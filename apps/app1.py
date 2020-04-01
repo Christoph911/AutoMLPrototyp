@@ -89,22 +89,24 @@ controls_regression = dbc.Card(
     ]
 )
 
-# define tabs
-tab = dbc.Tabs(
-    [   #dbc.Tab(choose_datatable,label="Datensatz"),
-        dbc.Tab(controls_clustering, label="Clustering"),
-        dbc.Tab(controls_regression, label="Regression")
-    ]
+# define navbar to change page
+nav = dbc.Nav(
+    [
+        dbc.NavItem(dbc.NavLink("Clustering", active=True, href="/")),
+        dbc.NavItem(dbc.NavLink("Regression", href='/apps/app2')),
+    ],
+    pills=True,
 )
 
 # create masterlayout
 layout = dbc.Container(
     [
         html.H1("AutoML Prototyp"),
+        html.Div(nav),
         html.Hr(),
         dbc.Row(
             [
-                dbc.Col(tab, md=4),
+                dbc.Col(controls_clustering, md=4),
                 dbc.Col(dcc.Graph(id="cluster-graph"), md=8),
             ],
             align="center",
@@ -112,6 +114,7 @@ layout = dbc.Container(
     ],
     fluid=True,
 )
+
 # callback and method for datensatz dropdown
 @app.callback(
     Output("datensatz", "children"),
@@ -189,7 +192,3 @@ app.callback(Output("x-variable", "options"), [Input("y-variable", "value")])(
 app.callback(Output("y-variable", "options"), [Input("x-variable", "value")])(
     filter_options
 )
-
-
-#if __name__ == "__main__":
-#   app.run_server(debug=True)
