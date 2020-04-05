@@ -16,8 +16,6 @@ iris = pd.DataFrame(iris_raw["data"], columns=iris_raw["feature_names"])
 boston_raw = datasets.load_boston()
 boston = pd.DataFrame(boston_raw["data"],columns=boston_raw["feature_names"])
 
-#app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP],suppress_callback_exceptions=True)
-
 ###LAYOUT###
 
 # make Card including dropdown menu
