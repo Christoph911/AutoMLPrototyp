@@ -12,7 +12,7 @@ from main import app
 
 ###SETUP###
 iris_raw = datasets.load_iris()
-iris = pd.DataFrame(iris_raw["data"], columns=iris_raw["feature_names"])
+df = pd.DataFrame(iris_raw["data"], columns=iris_raw["feature_names"])
 boston_raw = datasets.load_boston()
 boston = pd.DataFrame(boston_raw["data"],columns=boston_raw["feature_names"])
 
@@ -37,11 +37,21 @@ controls_clustering = dbc.Card(
 
         dbc.FormGroup(
             [
+                dcc.Upload(
+                    id="upload-data",
+                    children=dbc.Button("Datensatz hochladen", color="secondary", outline=True, block=True)
+                ),
+
+            ]
+        ),
+
+        dbc.FormGroup(
+            [
                 dbc.Label("X variable"),
                 dcc.Dropdown(
                     id="x-variable",
                     options=[
-                        {"label": col, "value": col} for col in iris.columns
+                        {"label": col, "value": col} for col in df.columns
                     ],
                     value="sepal length (cm)",
                 ),
@@ -53,7 +63,7 @@ controls_clustering = dbc.Card(
                 dcc.Dropdown(
                     id="y-variable",
                     options=[
-                        {"label": col, "value": col} for col in iris.columns
+                        {"label": col, "value": col} for col in df.columns
                     ],
                     value="sepal width (cm)",
                 ),
@@ -90,8 +100,9 @@ controls_regression = dbc.Card(
 # define navbar to change page
 nav = dbc.Nav(
     [
-        dbc.NavItem(dbc.NavLink("Clustering", active=True, href="/")),
-        dbc.NavItem(dbc.NavLink("Regression", href='/apps/app2')),
+        dbc.NavItem(dbc.NavLink("Unsupervised learning", active=True, href="/")),
+        dbc.NavItem(dbc.NavLink("Supervised learning", href='/apps/app2')),
+        dbc.NavItem(dbc.NavLink("Reinforcement learning", href='/')),
     ],
     pills=True,
 )
@@ -105,7 +116,8 @@ layout = dbc.Container(
         dbc.Row(
             [
                 dbc.Col(controls_clustering, md=4),
-                dbc.Col(dcc.Graph(id="cluster-graph"), md=8),
+                dbc.Col(html.Div(id="output-data-upload"),md=8)
+                #dbc.Col(dcc.Graph(id="cluster-graph"), md=8),
             ],
             align="center",
         ),
@@ -142,7 +154,7 @@ def choose_dataset(name):
 def make_graph(x, y, n_clusters):
     # minimal input validation, make sure there's at least one cluster
     km = KMeans(n_clusters=max(n_clusters, 1))
-    df = iris.loc[:, [x, y]]
+    df = df.loc[:, [x, y]]
     km.fit(df.values)
     df["cluster"] = km.labels_
 
@@ -179,7 +191,7 @@ def filter_options(v):
     """Disable option v"""
     return [
         {"label": col, "value": col, "disabled": col == v}
-        for col in iris.columns
+        for col in df.columns
     ]
 
 
