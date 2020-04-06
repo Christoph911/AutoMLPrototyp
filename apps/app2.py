@@ -21,7 +21,6 @@ colors = {
 # define page layout
 layout = dbc.Container(
     [
-        html.Div([
             html.H1("Seite 2"),
             html.Hr(),
             # create dcc.Upload inside a button
@@ -33,7 +32,6 @@ layout = dbc.Container(
             # place scatter plot and table on layout
             dcc.Graph(id='Mygraph'),
             html.Div(id='output-data-upload')
-        ])
     ])
 
 # method reads file, parse it and store as df

@@ -39,9 +39,9 @@ controls_clustering = dbc.Card(
             [
                 dcc.Upload(
                     id="upload-data",
-                    children=dbc.Button("Datensatz hochladen", color="secondary", outline=True, block=True)
+                    children=dbc.Button("Datensatz hochladen", color="secondary", outline=True, block=True),
+                    multiple=True
                 ),
-
             ]
         ),
 
@@ -116,11 +116,11 @@ layout = dbc.Container(
         dbc.Row(
             [
                 dbc.Col(controls_clustering, md=4),
-                dbc.Col(html.Div(id="output-data-upload"),md=8)
-                #dbc.Col(dcc.Graph(id="cluster-graph"), md=8),
+                dbc.Col(html.Div(id="output-data-upload"), md=8)
+                # dbc.Col(dcc.Graph(id="cluster-graph"), md=8),
             ],
             align="center",
-        ),
+        )
     ],
     fluid=True,
 )
