@@ -21,19 +21,19 @@ boston = pd.DataFrame(boston_raw["data"],columns=boston_raw["feature_names"])
 # make Card including dropdown menu
 controls_clustering = dbc.Card(
     [
-        dbc.FormGroup(
-            [
-                dbc.Label("Datensatz"),
-                dcc.Dropdown(
-                    id="datensatz",
-                    options=[
-                        {"label": "Iris", "value": "iris"},
-                        {"label": "Boston", "value": "boston"}
-                    ],
-                    value="name",
-                ),
-            ]
-        ),
+        # dbc.FormGroup(
+        #     [
+        #         dbc.Label("Datensatz"),
+        #         dcc.Dropdown(
+        #             id="datensatz",
+        #             options=[
+        #                 {"label": "Iris", "value": "iris"},
+        #                 {"label": "Boston", "value": "boston"}
+        #             ],
+        #             value="name",
+        #         ),
+        #     ]
+        # ),
 
         dbc.FormGroup(
             [
@@ -71,7 +71,7 @@ controls_clustering = dbc.Card(
         ),
         dbc.FormGroup(
             [
-                dbc.Label("Cluster count"),
+                dbc.Label("Anzahl Cluster"),
                 dbc.Input(id="cluster-count", type="number", value=3),
             ]
         ),
@@ -126,20 +126,20 @@ layout = dbc.Container(
 )
 
 # callback and method for datensatz dropdown
-@app.callback(
-    Output("datensatz", "children"),
-    [
-        Input("datensatz", "value"),
-    ],
-)
-def choose_dataset(name):
-    data = None
-    if name == "iris":
-        data = datasets.load_iris()
-    elif name == "boston":
-        data = datasets.load_boston()
-    return print(data)
-
+#
+#@app.callback(
+#     Output("datensatz", "children"),
+#     [
+#         Input("datensatz", "value"),
+#     ],
+# )
+# def choose_dataset(name):
+#     data = None
+#     if name == "iris":
+#         data = datasets.load_iris()
+#     elif name == "boston":
+#         data = datasets.load_boston()
+#     return print(data)
 
 # callbacks for other dropdowns
 @app.callback(
