@@ -4,7 +4,8 @@ from dash.dependencies import Input, Output
 
 from main import app
 from apps import app1, app2
-
+from layouts import layout1, layout2
+import callbacks
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
@@ -16,7 +17,7 @@ app.layout = html.Div([
               [Input('url', 'pathname')])
 def display_page(pathname):
     if pathname == '/':
-        return app1.layout
+        return layout1
     elif pathname == '/apps/app2':
         return app2.layout
     else:
