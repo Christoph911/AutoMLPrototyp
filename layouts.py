@@ -27,6 +27,18 @@ controls_clustering = dbc.Card(
 
         dbc.FormGroup(
             [
+                dbc.Label("Modellauswahl"),
+                dcc.Dropdown(
+                    id="model",
+                    options=[
+                     {"label": "K-Means Clustering", "value": "k-means"}
+                    ],
+                ),
+            ]
+        ),
+
+        dbc.FormGroup(
+            [
                 dbc.Label("X-Achse"),
                 dcc.Dropdown(
                     id="x-variable",
@@ -52,6 +64,11 @@ controls_clustering = dbc.Card(
             [
                 dbc.Label("Anzahl Cluster"),
                 dbc.Input(id="cluster-count", type="number", value=3),
+            ]
+        ),
+        dbc.FormGroup(
+            [
+                dbc.Button("Let the magic happen!",id="start"),
             ]
         ),
     ],
