@@ -50,6 +50,23 @@ def update_date_dropdown(contents,filename):
         options = [{'label': col, 'value': col} for col in df.columns]
     return options
 
+@app.callback(Output('opt-dropdownX', 'options'),
+    [
+        Input('upload', 'contents'),
+        Input('upload', 'filename')
+
+    ]
+)
+def update_date_dropdownX(contents,filename):
+    optionsX = []
+    if contents:
+        contents = contents[0]
+        filename = filename[0]
+        df = parse_data(contents,filename)
+
+        optionsX = [{'label': col, 'value': col} for col in df.columns]
+    return optionsX
+
 # output clustering
 
 # masterlayout
@@ -63,6 +80,14 @@ app.layout = html.Div(
         dbc.FormGroup(
             [
                 dbc.Label("X variable"),
+                dcc.Dropdown(
+                    id="opt-dropdownX",
+                ),
+            ]
+        ),
+        dbc.FormGroup(
+            [
+                dbc.Label("Y variable"),
                 dcc.Dropdown(
                     id="opt-dropdown",
                 ),

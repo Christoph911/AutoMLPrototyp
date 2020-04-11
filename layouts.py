@@ -2,6 +2,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 
+
+
 # define navbar
 nav = dbc.Nav(
     [
@@ -18,7 +20,7 @@ controls_clustering = dbc.Card(
         dbc.FormGroup(
             [
                 dcc.Upload(
-                    id="upload-data",
+                    id="upload",
                     children=dbc.Button("Datensatz hochladen", color="secondary", outline=True, block=True),
                     multiple=True
                 ),
@@ -41,7 +43,7 @@ controls_clustering = dbc.Card(
             [
                 dbc.Label("X-Achse"),
                 dcc.Dropdown(
-                    id="x-variable",
+                    id="opt-dropdownX",
                     # options=[
                     #   {"label": col, "value": col} for col in df.columns
                     # ],
@@ -52,7 +54,7 @@ controls_clustering = dbc.Card(
             [
                 dbc.Label("Y-Achse"),
                 dcc.Dropdown(
-                    id="y-variable",
+                    id="opt-dropdownY",
                     # options=[
                     #    {"label": col, "value": col} for col in df.columns
                     # ],
@@ -83,7 +85,7 @@ layout1 = dbc.Container(
         dbc.Row(
             [
                 dbc.Col(controls_clustering, md=4),
-                dbc.Col(html.Div(id="output-data-upload"), md=8)
+                #dbc.Col(html.Div(id="output-data-upload"), md=8)
                 # dbc.Col(dcc.Graph(id="cluster-graph"), md=8),
             ],
             align="center",
