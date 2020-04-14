@@ -33,6 +33,7 @@ def parse_data(contents, filename):
         return html.Div([
             'Fehler beim Dateiupload!'
         ])
+    print(df)
     return df
 
 # dropdown options
