@@ -61,7 +61,6 @@ def update_date_dropdown(contents, filename):
 
 
 # output clustering
-
 @app.callback(
     Output("cluster-graph", "figure"),
     [Input('button', 'n_clicks')],
@@ -73,7 +72,7 @@ def update_date_dropdown(contents, filename):
      State('upload', 'filename')
      ],
 )
-def make_graph(n_clicks, x, y, n_clusters, contents, filename):
+def make_clustering(n_clicks, x, y, n_clusters, contents, filename):
     layout = None
     if contents is None or filename is None or x is None or y is None or n_clusters is None:
         raise PreventUpdate

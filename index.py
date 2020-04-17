@@ -19,9 +19,9 @@ def display_page(pathname):
     if pathname == '/':
         return layout1
     elif pathname == '/apps/app2':
-        return app2.layout
+        return layout2
     else:
-        return '404'
+        return '404 - Hier gibt es nichts zu sehen!'
 
 if __name__ == '__main__':
     app.run_server(debug=True)

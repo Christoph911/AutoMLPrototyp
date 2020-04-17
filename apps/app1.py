@@ -143,7 +143,7 @@ layout = dbc.Container(
 
 # callbacks for other dropdowns
 @app.callback(
-    Output("cluster-graph", "figure"),
+    Output("cluster-graph-t", "figure"),
     [
         Input("x-variable", "value"),
         Input("y-variable", "value"),

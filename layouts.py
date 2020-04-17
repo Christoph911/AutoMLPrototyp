@@ -7,13 +7,13 @@ import dash_bootstrap_components as dbc
 # define navbar
 nav = dbc.Nav(
     [
-        dbc.NavItem(dbc.NavLink("Unsupervised learning", active=True, href="/")),
-        dbc.NavItem(dbc.NavLink("Supervised learning", href='/apps/app2')),
+        dbc.NavItem(dbc.NavLink("Unsupervised learning", href="/")),
+        dbc.NavItem(dbc.NavLink("Supervised learning", href="/apps/app2")),
         dbc.NavItem(dbc.NavLink("Reinforcement learning", href='/')),
     ],
     pills=True,
 )
-
+# define controls for clustering operations
 controls_clustering = dbc.Card(
     [
 
@@ -70,13 +70,57 @@ controls_clustering = dbc.Card(
         ),
         dbc.FormGroup(
             [
-                dbc.Button("Let the magic happen!",id="start"),
+                dbc.Button("Let the magic happen!",id="start-cluster"),
             ]
         ),
     ],
     body=True,
 )
 
+controls_regression = dbc.Card(
+    [
+        dbc.FormGroup(
+            [
+                dcc.Upload(
+                    id="upload",
+                    children=dbc.Button("Datensatz hochladen", color="secondary", outline=True, block=True),
+                    multiple=True
+                ),
+            ]
+        ),
+        dbc.FormGroup(
+            [
+                dbc.Label("Modellauswahl"),
+                dcc.Dropdown(
+                    id="model",
+                ),
+            ]
+        ),
+        dbc.FormGroup(
+            [
+                dbc.Label("Zielwert"),
+                dcc.Dropdown(
+                    id="opt-dropdownX",
+                ),
+            ]
+        ),
+        dbc.FormGroup(
+            [
+                dbc.Button("Let the magic happen!", id="start-regression"),
+            ]
+        ),
+    ],
+    body=True
+
+)
+
+
+
+
+
+
+
+# make layouts
 layout1 = dbc.Container(
     [
         html.H1("AutoML Prototyp"),
@@ -86,7 +130,7 @@ layout1 = dbc.Container(
             [
                 dbc.Col(controls_clustering, md=4),
                 #dbc.Col(html.Div(id="output-data-upload"), md=8)
-                # dbc.Col(dcc.Graph(id="cluster-graph"), md=8),
+                dbc.Col(dcc.Graph(id="cluster-graph"), md=8),
             ],
             align="center",
         )
@@ -101,7 +145,8 @@ layout2 = dbc.Container(
         html.Hr(),
         dbc.Row(
             [
-                dbc.Col(controls_clustering,md=4)
+                dbc.Col(controls_regression,md=4),
+                dbc.Col(dcc.Graph(id="regression-graph"),md=8)
             ],
             align="center"
         )
