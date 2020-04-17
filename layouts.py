@@ -2,13 +2,11 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 
-
-
 # define navbar
 nav = dbc.Nav(
     [
-        dbc.NavItem(dbc.NavLink("Unsupervised learning", href="/")),
-        dbc.NavItem(dbc.NavLink("Supervised learning", href="/apps/app2")),
+        dbc.NavItem(dbc.NavLink("Supervised learning", href="/")),
+        dbc.NavItem(dbc.NavLink("Unsupervised learning", href="/unsupervised")),
         dbc.NavItem(dbc.NavLink("Reinforcement learning", href='/')),
     ],
     pills=True,
@@ -32,9 +30,6 @@ controls_clustering = dbc.Card(
                 dbc.Label("Modellauswahl"),
                 dcc.Dropdown(
                     id="model",
-                    options=[
-                     {"label": "K-Means Clustering", "value": "k-means"}
-                    ],
                 ),
             ]
         ),
@@ -70,7 +65,7 @@ controls_clustering = dbc.Card(
         ),
         dbc.FormGroup(
             [
-                dbc.Button("Let the magic happen!",id="start-cluster"),
+                dbc.Button("Let the magic happen!", id="start-cluster"),
             ]
         ),
     ],
@@ -114,14 +109,24 @@ controls_regression = dbc.Card(
 
 )
 
-
-
-
-
-
-
 # make layouts
-layout1 = dbc.Container(
+layout_supervised = dbc.Container(
+    [
+        html.H1("AutoML Prototyp"),
+        html.Div(nav),
+        html.Hr(),
+        dbc.Row(
+            [
+                dbc.Col(controls_regression, md=4),
+                dbc.Col(dcc.Graph(id="regression-graph"), md=8)
+            ],
+            align="center"
+        )
+    ],
+    fluid=True,
+)
+
+layout_unsupervised = dbc.Container(
     [
         html.H1("AutoML Prototyp"),
         html.Div(nav),
@@ -129,26 +134,10 @@ layout1 = dbc.Container(
         dbc.Row(
             [
                 dbc.Col(controls_clustering, md=4),
-                #dbc.Col(html.Div(id="output-data-upload"), md=8)
+                # dbc.Col(html.Div(id="output-data-upload"), md=8)
                 dbc.Col(dcc.Graph(id="cluster-graph"), md=8),
             ],
             align="center",
-        )
-    ],
-    fluid=True,
-)
-
-layout2 = dbc.Container(
-    [
-        html.H1("AutoML Prototyp"),
-        html.Div(nav),
-        html.Hr(),
-        dbc.Row(
-            [
-                dbc.Col(controls_regression,md=4),
-                dbc.Col(dcc.Graph(id="regression-graph"),md=8)
-            ],
-            align="center"
         )
     ],
     fluid=True,

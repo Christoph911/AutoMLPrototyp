@@ -2,21 +2,20 @@ import base64
 import io
 from main import app
 
-import dash
-import dash_html_components as html
-import dash_core_components as dcc
-import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output, State
+
 import dash_table
+import dash_html_components as html
+from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
+
 import plotly.graph_objs as go
 
 import pandas as pd
 import sklearn
-from dash.exceptions import PreventUpdate
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 
-from dash.exceptions import PreventUpdate
+
 from sklearn.cluster import KMeans
 
 
@@ -89,9 +88,7 @@ def make_regression(n_clicks, x,model, contents, filename):
             contents = parse_data(contents, filename)
 
             Y = contents[x]
-            print(Y)
             X = contents.drop(x,axis=1)
-            print(X)
 
             X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33)
 
