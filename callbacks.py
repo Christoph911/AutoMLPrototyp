@@ -14,8 +14,7 @@ import pandas as pd
 import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-
-
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.cluster import KMeans
 
 
@@ -44,10 +43,11 @@ def parse_data(contents, filename):
 @app.callback(
     [Output('opt-dropdownX', 'options'),
      Output('opt-dropdownY', 'options'),
-     Output("model","options")],
+     Output("model","options"),
+    Output("model-cluster","options")],
     [
         Input('upload', 'contents'),
-        Input('upload', 'filename')
+        Input('upload', 'filename'),
 
     ]
 )
@@ -56,6 +56,7 @@ def update_date_dropdown(contents, filename):
     optionsY = []
     model = [{'label': "Lineare Regression", 'value': "regression"},
              {'label': "Random Forest", 'value': "forest"}]
+    model_cluster = [{"label":"K-Means","value":"kmeans"}]
     if contents:
         contents = contents[0]
         filename = filename[0]
@@ -63,7 +64,7 @@ def update_date_dropdown(contents, filename):
 
         optionsX = [{'label': col, 'value': col} for col in df.columns]
         optionsY = [{'label': col, 'value': col} for col in df.columns]
-    return optionsX, optionsY, model
+    return optionsX, optionsY, model,model_cluster
 
 
 @app.callback(
@@ -73,49 +74,68 @@ def update_date_dropdown(contents, filename):
     [State("opt-dropdownX", "value"),
      State("model","value"),
      State('upload', 'contents'),
-     State('upload', 'filename')
+     State('upload', 'filename'),
      ],
 )
-def make_regression(n_clicks, x,model, contents, filename):
-    layout = None
-    data = []
-    if contents is None or filename is None or x is None or model is None:
+def make_regression(n_clicks, y, model, contents, filename):
+    if None in (contents, filename, y, model):
         raise PreventUpdate
+    elif contents:
+        contents = contents[0]
+        filename = filename[0]
+        contents = parse_data(contents, filename)
+
     if model == "regression":
-        if contents:
-            contents = contents[0]
-            filename = filename[0]
-            contents = parse_data(contents, filename)
 
-            Y = contents[x]
-            X = contents.drop(x,axis=1)
+        Y = contents[y]
+        X = contents.drop(y,axis=1)
 
-            X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33)
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33)
 
-            model = LinearRegression()
-            model.fit(X_train,Y_train)
+        model = LinearRegression()
+        model.fit(X_train,Y_train)
 
-            Y_pred = model.predict(X_test)
+        Y_pred = model.predict(X_test)
 
-            mse = sklearn.metrics.mean_squared_error(Y_test, Y_pred)
-            print(mse)
+        mse = sklearn.metrics.mean_squared_error(Y_test, Y_pred)
+        print(mse)
 
 
-            data = [
-                go.Scatter(
-                    x=Y_test,
-                    y=Y_pred,
-                    mode="markers",
-                    marker={"size": 8},
-                )
+        data = [
+            go.Scatter(
+                x=Y_test,
+                y=Y_pred,
+                mode="markers",
+                marker={"size": 8},
+            )
 
-            ]
+        ]
 
-            layout = {"xaxis": {"title": "Actual " + x}, "yaxis": {"title": "Predicted" + x}}
+        layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y}}
 
-                #title=f"Score: {filename}, MSE: {mse:.3f} (Test Data)",
     elif model == "forest":
-        print("Ich und mein Holz")
+        Y = contents[y]
+        X = contents.drop(y,axis=1)
+
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33)
+
+        model = RandomForestClassifier(n_jobs=1,n_estimators=10)
+        model.fit(X_train,Y_train)
+
+        Y_pred = model.predict(X_test)
+
+        data = [
+            go.Scatter(
+                x=Y_test,
+                y=Y_pred,
+                mode="markers",
+                marker={"size": 8},
+            )
+
+        ]
+
+        layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y}}
+
 
     elif model == None:
         print("Bitte Model auswählen")
@@ -136,8 +156,7 @@ def make_regression(n_clicks, x,model, contents, filename):
      ],
 )
 def make_clustering(n_clicks, x, y, n_clusters, contents, filename):
-    layout = None
-    if contents is None or filename is None or x is None or y is None or n_clusters is None:
+    if None in (contents, filename, x, y, n_clusters):
         raise PreventUpdate
 
     if contents:
