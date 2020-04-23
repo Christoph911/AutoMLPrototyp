@@ -37,6 +37,64 @@ def parse_data(contents, filename):
     return df
 
 
+@app.callback(
+    Output('table-head','children'),
+    [Input('upload','contents'),
+     Input('upload','filename'),
+     Input("card-tabs", "active_tab")
+     ]
+)
+def display_table(contents, filename, active_tab):
+    df = pd.DataFrame()
+    table = []
+    shape = None
+    if contents:
+        contents = contents[0]
+        filename = filename[0]
+        df = parse_data(contents, filename)
+
+    if active_tab == "tab-1":
+        df = df.head(10)
+        table = dash_table.DataTable(
+
+            id='table',
+            columns=[{"name": i, "id": i} for i in df.columns],
+            data=df.to_dict("rows"),
+            style_cell={'width': '150',
+                        'height': '60px',
+                        'textAlign': 'left'})
+
+
+
+    elif active_tab == "tab-2":
+        table = None
+        shape = html.P(['Dataset Shape:',html.Br(),str(df.shape),html.Br(),
+                        'Anzahal NaN Werte in Spalten:',html.Br(),str(df.isna().sum()),html.Br(),
+                        ])
+
+
+
+    return table,shape
+
+
+# (df.shape)
+#  print(df.isna().sum())
+#  print(df.dtypes)
+
+
+# @app.callback(
+#     Output("card-content", "children"),
+#     [Input('table-head', 'children'),
+#     Input("card-tabs", "active_tab")
+#      ]
+# )
+# def tab_content(active_tab,table):
+#     if active_tab == "tab-1":
+#         return table
+#     else:
+#         return "This is tab {}".format(active_tab)
+
+
 # dropdown options
 # TODO: Callbacks redundanter code. bessere Lösung?
 # TODO: Zwei gleiche Auswahlmögl. ausschließen

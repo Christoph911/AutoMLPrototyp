@@ -1,6 +1,8 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+from dash.dependencies import Input,Output,State
+from main import app
 
 # define navbar
 nav = dbc.Nav(
@@ -133,6 +135,23 @@ controls_regression = dbc.Card(
     body=True
 
 )
+card_table = dbc.Card(
+    [
+        dbc.CardHeader(
+            dbc.Tabs(
+                [
+                    dbc.Tab(label="Tab 1", tab_id="tab-1"),
+                    dbc.Tab(label="Tab 2", tab_id="tab-2"),
+                ],
+                id="card-tabs",
+                card=True,
+                active_tab="tab-1",
+            )
+        ),
+        dbc.CardBody(html.Div(id="table-head")),
+    ]
+)
+
 
 # make layouts
 layout_start = dbc.Container(
@@ -172,7 +191,8 @@ layout_upload = dbc.Container(
         dbc.Row(
             [
                 dbc.Col(controls_regression, md=4),
-                # dbc.Col(html.Div(id="output-data-upload"), md=8)
+                #dbc.Col(html.Div(id="table-head"), md=8)
+                dbc.Col(card_table,md=8)
                 #dbc.Col(dcc.Graph(id="cluster-graph"), md=8),
             ],
             align="center",
