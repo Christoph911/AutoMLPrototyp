@@ -33,9 +33,19 @@ controls_upload = dbc.Card(
 
         dbc.FormGroup(
             [
-                dbc.Button("Beginn Preprocessing", id="start-preprocessing"),
+                dbc.Button("Zeige Vorschau an", id="start-preprocessing"),
             ]
         ),
+    ]
+)
+
+controls_prep = dbc.Card(
+    [
+        dbc.FormGroup(
+            [
+                dbc.Button("NaN-Values entfernen",id = "remove-NaN")
+            ]
+        )
     ]
 )
 # define controls for clustering operations
@@ -140,8 +150,8 @@ card_table = dbc.Card(
         dbc.CardHeader(
             dbc.Tabs(
                 [
-                    dbc.Tab(label="Tab 1", tab_id="tab-1"),
-                    dbc.Tab(label="Tab 2", tab_id="tab-2"),
+                    dbc.Tab(label="Vorschau", tab_id="tab-1"),
+                    dbc.Tab(label="Infos", tab_id="tab-2"),
                 ],
                 id="card-tabs",
                 card=True,
@@ -190,12 +200,12 @@ layout_upload = dbc.Container(
         html.Hr(),
         dbc.Row(
             [
-                dbc.Col(controls_regression, md=4),
+                dbc.Col(controls_upload, width=4,align="start"),
                 #dbc.Col(html.Div(id="table-head"), md=8)
-                dbc.Col(card_table,md=8)
+                dbc.Col(card_table,width=8,align="start")
                 #dbc.Col(dcc.Graph(id="cluster-graph"), md=8),
             ],
-            align="center",
+
         )
     ],
     fluid=True,
@@ -206,6 +216,13 @@ layout_prep = dbc.Container(
         html.H1("AutoML Prototyp - Preprocessing"),
         html.Div(nav),
         html.Hr(),
+        dbc.Row(
+            [
+                dbc.Col(controls_prep,width=4,align="start"),
+                dbc.Col(html.Div(id="data-prepared"),width=4,align="start")
+
+            ]
+        )
     ]
 ),
 

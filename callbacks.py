@@ -1,7 +1,7 @@
 import base64
 import io
+import json
 from main import app
-
 
 import dash_table
 import dash_html_components as html
@@ -38,61 +38,74 @@ def parse_data(contents, filename):
 
 
 @app.callback(
-    Output('table-head','children'),
-    [Input('upload','contents'),
-     Input('upload','filename'),
-     Input("card-tabs", "active_tab")
-     ]
+    Output('stored-data', 'children'),
+    [Input('upload', 'contents'),
+     Input('upload', 'filename')]
 )
-def display_table(contents, filename, active_tab):
-    df = pd.DataFrame()
-    table = []
-    shape = None
+def store_data(contents, filename):
     if contents:
         contents = contents[0]
         filename = filename[0]
         df = parse_data(contents, filename)
+        df = df.to_json(orient='split')
+        print("Daten in hidden Div gespeichert")
+        return df
 
+
+@app.callback(
+    Output('data-prepared', 'children'),
+    [Input('stored-data', 'children'),
+     Input('remove-NaN', 'n_clicks')
+     ]
+)
+def prepare_data(df, n_clicks):
+    if n_clicks is None:
+        raise PreventUpdate
+    elif n_clicks is not None:
+        df = json.loads(df)
+        df = pd.DataFrame(df['data'], columns=df['columns'])
+        df = df.dropna()
+
+        return print("Null values entfernt")
+    else:
+        raise PreventUpdate
+
+
+@app.callback(
+    Output('table-head', 'children'),
+    [Input('stored-data', 'children'),
+     Input("card-tabs", "active_tab"),
+     Input("start-preprocessing", "n_clicks")
+
+     ]
+)
+def display_table(df, active_tab, n_clicks):
+    if n_clicks is None:
+        raise PreventUpdate
+    elif n_clicks is not None:
+        df = json.loads(df)
+        df = pd.DataFrame(df['data'], columns=df['columns'])
+        dff = df.head(10)
     if active_tab == "tab-1":
-        df = df.head(10)
+
         table = dash_table.DataTable(
 
             id='table',
-            columns=[{"name": i, "id": i} for i in df.columns],
-            data=df.to_dict("rows"),
+            columns=[{"name": i, "id": i} for i in dff.columns],
+            data=dff.to_dict("rows"),
             style_cell={'width': '150',
                         'height': '60px',
                         'textAlign': 'left'})
 
-
-
+        return table
     elif active_tab == "tab-2":
-        table = None
-        shape = html.P(['Dataset Shape:',html.Br(),str(df.shape),html.Br(),
-                        'Anzahal NaN Werte in Spalten:',html.Br(),str(df.isna().sum()),html.Br(),
+        shape = html.P(['Dataset Shape:', html.Br(), str(df.shape), html.Br(),
+                        'Anzahal NaN Werte in Spalten:', html.Br(), str(df.isna().sum()), html.Br(),
                         ])
+        return shape
 
-
-
-    return table,shape
-
-
-# (df.shape)
-#  print(df.isna().sum())
-#  print(df.dtypes)
-
-
-# @app.callback(
-#     Output("card-content", "children"),
-#     [Input('table-head', 'children'),
-#     Input("card-tabs", "active_tab")
-#      ]
-# )
-# def tab_content(active_tab,table):
-#     if active_tab == "tab-1":
-#         return table
-#     else:
-#         return "This is tab {}".format(active_tab)
+    else:
+        raise PreventUpdate
 
 
 # dropdown options
@@ -101,8 +114,8 @@ def display_table(contents, filename, active_tab):
 @app.callback(
     [Output('opt-dropdownX', 'options'),
      Output('opt-dropdownY', 'options'),
-     Output("model","options"),
-    Output("model-cluster","options")],
+     Output("model", "options"),
+     Output("model-cluster", "options")],
     [
         Input('upload', 'contents'),
         Input('upload', 'filename'),
@@ -114,7 +127,7 @@ def update_date_dropdown(contents, filename):
     optionsY = []
     model = [{'label': "Lineare Regression", 'value': "regression"},
              {'label': "Random Forest", 'value': "forest"}]
-    model_cluster = [{"label":"K-Means","value":"kmeans"}]
+    model_cluster = [{"label": "K-Means", "value": "kmeans"}]
     if contents:
         contents = contents[0]
         filename = filename[0]
@@ -122,7 +135,7 @@ def update_date_dropdown(contents, filename):
 
         optionsX = [{'label': col, 'value': col} for col in df.columns]
         optionsY = [{'label': col, 'value': col} for col in df.columns]
-    return optionsX, optionsY, model,model_cluster
+    return optionsX, optionsY, model, model_cluster
 
 
 @app.callback(
@@ -130,7 +143,7 @@ def update_date_dropdown(contents, filename):
     [Input('start-regression', 'n_clicks')],
 
     [State("opt-dropdownX", "value"),
-     State("model","value"),
+     State("model", "value"),
      State('upload', 'contents'),
      State('upload', 'filename'),
      ],
@@ -146,18 +159,17 @@ def make_regression(n_clicks, y, model, contents, filename):
     if model == "regression":
 
         Y = contents[y]
-        X = contents.drop(y,axis=1)
+        X = contents.drop(y, axis=1)
 
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33)
 
         model = LinearRegression()
-        model.fit(X_train,Y_train)
+        model.fit(X_train, Y_train)
 
         Y_pred = model.predict(X_test)
 
         mse = sklearn.metrics.mean_squared_error(Y_test, Y_pred)
         print(mse)
-
 
         data = [
             go.Scatter(
@@ -173,12 +185,12 @@ def make_regression(n_clicks, y, model, contents, filename):
 
     elif model == "forest":
         Y = contents[y]
-        X = contents.drop(y,axis=1)
+        X = contents.drop(y, axis=1)
 
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33)
 
-        model = RandomForestClassifier(n_jobs=1,n_estimators=10)
-        model.fit(X_train,Y_train)
+        model = RandomForestClassifier(n_jobs=1, n_estimators=10)
+        model.fit(X_train, Y_train)
 
         Y_pred = model.predict(X_test)
 
@@ -198,8 +210,8 @@ def make_regression(n_clicks, y, model, contents, filename):
     elif model == None:
         print("Bitte Model auswählen")
 
-
     return go.Figure(data=data, layout=layout)
+
 
 # output clustering
 @app.callback(
