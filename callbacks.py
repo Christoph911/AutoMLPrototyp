@@ -18,7 +18,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.cluster import KMeans
 
 
-# import dataset
+# parse uploaded data and return dataframe
 def parse_data(contents, filename):
     content_type, content_string = contents.split(',')
 
@@ -37,6 +37,7 @@ def parse_data(contents, filename):
     return df
 
 
+# convert uploaded data to json and store it in hidden div
 @app.callback(
     Output('stored-data', 'children'),
     [Input('upload', 'contents'),
@@ -52,6 +53,7 @@ def store_data(contents, filename):
         return df
 
 
+# take stored data and make some basic preparations
 @app.callback(
     Output('data-prepared', 'children'),
     [Input('stored-data', 'children'),
@@ -71,6 +73,7 @@ def prepare_data(df, n_clicks):
         raise PreventUpdate
 
 
+# take stored data, display dash table and some basic statistics
 @app.callback(
     Output('table-head', 'children'),
     [Input('stored-data', 'children'),
@@ -82,14 +85,14 @@ def prepare_data(df, n_clicks):
 def display_table(df, active_tab, n_clicks):
     if n_clicks is None:
         raise PreventUpdate
+
     elif n_clicks is not None:
         df = json.loads(df)
         df = pd.DataFrame(df['data'], columns=df['columns'])
         dff = df.head(10)
+
     if active_tab == "tab-1":
-
         table = dash_table.DataTable(
-
             id='table',
             columns=[{"name": i, "id": i} for i in dff.columns],
             data=dff.to_dict("rows"),
@@ -98,6 +101,7 @@ def display_table(df, active_tab, n_clicks):
                         'textAlign': 'left'})
 
         return table
+
     elif active_tab == "tab-2":
         shape = html.P(['Dataset Shape:', html.Br(), str(df.shape), html.Br(),
                         'Anzahal NaN Werte in Spalten:', html.Br(), str(df.isna().sum()), html.Br(),
@@ -108,9 +112,9 @@ def display_table(df, active_tab, n_clicks):
         raise PreventUpdate
 
 
-# dropdown options
-# TODO: Callbacks redundanter code. bessere Lösung?
+# take stored data, display column names and models in dropdown-menu
 # TODO: Zwei gleiche Auswahlmögl. ausschließen
+# TODO: JSON file as input
 @app.callback(
     [Output('opt-dropdownX', 'options'),
      Output('opt-dropdownY', 'options'),
@@ -138,6 +142,8 @@ def update_date_dropdown(contents, filename):
     return optionsX, optionsY, model, model_cluster
 
 
+# simple regression on input data and return figure
+# TODO: JSON file as input
 @app.callback(
     Output("regression-graph", "figure"),
     [Input('start-regression', 'n_clicks')],
@@ -213,7 +219,8 @@ def make_regression(n_clicks, y, model, contents, filename):
     return go.Figure(data=data, layout=layout)
 
 
-# output clustering
+# simple clustering based on input data
+# TODO: JSON file as input
 @app.callback(
     Output("cluster-graph", "figure"),
     [Input('start-cluster', 'n_clicks')],

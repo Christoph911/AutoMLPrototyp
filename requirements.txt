@@ -109,3 +109,8 @@ wincertstore=0.2=py38_0
 winpty=0.4.3=4
 zeromq=4.3.2=h6538335_2
 zipp=3.1.0=py_0
+
+dash~=1.9.1
+pandas~=1.0.3
+plotly~=4.5.4
+scikit-learn~=0.22.2.post1
