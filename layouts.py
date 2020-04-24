@@ -149,7 +149,7 @@ controls_model = dbc.Card(
     [
         dbc.FormGroup(
             [
-                dbc.Button("Modell laden",id="load-data")
+                dbc.Button("Daten laden",id="load-data")
             ]
         ),
         dbc.FormGroup(
@@ -172,7 +172,7 @@ controls_model = dbc.Card(
             [
                 dbc.Label("Train/Test-Size"),
                 dcc.Dropdown(
-                    id="train-test-size",
+                    id="train-test",
                 ),
             ]
         ),
