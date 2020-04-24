@@ -121,102 +121,111 @@ def display_table(df, active_tab, n_clicks):
      Output("model", "options"),
      Output("model-cluster", "options")],
     [
-        Input('upload', 'contents'),
-        Input('upload', 'filename'),
+        Input('stored-data', 'children'),
+        Input("load-data", "n_clicks")
 
     ]
 )
-def update_date_dropdown(contents, filename):
-    optionsX = []
-    optionsY = []
-    model = [{'label': "Lineare Regression", 'value': "regression"},
-             {'label': "Random Forest", 'value': "forest"}]
-    model_cluster = [{"label": "K-Means", "value": "kmeans"}]
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-        df = parse_data(contents, filename)
+def update_date_dropdown(df, n_clicks):
+    if n_clicks is None:
+        raise PreventUpdate
+    elif n_clicks is not None:
+        df = json.loads(df)
+        df = pd.DataFrame(df['data'], columns=df['columns'])
+        model = [{'label': "Lineare Regression", 'value': "regression"},
+                 {'label': "Random Forest", 'value': "forest"}]
+        model_cluster = [{"label": "K-Means", "value": "kmeans"}]
 
         optionsX = [{'label': col, 'value': col} for col in df.columns]
         optionsY = [{'label': col, 'value': col} for col in df.columns]
-    return optionsX, optionsY, model, model_cluster
+
+        return optionsX, optionsY, model, model_cluster
+    else:
+        raise PreventUpdate
 
 
 # simple regression on input data and return figure
-# TODO: JSON file as input
 @app.callback(
     Output("regression-graph", "figure"),
-    [Input('start-regression', 'n_clicks')],
-
-    [State("opt-dropdownX", "value"),
-     State("model", "value"),
-     State('upload', 'contents'),
-     State('upload', 'filename'),
+    [Input('stored-data', 'children'),
+     Input("opt-dropdownX", "value"),
+     Input("model", "value"),
+     Input('card-tabs-model','active_tab'),
+     Input('start-regression', 'n_clicks'),
      ],
 )
-def make_regression(n_clicks, y, model, contents, filename):
-    if None in (contents, filename, y, model):
+def make_regression(df, y, model,active_tab, n_clicks):
+    if n_clicks is None:
         raise PreventUpdate
-    elif contents:
-        contents = contents[0]
-        filename = filename[0]
-        contents = parse_data(contents, filename)
+    elif n_clicks is not None:
+        df = json.loads(df)
+        df = pd.DataFrame(df['data'], columns=df['columns'])
 
-    if model == "regression":
+    if active_tab == 'tab-1-model':
 
-        Y = contents[y]
-        X = contents.drop(y, axis=1)
+        if model == "regression":
 
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33)
+            Y = df[y]
+            X = df.drop(y, axis=1)
 
-        model = LinearRegression()
-        model.fit(X_train, Y_train)
+            X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33)
 
-        Y_pred = model.predict(X_test)
+            model = LinearRegression()
+            model.fit(X_train, Y_train)
 
-        mse = sklearn.metrics.mean_squared_error(Y_test, Y_pred)
-        print(mse)
+            Y_pred = model.predict(X_test)
 
-        data = [
-            go.Scatter(
-                x=Y_test,
-                y=Y_pred,
-                mode="markers",
-                marker={"size": 8},
-            )
+            mse = sklearn.metrics.mean_squared_error(Y_test, Y_pred)
+            print(mse)
 
-        ]
+            data = [
+                go.Scatter(
+                    x=Y_test,
+                    y=Y_pred,
+                    mode="markers",
+                    marker={"size": 8},
+                )
 
-        layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y}}
+            ]
 
-    elif model == "forest":
-        Y = contents[y]
-        X = contents.drop(y, axis=1)
+            layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y}}
+            return go.Figure(data=data, layout=layout)
 
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33)
+        elif model == "forest":
+            Y = df[y]
+            X = df.drop(y, axis=1)
 
-        model = RandomForestClassifier(n_jobs=1, n_estimators=10)
-        model.fit(X_train, Y_train)
+            X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.33)
 
-        Y_pred = model.predict(X_test)
+            model = RandomForestClassifier(n_jobs=1, n_estimators=10)
+            model.fit(X_train, Y_train)
 
-        data = [
-            go.Scatter(
-                x=Y_test,
-                y=Y_pred,
-                mode="markers",
-                marker={"size": 8},
-            )
+            Y_pred = model.predict(X_test)
 
-        ]
+            data = [
+                go.Scatter(
+                    x=Y_test,
+                    y=Y_pred,
+                    mode="markers",
+                    marker={"size": 8},
+                )
 
-        layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y}}
+            ]
+
+            layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y}}
+
+            return go.Figure(data=data, layout=layout)
+
+        else:
+            raise PreventUpdate
+
+    if active_tab == "tab-2-model":
+        raise PreventUpdate
+
+    else:
+        raise PreventUpdate
 
 
-    elif model == None:
-        print("Bitte Model auswählen")
-
-    return go.Figure(data=data, layout=layout)
 
 
 # simple clustering based on input data

@@ -3,7 +3,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from main import app
-from layouts import layout_unsupervised, layout_supervised,layout_start,layout_prep,layout_upload
+from layouts import layout_unsupervised, layout_supervised,layout_start,layout_prep,layout_upload,layout_model
 import callbacks
 
 app.layout = html.Div([
@@ -23,6 +23,8 @@ def display_page(pathname):
         return layout_upload
     elif pathname == '/prep':
         return layout_prep
+    elif pathname == '/model':
+        return layout_model
     elif pathname == '/supervised':
         return layout_supervised
     elif pathname == '/unsupervised':

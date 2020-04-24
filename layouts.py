@@ -145,7 +145,46 @@ controls_regression = dbc.Card(
     body=True
 
 )
-card_table = dbc.Card(
+controls_model = dbc.Card(
+    [
+        dbc.FormGroup(
+            [
+                dbc.Button("Modell laden",id="load-data")
+            ]
+        ),
+        dbc.FormGroup(
+            [
+                dbc.Label("Modellauswahl"),
+                dcc.Dropdown(
+                    id="model",
+                ),
+            ]
+        ),
+        dbc.FormGroup(
+            [
+                dbc.Label("Zielwert"),
+                dcc.Dropdown(
+                    id="opt-dropdownX",
+                ),
+            ]
+        ),
+        dbc.FormGroup(
+            [
+                dbc.Label("Train/Test-Size"),
+                dcc.Dropdown(
+                    id="train-test-size",
+                ),
+            ]
+        ),
+        dbc.FormGroup(
+            [
+                dbc.Button("Let the magic happen!", id="start-regression"),
+            ]
+        ),
+    ],
+    body=True
+),
+card_table_upload = dbc.Card(
     [
         dbc.CardHeader(
             dbc.Tabs(
@@ -159,6 +198,22 @@ card_table = dbc.Card(
             )
         ),
         dbc.CardBody(html.Div(id="table-head")),
+    ]
+)
+card_table_model = dbc.Card(
+    [
+        dbc.CardHeader(
+            dbc.Tabs(
+                [
+                    dbc.Tab(label="Vorschau", tab_id="tab-1-model"),
+                    dbc.Tab(label="Metriken", tab_id="tab-2-model"),
+                ],
+                id="card-tabs-model",
+                card=True,
+                active_tab="tab-1-model",
+            )
+        ),
+        dbc.CardBody(dcc.Graph(id="regression-graph")),
     ]
 )
 
@@ -191,6 +246,7 @@ layout_start = dbc.Container(
             )
         )
     ]
+
 )
 
 layout_upload = dbc.Container(
@@ -200,9 +256,9 @@ layout_upload = dbc.Container(
         html.Hr(),
         dbc.Row(
             [
-                dbc.Col(controls_upload, width=4,align="start"),
+                dbc.Col(controls_upload, md=4,align="start"),
                 #dbc.Col(html.Div(id="table-head"), md=8)
-                dbc.Col(card_table,width=8,align="start")
+                dbc.Col(card_table_upload,md=8,align="start")
                 #dbc.Col(dcc.Graph(id="cluster-graph"), md=8),
             ],
 
@@ -218,14 +274,31 @@ layout_prep = dbc.Container(
         html.Hr(),
         dbc.Row(
             [
-                dbc.Col(controls_prep,width=4,align="start"),
-                dbc.Col(html.Div(id="data-prepared"),width=4,align="start")
+                dbc.Col(controls_prep,md=4,align="start"),
+                dbc.Col(html.Div(id="data-prepared"),md=4,align="start")
 
             ]
         )
-    ]
+    ],
+    fluid=True,
 ),
+layout_model = dbc.Container(
+    [
+        html.H1("AutoML Prototyp - Modellauswahl"),
+        html.Div(nav),
+        html.Hr(),
+        dbc.Row(
+            [
+                dbc.Col(controls_model,md=4,align="start"),
+                dbc.Col(card_table_model,md=8,align="start")
+                #dbc.Col(dcc.Graph(id='regression-graph'),md=8),
+                #dbc.Col(html.Div(id="data-prepared"),md=4,align="start")
 
+            ]
+        )
+    ],
+    fluid=True,
+),
 layout_supervised = dbc.Container(
     [  
         html.H1("AutoML Prototyp - Supervised Learning"),
