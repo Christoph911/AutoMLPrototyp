@@ -42,9 +42,11 @@ controls_upload = dbc.Card(
 controls_prep = dbc.Card(
     [
         dbc.FormGroup(
-            [
-                dbc.Button("NaN-Values entfernen",id = "remove-NaN")
-            ]
+            [dbc.Button('Daten laden', id='load-table'),
+             html.Br(),
+             dbc.Button("NaN-Values entfernen", id="remove-NaN"),
+             dbc.Button('Änderungen speichern',id='save-table-changes-btn')
+             ]
         )
     ]
 )
@@ -216,6 +218,35 @@ card_table_model = dbc.Card(
         dbc.CardBody(dcc.Graph(id="regression-graph")),
     ]
 )
+card_table_prep = dbc.Card(
+    [
+        dbc.CardHeader(
+            dbc.Tabs(
+                [
+                    dbc.Tab(label="Vorschau", tab_id="tab-1-prep"),
+                ],
+                id="card-tabs-prep",
+                card=True,
+                active_tab="tab-1-prep",
+            )
+        ),
+        dbc.CardBody(
+            html.Div([
+                dcc.Input(
+                    id='add-column-name',
+                    placeholder='Spaltennaamme eingeben',
+                    value='',
+                    style={'paadding': 10}
+                ),
+                html.Button('Spalte hinzufügen', id='add-column-button',style={'margin':10}),
+                html.Div(id="table-prep"),
+                html.Button('Reihe hinzufügen',id='add-rows-button')
+
+            ]),
+
+        ),
+    ]
+)
 
 
 # make layouts
@@ -275,6 +306,7 @@ layout_prep = dbc.Container(
         dbc.Row(
             [
                 dbc.Col(controls_prep,md=4,align="start"),
+                dbc.Col(card_table_prep,md=8,align='start'),
                 dbc.Col(html.Div(id="data-prepared"),md=4,align="start")
 
             ]

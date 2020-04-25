@@ -112,6 +112,82 @@ def display_table(df, active_tab, n_clicks):
         raise PreventUpdate
 
 
+@app.callback(
+    Output('table-prep', 'children'),
+    [Input('stored-data', 'children'),
+     (Input('load-table', 'n_clicks'))
+     ]
+)
+def display_table_prep(df, n_clicks):
+    if n_clicks is None:
+        raise PreventUpdate
+
+    elif n_clicks is not None:
+        df = json.loads(df)
+        df = pd.DataFrame(df['data'], columns=df['columns'])
+
+        table = dash_table.DataTable(
+            id='table-prep',
+            columns=[{"name": i, "id": i, 'deletable': True, 'renamable': True} for i in df.columns],
+            data=df.to_dict("rows"),
+            style_cell={'width': '150',
+                        'height': '60px',
+                        'textAlign': 'left'},
+
+                    editable = True,
+                    row_deletable = True,
+        )
+
+        return table
+
+@app.callback(
+    Output('table-prep', 'data'),
+    [Input('add-rows-button', 'n_clicks')],
+    [State('table-prep', 'data'),
+     State('table-prep', 'columns')]
+)
+def update_table_prep_add_row(n_clicks,rows,columns):
+    if n_clicks is None:
+        raise PreventUpdate
+    elif n_clicks is not None:
+        rows.append({c['id']: '' for c in columns})
+        return rows
+
+@app.callback(
+    Output('table-prep', 'columns'),
+    [Input('add-column-button', 'n_clicks')],
+    [State('add-column-name', 'value'),
+     State('table-prep', 'columns')])
+def update_columns(n_clicks, value, existing_columns):
+    if n_clicks is None:
+        raise PreventUpdate
+    elif n_clicks is not None:
+        existing_columns.append({
+            'id': value, 'name': value,
+            'renamable': True, 'deletable': True
+        })
+
+    return existing_columns
+
+
+@app.callback(Output('table-action-outputs', 'children'),
+              [Input('table-editing-simple', 'active_cell'),
+               Input('table-prep', 'data'),
+               Input('table-prep', 'columns'),
+               Input('save-table-changes-btn', 'n_clicks')]
+              )
+def update_database(cell_coordinates, table_data,columns,n_clicks):
+    if n_clicks is None:
+        raise PreventUpdate
+    elif n_clicks is not None:
+        saved = json.dumps(table_data)
+        print(table_data)
+        print(columns)
+        print(cell_coordinates)
+        return saved
+
+
+
 # take stored data, display column names and models in dropdown-menu
 # TODO: Zwei gleiche Auswahlmögl. ausschließen
 # TODO: JSON file as input
