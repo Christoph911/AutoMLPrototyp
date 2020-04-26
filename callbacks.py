@@ -52,10 +52,11 @@ def store_data(contents, filename):
         print("Daten in hidden Div gespeichert")
         return df
 
+#TODO: mit save changes zusammenführen
 
 # take stored data and make some basic preparations
 @app.callback(
-    Output('data-prepared', 'children'),
+    Output('table-null', 'children'),
     [Input('stored-data', 'children'),
      Input('remove-NaN', 'n_clicks')
      ]
@@ -137,7 +138,6 @@ def display_table_prep(df, n_clicks):
                     editable = True,
                     row_deletable = True,
         )
-        print(table)
         return table
 
 @app.callback(
@@ -146,12 +146,11 @@ def display_table_prep(df, n_clicks):
     [State('table-prep', 'data'),
      State('table-prep', 'columns')]
 )
-def update_table_prep_add_row(n_clicks,rows,columns):
+def update_table_prep_rows(n_clicks,rows,columns):
     if n_clicks is None:
         raise PreventUpdate
     elif n_clicks is not None:
         rows.append({c['id']: '' for c in columns})
-        print(rows)
         return rows
 
 @app.callback(
@@ -159,7 +158,7 @@ def update_table_prep_add_row(n_clicks,rows,columns):
     [Input('add-column-button', 'n_clicks')],
     [State('add-column-name', 'value'),
      State('table-prep', 'columns')])
-def update_columns(n_clicks, value, existing_columns):
+def update_table_prep_columns(n_clicks, value, existing_columns):
     if n_clicks is None:
         raise PreventUpdate
     elif n_clicks is not None:
@@ -167,22 +166,23 @@ def update_columns(n_clicks, value, existing_columns):
             'id': value, 'name': value,
             'renamable': True, 'deletable': True
         })
-    print(existing_columns)
     return existing_columns
 
 
 @app.callback(
     Output('table-new', 'children'),
-    [Input('save-table-changes-btn','n_clicks')],
+    [Input('save-table-changes-btn', 'n_clicks')],
     [State('table-prep', 'data'),
-    State('table-prep', 'columns')]
+     State('table-prep', 'columns')]
 )
-def save(n_clicks,data,columns):
+def save_table_prep_changes(n_clicks, rows, columns):
     if n_clicks is None:
         raise PreventUpdate
     elif n_clicks is not None:
-        df = pd.DataFrame(data,columns=[c['name'] for c in columns])
+        # TODO: Konvertierung direkt in JSON möglich?
+        df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
         df = df.to_json(orient='split')
+        print("Geänderte Table in Div gespeichert")
         return df
 
 @app.callback(

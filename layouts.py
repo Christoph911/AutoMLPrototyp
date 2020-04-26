@@ -1,10 +1,9 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input,Output,State
 from main import app
 
-# define navbar
+# define navbar for mainLayout
 nav = dbc.Nav(
     children=[
         dbc.NavItem(dbc.NavLink("1. Daten hochladen", href='/upload')),
@@ -17,8 +16,9 @@ nav = dbc.Nav(
     ],
     pills=True,
 
-),
-# define control bar for upload layout
+)
+
+# define control panel for uploadLayout
 controls_upload = dbc.Card(
     [
         dbc.FormGroup(
@@ -38,19 +38,20 @@ controls_upload = dbc.Card(
         ),
     ]
 )
-
+# define control panel for prepLayout
 controls_prep = dbc.Card(
     [
         dbc.FormGroup(
             [dbc.Button('Daten laden', id='load-table'),
              html.Br(),
              dbc.Button("NaN-Values entfernen", id="remove-NaN"),
-             dbc.Button('Änderungen speichern',id='save-table-changes-btn')
+             html.Br(),
+             dbc.Button('Änderungen speichern', id='save-table-changes-btn')
              ]
         )
     ]
 )
-# define controls for clustering operations
+# define control panel for clustering operations
 controls_clustering = dbc.Card(
     [
 
@@ -110,7 +111,7 @@ controls_clustering = dbc.Card(
     ],
     body=True,
 )
-
+# define control panel for regression operations
 controls_regression = dbc.Card(
     [
         dbc.FormGroup(
@@ -147,11 +148,12 @@ controls_regression = dbc.Card(
     body=True
 
 )
+# define control panel for modelLayout
 controls_model = dbc.Card(
     [
         dbc.FormGroup(
             [
-                dbc.Button("Daten laden",id="load-data")
+                dbc.Button("Daten laden", id="load-data")
             ]
         ),
         dbc.FormGroup(
@@ -185,7 +187,8 @@ controls_model = dbc.Card(
         ),
     ],
     body=True
-),
+)
+# define card for table and metrics in uploadLayout
 card_table_upload = dbc.Card(
     [
         dbc.CardHeader(
@@ -202,7 +205,8 @@ card_table_upload = dbc.Card(
         dbc.CardBody(html.Div(id="table-head")),
     ]
 )
-card_table_model = dbc.Card(
+# define card for graph in modelLayout
+card_graph_model = dbc.Card(
     [
         dbc.CardHeader(
             dbc.Tabs(
@@ -218,6 +222,7 @@ card_table_model = dbc.Card(
         dbc.CardBody(dcc.Graph(id="regression-graph")),
     ]
 )
+# define card for table in prepLayout
 card_table_prep = dbc.Card(
     [
         dbc.CardHeader(
@@ -238,9 +243,9 @@ card_table_prep = dbc.Card(
                     value='',
                     style={'paadding': 10}
                 ),
-                html.Button('Spalte hinzufügen', id='add-column-button',style={'margin':10}),
+                html.Button('Spalte hinzufügen', id='add-column-button', style={'margin': 10}),
                 html.Div(id="table-prep"),
-                html.Button('Reihe hinzufügen',id='add-rows-button')
+                html.Button('Reihe hinzufügen', id='add-rows-button')
 
             ]),
 
@@ -249,7 +254,7 @@ card_table_prep = dbc.Card(
 )
 
 
-# make layouts
+# create layout pages
 layout_start = dbc.Container(
     [
         html.H1("AutoML Prototyp - Willkommen!"),
@@ -264,14 +269,16 @@ layout_start = dbc.Container(
                     html.P(
                         "Bitte gehe nach folgenden Schritten vor:"),
                     html.P(
-                        ['Schritt 1: Klicke auf den Button "1. Daten hochladen" in der Kopfzeile und folge den Anweisungen', html.Br(),
-                         'Schritt 2: ', html.Br(),
-                         'Schritt 3: ', html.Br(),
-                         'Schritt 4: ', html.Br(),
-                         'Schritt 5: ', html.Br(),
-                         ''
+                        [
+                            'Schritt 1: Klicke auf den Button "1. Daten hochladen" in der Kopfzeile und folge den Anweisungen',
+                            html.Br(),
+                            'Schritt 2: ', html.Br(),
+                            'Schritt 3: ', html.Br(),
+                            'Schritt 4: ', html.Br(),
+                            'Schritt 5: ', html.Br(),
+                            ''
 
-                         ]
+                            ]
                     )
                 ]
             )
@@ -287,16 +294,14 @@ layout_upload = dbc.Container(
         html.Hr(),
         dbc.Row(
             [
-                dbc.Col(controls_upload, md=4,align="start"),
-                #dbc.Col(html.Div(id="table-head"), md=8)
-                dbc.Col(card_table_upload,md=8,align="start")
-                #dbc.Col(dcc.Graph(id="cluster-graph"), md=8),
+                dbc.Col(controls_upload, md=4, align="start"),
+                dbc.Col(card_table_upload, md=8, align="start")
             ],
 
         )
     ],
     fluid=True,
-),
+)
 
 layout_prep = dbc.Container(
     [
@@ -305,18 +310,16 @@ layout_prep = dbc.Container(
         html.Hr(),
         dbc.Row(
             [
-                dbc.Col(controls_prep,md=4,align="start"),
-                dbc.Col(card_table_prep,md=8,align='start'),
-                dbc.Col(html.Div(id="data-prepared"),md=4,align="start"),
-                dbc.Col(html.Div(id='table-new'))
-                #html.Div(id='table-prep', style={'display': 'none'}),
-                #html.Div(id='table-prep-columns', style={'display': 'none'})
+                dbc.Col(controls_prep, md=4, align="start"),
+                dbc.Col(card_table_prep, md=8, align='start'),
+                dbc.Col(html.Div(id="data-prepared"), md=4, align="start")
 
             ]
         )
     ],
     fluid=True,
-),
+)
+
 layout_model = dbc.Container(
     [
         html.H1("AutoML Prototyp - Modellauswahl"),
@@ -324,18 +327,19 @@ layout_model = dbc.Container(
         html.Hr(),
         dbc.Row(
             [
-                dbc.Col(controls_model,md=4,align="start"),
-                dbc.Col(card_table_model,md=8,align="start")
-                #dbc.Col(dcc.Graph(id='regression-graph'),md=8),
-                #dbc.Col(html.Div(id="data-prepared"),md=4,align="start")
+                dbc.Col(controls_model, md=4, align="start"),
+                dbc.Col(card_graph_model, md=8, align="start")
+                # dbc.Col(dcc.Graph(id='regression-graph'),md=8),
+                # dbc.Col(html.Div(id="data-prepared"),md=4,align="start")
 
             ]
         )
     ],
     fluid=True,
-),
+)
+
 layout_supervised = dbc.Container(
-    [  
+    [
         html.H1("AutoML Prototyp - Supervised Learning"),
         html.Div(nav),
         html.Hr(),
