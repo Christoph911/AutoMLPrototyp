@@ -220,7 +220,7 @@ def update_date_dropdown(df, n_clicks):
 # simple regression on input data and return figure
 @app.callback(
     Output("regression-graph", "figure"),
-    [Input('stored-data', 'children'),
+    [Input('table-new', 'children'),
      Input("opt-dropdownX", "value"),
      Input("model", "value"),
      Input('train-test','value'),
