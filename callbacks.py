@@ -137,7 +137,7 @@ def display_table_prep(df, n_clicks):
                     editable = True,
                     row_deletable = True,
         )
-
+        print(table)
         return table
 
 @app.callback(
@@ -151,6 +151,7 @@ def update_table_prep_add_row(n_clicks,rows,columns):
         raise PreventUpdate
     elif n_clicks is not None:
         rows.append({c['id']: '' for c in columns})
+        print(rows)
         return rows
 
 @app.callback(
@@ -166,31 +167,24 @@ def update_columns(n_clicks, value, existing_columns):
             'id': value, 'name': value,
             'renamable': True, 'deletable': True
         })
-
+    print(existing_columns)
     return existing_columns
 
 
-@app.callback(Output('table-action-outputs', 'children'),
-              [Input('table-editing-simple', 'active_cell'),
-               Input('table-prep', 'data'),
-               Input('table-prep', 'columns'),
-               Input('save-table-changes-btn', 'n_clicks')]
-              )
-def update_database(cell_coordinates, table_data,columns,n_clicks):
+@app.callback(
+    Output('table-new', 'children'),
+    [Input('save-table-changes-btn','n_clicks')],
+    [State('table-prep', 'data'),
+    State('table-prep', 'columns')]
+)
+def save(n_clicks,data,columns):
     if n_clicks is None:
         raise PreventUpdate
     elif n_clicks is not None:
-        saved = json.dumps(table_data)
-        print(table_data)
-        print(columns)
-        print(cell_coordinates)
-        return saved
+        df = pd.DataFrame(data,columns=[c['name'] for c in columns])
+        df = df.to_json(orient='split')
+        return df
 
-
-
-# take stored data, display column names and models in dropdown-menu
-# TODO: Zwei gleiche Auswahlmögl. ausschließen
-# TODO: JSON file as input
 @app.callback(
     [Output('opt-dropdownX', 'options'),
      Output('opt-dropdownY', 'options'),

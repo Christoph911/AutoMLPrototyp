@@ -307,7 +307,10 @@ layout_prep = dbc.Container(
             [
                 dbc.Col(controls_prep,md=4,align="start"),
                 dbc.Col(card_table_prep,md=8,align='start'),
-                dbc.Col(html.Div(id="data-prepared"),md=4,align="start")
+                dbc.Col(html.Div(id="data-prepared"),md=4,align="start"),
+                dbc.Col(html.Div(id='table-new'))
+                #html.Div(id='table-prep', style={'display': 'none'}),
+                #html.Div(id='table-prep-columns', style={'display': 'none'})
 
             ]
         )
