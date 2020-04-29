@@ -3,13 +3,18 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from main import app
-from layouts import layout_unsupervised, layout_supervised,layout_start,layout_prep,layout_upload,layout_model
-import callbacks
+from Layouts.masterlayout import layout_unsupervised, layout_supervised,layout_start
+from Callbacks import *
+from Layouts.layoutUpload import layout_upload
+from Layouts.layoutPreprocessing import layout_prep
+from Layouts.layoutModel import layout_model
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
-    # hidden Div for storing data
+    # hidden Div for storing upload data as json
     html.Div(id='stored-data', style={'display': 'none'}),
+    # hidden Div for storing table-prep results as json
+    html.Div(id='table-new',style={'display': 'none'}),
 
     html.Div(id='page-content')
 ])
