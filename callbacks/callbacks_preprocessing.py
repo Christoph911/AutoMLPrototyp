@@ -4,31 +4,7 @@ import dash_table
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import pandas as pd
-
-
-#TODO: mit save changes zusammenführen
-
-# take stored data and make some basic preparations
-@app.callback(
-    Output('table-null', 'children'),
-    [Input('stored-data', 'children'),
-     Input('remove-NaN', 'n_clicks')
-     ]
-)
-def prepare_data(df, n_clicks):
-    if n_clicks is None:
-        raise PreventUpdate
-    elif n_clicks is not None:
-        df = json.loads(df)
-        df = pd.DataFrame(df['data'], columns=df['columns'])
-        df = df.dropna()
-
-        return print("Null values entfernt")
-    else:
-        raise PreventUpdate
-
-
-
+import numpy as np
 
 
 @app.callback(
@@ -99,6 +75,8 @@ def save_table_prep_changes(n_clicks, rows, columns):
     elif n_clicks is not None:
         # TODO: Konvertierung direkt in JSON möglich?
         df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
+        df = df.replace('', np.nan)
+        df = df.dropna()
         df = df.to_json(orient='split')
-        print("Geänderte Table in Div gespeichert")
+        print("Geänderte Table in Div gespeichert und Null Values entfernt")
         return df

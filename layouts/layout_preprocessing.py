@@ -9,9 +9,7 @@ controls_prep = dbc.Card(
         dbc.FormGroup(
             [dbc.Button('Daten laden', id='load-table'),
              html.Br(),
-             dbc.Button("NaN-Values entfernen", id="remove-NaN"),
-             html.Br(),
-             dbc.Button('Änderungen speichern', id='save-table-changes-btn')
+             dbc.Button('Änderungen speichern/DropNull', id='save-table-changes-btn')
              ]
         )
     ]
