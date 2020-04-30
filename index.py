@@ -21,6 +21,7 @@ app.layout = html.Div([
 
     html.Div(id='page-content')
 ])
+app.title = "Machine Learning Web-App"
 
 
 @app.callback(Output('page-content', 'children'),
