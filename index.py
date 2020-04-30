@@ -3,11 +3,11 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from main import app
-from Layouts.masterlayout import layout_unsupervised, layout_supervised,layout_start
-from Callbacks import *
-from Layouts.layoutUpload import layout_upload
-from Layouts.layoutPreprocessing import layout_prep
-from Layouts.layoutModel import layout_model
+from layouts.masterlayout import layout_unsupervised, layout_supervised,layout_start
+from callbacks import *
+from layouts.layout_upload import layout_upload
+from layouts.layout_preprocessing import layout_prep
+from layouts.layout_model import layout_model
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),

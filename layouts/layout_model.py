@@ -1,9 +1,9 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from Layouts.masterlayout import nav
+from layouts.masterlayout import nav
 from main import app
-from Callbacks import callbacksModel
+from callbacks import callbacks_model
 
 # define control panel for modelLayout
 controls_model = dbc.Card(

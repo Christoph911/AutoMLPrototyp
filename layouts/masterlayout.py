@@ -2,7 +2,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from main import app
-from Callbacks import callbacksUpload, callbacksPreprocessing, callbacksModel
+from callbacks import callbacks_upload, callbacks_preprocessing, callbacks_model
 
 # define navbar for mainLayout
 nav = dbc.Nav(

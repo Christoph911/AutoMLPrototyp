@@ -1,7 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from Layouts.masterlayout import nav
+from layouts.masterlayout import nav
 
 # define control panel for uploadLayout
 controls_upload = dbc.Card(
