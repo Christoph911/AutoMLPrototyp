@@ -1,23 +1,18 @@
 import json
 from main import app
-
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-
 import plotly.graph_objs as go
-
 import pandas as pd
 import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.cluster import KMeans
+
 
 @app.callback(
     [Output('opt-dropdownX', 'options'),
      Output('opt-dropdownY', 'options'),
-     Output("model", "options"),
-     Output("model-cluster", "options"),
      Output('train-test','options')],
     [
         Input('stored-data', 'children'),
@@ -31,16 +26,13 @@ def update_date_dropdown(df, n_clicks):
     elif n_clicks is not None:
         df = json.loads(df)
         df = pd.DataFrame(df['data'], columns=df['columns'])
-        model = [{'label': "Lineare Regression", 'value': "regression"},
-                 {'label': "Random Forest", 'value': "forest"}]
-        model_cluster = [{"label": "K-Means", "value": "kmeans"}]
         train_test_size = [{'label': '75% Train-size/25% Test-size','value': 0.25},
                            {'label': '60% Train-size/40% Test-size','value': 0.4}]
 
         optionsX = [{'label': col, 'value': col} for col in df.columns]
         optionsY = [{'label': col, 'value': col} for col in df.columns]
 
-        return optionsX, optionsY, model, model_cluster,train_test_size
+        return optionsX, optionsY,train_test_size
     else:
         raise PreventUpdate
 
@@ -50,21 +42,21 @@ def update_date_dropdown(df, n_clicks):
     Output("regression-graph", "figure"),
     [Input('table-new', 'children'),
      Input("opt-dropdownX", "value"),
-     Input("model", "value"),
      Input('train-test','value'),
      Input('card-tabs-model','active_tab'),
      Input('start-regression', 'n_clicks'),
      ],
 )
-def make_regression(df, y, model, train_test_size, active_tab, n_clicks):
+def make_regression(df, y, train_test_size, active_tab, n_clicks):
     mse = None
     if n_clicks is None:
         raise PreventUpdate
     elif n_clicks is not None:
+        print("started regression")
         df = json.loads(df)
         df = pd.DataFrame(df['data'], columns=df['columns'])
 
-    if active_tab == 'tab-1-model' and model == "regression":
+    if active_tab == 'tab-1-model':
 
         Y = df[y]
         X = df.drop(y, axis=1)
@@ -92,7 +84,7 @@ def make_regression(df, y, model, train_test_size, active_tab, n_clicks):
         layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y}}
         return go.Figure(data=data, layout=layout)
 
-    elif active_tab == 'tab-1-model' and model == "forest":
+    elif active_tab == 'tab-2-model':
         Y = df[y]
         X = df.drop(y, axis=1)
 
@@ -125,57 +117,3 @@ def make_regression(df, y, model, train_test_size, active_tab, n_clicks):
         raise PreventUpdate
 
 
-# simple clustering based on input data
-# TODO: JSON file as input
-@app.callback(
-    Output("cluster-graph", "figure"),
-    [Input('start-cluster', 'n_clicks')],
-
-    [State("opt-dropdownX", "value"),
-     State("opt-dropdownY", "value"),
-     State("cluster-count", "value"),
-     State('upload', 'contents'),
-     State('upload', 'filename')
-     ],
-)
-def make_clustering(n_clicks, x, y, n_clusters, contents, filename):
-    if None in (contents, filename, x, y, n_clusters):
-        raise PreventUpdate
-
-    if contents:
-        contents = contents[0]
-        filename = filename[0]
-        contents = parse_data(contents, filename)
-
-        # minimal input validation, make sure there's at least one cluster
-        km = KMeans(n_clusters=max(n_clusters, 1))
-        df = contents.loc[:, [x, y]]
-        km.fit(df.values)
-        df["cluster"] = km.labels_
-
-        centers = km.cluster_centers_
-
-        data = [
-            go.Scatter(
-                x=df.loc[df.cluster == c, x],
-                y=df.loc[df.cluster == c, y],
-                mode="markers",
-                marker={"size": 8},
-                name="Cluster {}".format(c),
-            )
-            for c in range(n_clusters)
-        ]
-
-        data.append(
-            go.Scatter(
-                x=centers[:, 0],
-                y=centers[:, 1],
-                mode="markers",
-                marker={"color": "#000", "size": 12, "symbol": "diamond"},
-                name="Cluster centers",
-            )
-        )
-
-        layout = {"xaxis": {"title": x}, "yaxis": {"title": y}}
-
-    return go.Figure(data=data, layout=layout)

@@ -3,11 +3,12 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from main import app
-from layouts.masterlayout import layout_unsupervised, layout_supervised,layout_start
+from layouts.masterlayout import layout_supervised,layout_start
 from callbacks import *
 from layouts.layout_upload import layout_upload
 from layouts.layout_preprocessing import layout_prep
 from layouts.layout_model import layout_model
+from layouts.layout_kmeans import layout_kmeans
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
@@ -32,8 +33,8 @@ def display_page(pathname):
         return layout_model
     elif pathname == '/supervised':
         return layout_supervised
-    elif pathname == '/unsupervised':
-        return layout_unsupervised
+    elif pathname == '/kmeans':
+        return layout_kmeans
     else:
         return '404 - Hier gibt es nichts zu sehen!'
 

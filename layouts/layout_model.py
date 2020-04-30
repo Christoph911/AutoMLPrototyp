@@ -2,23 +2,25 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from layouts.masterlayout import nav
-from main import app
-from callbacks import callbacks_model
-
 # define control panel for modelLayout
+
+#TODO: Dropdown ins masterlayout?
 controls_model = dbc.Card(
     [
+        dbc.DropdownMenu(
+            [
+                dbc.DropdownMenuItem('Supervised Learning',header=True),
+                dbc.DropdownMenuItem('Lineare Regression',href='/model'),
+                dbc.DropdownMenuItem('Unsupervised Learning',header=True),
+                dbc.DropdownMenuItem('K-Means Clustering',href='/kmeans')
+            ],
+            label='Modellauswahl',
+            bs_size='md',
+        ),
+        html.Hr(),
         dbc.FormGroup(
             [
                 dbc.Button("Daten laden", id="load-data")
-            ]
-        ),
-        dbc.FormGroup(
-            [
-                dbc.Label("Modellauswahl"),
-                dcc.Dropdown(
-                    id="model",
-                ),
             ]
         ),
         dbc.FormGroup(
@@ -81,3 +83,6 @@ layout_model = dbc.Container(
     ],
     fluid=True,
 )
+
+
+
