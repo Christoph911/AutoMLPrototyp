@@ -2,7 +2,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from main import app
-from callbacks import callbacks_upload, callbacks_preprocessing,callbacks_model,callbacks_kmeans
+from callbacks import callbacks_upload, callbacks_preprocessing,callbacks_linear_regression,callbacks_kmeans,callbacks_random_forest
 
 # define navbar for mainLayout
 nav = dbc.Nav(
@@ -15,10 +15,22 @@ nav = dbc.Nav(
     pills=True,
 )
 
+choose_model = dbc.DropdownMenu(
+    [
+        dbc.DropdownMenuItem('Supervised Learning', header=True),
+        dbc.DropdownMenuItem('Lineare Regression', href='/model'),
+        dbc.DropdownMenuItem('Random Forest',href='/forest'),
+        dbc.DropdownMenuItem('Unsupervised Learning', header=True),
+        dbc.DropdownMenuItem('K-Means Clustering', href='/kmeans')
+    ],
+    label='Modellauswahl',
+    bs_size='md',
+),
+
 # create layout for startpage
 layout_start = dbc.Container(
     [
-        html.H1("AutoML Prototyp - Willkommen!"),
+        html.H1("Automated Machine Learning Web-App - Willkommen!"),
         html.Div(nav),
         html.Hr(),
         dbc.Card(
@@ -48,61 +60,4 @@ layout_start = dbc.Container(
 
 )
 
-
-
-###METHOD NOT USED AT THE MOMENT###
-# define control panel for regression operations
-controls_regression = dbc.Card(
-    [
-        dbc.FormGroup(
-            [
-                dcc.Upload(
-                    id="upload",
-                    children=dbc.Button("Datensatz hochladen", color="secondary", outline=True, block=True),
-                    multiple=True
-                ),
-            ]
-        ),
-        dbc.FormGroup(
-            [
-                dbc.Label("Modellauswahl"),
-                dcc.Dropdown(
-                    id="model",
-                ),
-            ]
-        ),
-        dbc.FormGroup(
-            [
-                dbc.Label("Zielwert"),
-                dcc.Dropdown(
-                    id="opt-dropdownX",
-                ),
-            ]
-        ),
-        dbc.FormGroup(
-            [
-                dbc.Button("Let the magic happen!", id="start-regression"),
-            ]
-        ),
-    ],
-    body=True
-
-)
-
-###METHOD NOT USED AT THE MOMENT###
-layout_supervised = dbc.Container(
-    [
-        html.H1("AutoML Prototyp - Supervised Learning"),
-        html.Div(nav),
-        html.Hr(),
-        dbc.Row(
-            [
-                dbc.Col(controls_regression, md=4),
-                dbc.Col(dcc.Graph(id="regression-graph"), md=8)
-            ],
-            align="center"
-        )
-    ],
-    fluid=True,
-)
 

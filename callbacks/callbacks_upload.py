@@ -47,8 +47,8 @@ def store_data(contents, filename):
 @app.callback(
     Output('table-head', 'children'),
     [Input('stored-data', 'children'),
-     Input("card-tabs", "active_tab"),
-     Input("start-preprocessing", "n_clicks")
+     Input('card-tabs', 'active_tab'),
+     Input('start-preprocessing', 'n_clicks')
 
      ]
 )
@@ -61,18 +61,18 @@ def display_table(df, active_tab, n_clicks):
         df = pd.DataFrame(df['data'], columns=df['columns'])
         dff = df.head(10)
 
-    if active_tab == "tab-1":
+    if active_tab == 'tab-1':
         table = dash_table.DataTable(
             id='table',
-            columns=[{"name": i, "id": i} for i in dff.columns],
-            data=dff.to_dict("rows"),
+            columns=[{'name': i, 'id': i} for i in dff.columns],
+            data=dff.to_dict('rows'),
             style_cell={'width': '150',
                         'height': '60px',
                         'textAlign': 'left'})
 
         return table
 
-    elif active_tab == "tab-2":
+    elif active_tab == 'tab-2':
         shape = html.P(['Dataset Shape:', html.Br(), str(df.shape), html.Br(),
                         'Anzahal NaN Werte in Spalten:', html.Br(), str(df.isna().sum()), html.Br(),
                         ])

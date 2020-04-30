@@ -10,7 +10,7 @@ import numpy as np
 @app.callback(
     Output('table-prep', 'children'),
     [Input('stored-data', 'children'),
-     (Input('load-table', 'n_clicks'))
+     (Input('load-table-btn', 'n_clicks'))
      ]
 )
 def display_table_prep(df, n_clicks):
@@ -36,7 +36,7 @@ def display_table_prep(df, n_clicks):
 
 @app.callback(
     Output('table-prep', 'data'),
-    [Input('add-rows-button', 'n_clicks')],
+    [Input('add-rows-btn', 'n_clicks')],
     [State('table-prep', 'data'),
      State('table-prep', 'columns')]
 )
@@ -49,7 +49,7 @@ def update_table_prep_rows(n_clicks,rows,columns):
 
 @app.callback(
     Output('table-prep', 'columns'),
-    [Input('add-column-button', 'n_clicks')],
+    [Input('add-column-btn', 'n_clicks')],
     [State('add-column-name', 'value'),
      State('table-prep', 'columns')])
 def update_table_prep_columns(n_clicks, value, existing_columns):

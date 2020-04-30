@@ -8,11 +8,11 @@ from sklearn.cluster import KMeans
 
 
 @app.callback(
-    [Output('opt-dropdownX-kmeans', 'options'),
-     Output('opt-dropdownY-kmeans', 'options')],
+    [Output('dropdownX-kmeans-opt', 'options'),
+     Output('dropdownY-kmeans-opt', 'options')],
     [
         Input('stored-data', 'children'),
-        Input("load-data", "n_clicks")
+        Input('load-data-btn', 'n_clicks')
 
     ]
 )
@@ -34,12 +34,12 @@ def update_date_dropdown(df, n_clicks):
 # simple clustering based on input data
 # TODO: JSON file as input
 @app.callback(
-    Output("cluster-graph", "figure"),
+    Output('cluster-graph', 'figure'),
     [Input('table-new', 'children'),
-     Input("opt-dropdownX", "value"),
-     Input("opt-dropdownY", "value"),
-     Input("cluster-count", "value"),
-     Input('start-cluster', 'n_clicks'),
+     Input('dropdownX-kmeans-opt', 'value'),
+     Input('dropdownY-kmeans-opt', 'value'),
+     Input('cluster-count', 'value'),
+     Input('start-cluster-btn', 'n_clicks'),
      ],
 )
 def make_clustering(df, x, y, n_clusters, n_clicks):

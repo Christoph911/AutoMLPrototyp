@@ -7,7 +7,7 @@ from layouts.masterlayout import nav
 controls_prep = dbc.Card(
     [
         dbc.FormGroup(
-            [dbc.Button('Daten laden', id='load-table'),
+            [dbc.Button('Daten laden', id='load-table-btn'),
              html.Br(),
              dbc.Button('Änderungen speichern/DropNull', id='save-table-changes-btn')
              ]
@@ -21,11 +21,11 @@ card_table_prep = dbc.Card(
         dbc.CardHeader(
             dbc.Tabs(
                 [
-                    dbc.Tab(label="Vorschau", tab_id="tab-1-prep"),
+                    dbc.Tab(label='Vorschau', tab_id='tab-1-prep'),
                 ],
-                id="card-tabs-prep",
+                id='card-tabs-prep',
                 card=True,
-                active_tab="tab-1-prep",
+                active_tab='tab-1-prep',
             )
         ),
         dbc.CardBody(
@@ -36,9 +36,9 @@ card_table_prep = dbc.Card(
                     value='',
                     style={'paadding': 10}
                 ),
-                html.Button('Spalte hinzufügen', id='add-column-button', style={'margin': 10}),
+                html.Button('Spalte hinzufügen', id='add-column-btn', style={'margin': 10}),
                 html.Div(id="table-prep"),
-                html.Button('Reihe hinzufügen', id='add-rows-button')
+                html.Button('Reihe hinzufügen', id='add-rows-btn')
 
             ]),
 
@@ -48,14 +48,14 @@ card_table_prep = dbc.Card(
 
 layout_prep = dbc.Container(
     [
-        html.H1("AutoML Prototyp - Preprocessing"),
+        html.H1('AutoML Prototyp - Preprocessing'),
         html.Div(nav),
         html.Hr(),
         dbc.Row(
             [
-                dbc.Col(controls_prep, md=4, align="start"),
+                dbc.Col(controls_prep, md=4, align='start'),
                 dbc.Col(card_table_prep, md=8, align='start'),
-                dbc.Col(html.Div(id="data-prepared"), md=4, align="start")
+                dbc.Col(html.Div(id='data-prepared'), md=4, align='start')
 
             ]
         )
