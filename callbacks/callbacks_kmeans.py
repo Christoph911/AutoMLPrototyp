@@ -11,7 +11,7 @@ from sklearn.cluster import KMeans
     [Output('dropdownX-kmeans-opt', 'options'),
      Output('dropdownY-kmeans-opt', 'options')],
     [
-        Input('stored-data', 'children'),
+        Input('table-new', 'children'),
         Input('load-data-btn', 'n_clicks')
 
     ]
@@ -73,7 +73,7 @@ def make_clustering(df, x, y, n_clusters, n_clicks):
                 x=centers[:, 0],
                 y=centers[:, 1],
                 mode="markers",
-                marker={"color": "#000", "size": 12, "symbol": "diamond"},
+                marker={"color": "#000", "size": 12, "symbol": "diamond",'template':'plotly_white'},
                 name="Cluster centers",
             )
         )

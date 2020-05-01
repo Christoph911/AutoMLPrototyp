@@ -12,15 +12,9 @@ controls_upload = dbc.Card(
                     id='upload',
                     children=dbc.Button('Datensatz hochladen', color='secondary', outline=True, block=True),
                     multiple=True
-                ),
+                )
             ]
-        ),
-
-        dbc.FormGroup(
-            [
-                dbc.Button('Zeige Vorschau an', id='start-preprocessing'),
-            ]
-        ),
+        )
     ]
 )
 

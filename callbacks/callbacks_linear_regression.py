@@ -12,13 +12,11 @@ from sklearn.linear_model import LinearRegression
 @app.callback(
     [Output('zielwert-opt', 'options'),
      Output('train-test-opt', 'options')],
-    [
-        Input('stored-data', 'children'),
-        Input("load-data", "n_clicks")
-
-    ]
+    [Input('table-new', 'children'),
+     Input('load-data','n_clicks')]
 )
-def update_date_dropdown(df, n_clicks):
+def update_date_dropdown(df,n_clicks):
+    print("Daten an Dropdown Übergeben")
     if n_clicks is None:
         raise PreventUpdate
     elif n_clicks is not None:
@@ -78,7 +76,7 @@ def make_regression(df, y, train_test_size, active_tab, n_clicks):
 
         ]
 
-        layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y}}
+        layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y},'template':'plotly_white'}
 
         return go.Figure(data=data, layout=layout)
 

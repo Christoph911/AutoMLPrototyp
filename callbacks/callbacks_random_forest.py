@@ -73,7 +73,7 @@ def make_random_forest(df, y, train_test_size, active_tab, n_clicks):
 
         ]
 
-        layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y}}
+        layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y},'template':'plotly_white'}
 
         return go.Figure(data=data, layout=layout)
 

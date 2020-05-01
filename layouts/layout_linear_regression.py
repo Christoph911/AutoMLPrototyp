@@ -5,7 +5,7 @@ from layouts.masterlayout import nav, choose_model
 # define control panel for modelLayout
 
 #TODO: Dropdown ins masterlayout?
-controls_model = dbc.Card(
+controls_linear_regression = dbc.Card(
     [
         html.Div(choose_model),
         html.Hr(),
@@ -40,7 +40,7 @@ controls_model = dbc.Card(
 )
 
 # define card for graph in modelLayout
-card_graph_model = dbc.Card(
+card_graph_linear_regression = dbc.Card(
     [
         dbc.CardHeader(
             dbc.Tabs(
@@ -57,15 +57,15 @@ card_graph_model = dbc.Card(
     ]
 )
 
-layout_model = dbc.Container(
+layout_linear_regression = dbc.Container(
     [
         html.H1("AutoML Prototyp - Modellauswahl"),
         html.Div(nav),
         html.Hr(),
         dbc.Row(
             [
-                dbc.Col(controls_model, md=4, align="start"),
-                dbc.Col(card_graph_model, md=8, align="start")
+                dbc.Col(controls_linear_regression, md=4, align="start"),
+                dbc.Col(card_graph_linear_regression, md=8, align="start")
 
             ]
         )

@@ -47,16 +47,13 @@ def store_data(contents, filename):
 @app.callback(
     Output('table-head', 'children'),
     [Input('stored-data', 'children'),
-     Input('card-tabs', 'active_tab'),
-     Input('start-preprocessing', 'n_clicks')
-
+     Input('card-tabs', 'active_tab')
      ]
 )
-def display_table(df, active_tab, n_clicks):
-    if n_clicks is None:
+def display_table(df, active_tab):
+    if df == None:
         raise PreventUpdate
-
-    elif n_clicks is not None:
+    elif df != None:
         df = json.loads(df)
         df = pd.DataFrame(df['data'], columns=df['columns'])
         dff = df.head(10)

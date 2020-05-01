@@ -7,10 +7,9 @@ from layouts.masterlayout import nav
 controls_prep = dbc.Card(
     [
         dbc.FormGroup(
-            [dbc.Button('Daten laden', id='load-table-btn'),
-             html.Br(),
-             dbc.Button('Änderungen speichern/DropNull', id='save-table-changes-btn')
-             ]
+            [
+                dbc.Button('Änderungen speichern/DropNull', id='save-table-changes-btn')
+            ]
         )
     ]
 )
