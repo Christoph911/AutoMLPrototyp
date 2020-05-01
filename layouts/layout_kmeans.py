@@ -6,8 +6,6 @@ from layouts.masterlayout import header, choose_model
 # define control panel for clustering operations
 controls_clustering = dbc.Card(
     [
-        html.Div(choose_model),
-        html.Hr(),
         dbc.FormGroup(
             [
                 dbc.Button('Daten laden', id='load-data-btn')

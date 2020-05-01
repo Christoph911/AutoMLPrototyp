@@ -8,8 +8,6 @@ from layouts.masterlayout import header, choose_model
 # TODO: Dropdown ins masterlayout?
 controls_forest = dbc.Card(
     [
-        html.Div(choose_model),
-        html.Hr(),
         dbc.FormGroup(
             [
                 dbc.Button("Daten laden", id="load-data")
