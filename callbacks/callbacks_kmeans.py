@@ -73,11 +73,11 @@ def make_clustering(df, x, y, n_clusters, n_clicks):
                 x=centers[:, 0],
                 y=centers[:, 1],
                 mode="markers",
-                marker={"color": "#000", "size": 12, "symbol": "diamond",'template':'plotly_white'},
+                marker={"color": "#000", "size": 12, "symbol": "diamond"},
                 name="Cluster centers",
             )
         )
 
-        layout = {"xaxis": {"title": x}, "yaxis": {"title": y}}
+        layout = {"xaxis": {"title": x}, "yaxis": {"title": y},'template':'plotly_white'}
 
         return go.Figure(data=data, layout=layout)

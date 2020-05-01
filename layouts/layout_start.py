@@ -17,7 +17,7 @@ layout_start = dbc.Container(
                         "Bitte gehe nach folgenden Schritten vor:"),
                     html.P(
                         [
-                            'Schritt 1: Klicke auf den Button "1. Daten hochladen" in der Kopfzeile und folge den Anweisungen',
+                            'Schritt 1: Klicke auf den Button "Beginnen" und folge den Anweisungen des Programmes',
                             html.Br(),
                             'Schritt 2: ', html.Br(),
                             'Schritt 3: ', html.Br(),
@@ -26,7 +26,8 @@ layout_start = dbc.Container(
                             ''
 
                         ]
-                    )
+                    ),
+                    dbc.Button('Beginnen',color='success',size='lg', href='/upload',style={'float': 'right'})
                 ]
             )
         )

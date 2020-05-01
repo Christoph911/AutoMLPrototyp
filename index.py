@@ -7,6 +7,7 @@ from layouts.layout_start import layout_start
 from callbacks import *
 from layouts.layout_upload import layout_upload
 from layouts.layout_preprocessing import layout_prep
+from layouts.layout_modellauswahl import layout_model
 from layouts.layout_linear_regression import layout_linear_regression
 from layouts.layout_kmeans import layout_kmeans
 from layouts.layout_random_forest import layout_forest
@@ -33,6 +34,8 @@ def display_page(pathname):
         return layout_upload
     elif pathname == '/prep':
         return layout_prep
+    elif pathname == '/model':
+        return layout_model
     elif pathname == '/regression':
         return layout_linear_regression
     elif pathname == '/forest':

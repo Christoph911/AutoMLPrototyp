@@ -64,7 +64,6 @@ card_graph_kmeans = dbc.Card(
 
 layout_kmeans = dbc.Container(
     [
-        html.H1('AutoML Prototyp - Modellauswahl'),
         html.Div(header),
         html.Hr(),
         dbc.Row(

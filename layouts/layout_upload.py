@@ -6,6 +6,7 @@ from layouts.masterlayout import header
 # define control panel for uploadLayout
 controls_upload = dbc.Card(
     [
+
         dbc.FormGroup(
             [
                 dcc.Upload(
@@ -45,7 +46,6 @@ layout_upload = dbc.Container(
                 dbc.Col(controls_upload, md=4, align='start'),
                 dbc.Col(card_table_upload, md=8, align='start')
             ],
-
         )
     ],
     fluid=True,
