@@ -3,7 +3,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from main import app
-from layouts.masterlayout import layout_start
+from layouts.layout_start import layout_start
 from callbacks import *
 from layouts.layout_upload import layout_upload
 from layouts.layout_preprocessing import layout_prep

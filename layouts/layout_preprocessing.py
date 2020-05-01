@@ -1,7 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from layouts.masterlayout import nav
+from layouts.masterlayout import header
 
 # define control panel for prepLayout
 controls_prep = dbc.Card(
@@ -47,8 +47,7 @@ card_table_prep = dbc.Card(
 
 layout_prep = dbc.Container(
     [
-        html.H1('AutoML Prototyp - Preprocessing'),
-        html.Div(nav),
+        html.Div(header),
         html.Hr(),
         dbc.Row(
             [

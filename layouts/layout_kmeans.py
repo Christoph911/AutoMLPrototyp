@@ -1,7 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from layouts.masterlayout import nav, choose_model
+from layouts.masterlayout import header, choose_model
 
 # define control panel for clustering operations
 controls_clustering = dbc.Card(
@@ -65,7 +65,7 @@ card_graph_kmeans = dbc.Card(
 layout_kmeans = dbc.Container(
     [
         html.H1('AutoML Prototyp - Modellauswahl'),
-        html.Div(nav),
+        html.Div(header),
         html.Hr(),
         dbc.Row(
             [

@@ -27,6 +27,11 @@ choose_model = dbc.DropdownMenu(
     label='Modellauswahl',
     bs_size='md',
 ),
+
+header = (html.Div(children=[html.H1('Automated Machine Learning Web-App'),html.Img(src='/assets/images/logo.png',style={'position':'absolute','top':'0px','right':'0px','width':'170px','height':'100px','margin-top':'6px','margin-right':'12px'})]),
+        html.Div(nav),
+        html.Hr())
+
 #METHOD NOT USED AT THE MOMENT
 # nav = dbc.NavbarSimple(
 #     children=[
@@ -42,39 +47,3 @@ choose_model = dbc.DropdownMenu(
 #     expand='xl',
 #     style={'height':'80px'}
 # )
-
-# create layout for startpage
-layout_start = dbc.Container(
-    [   #TODO: place css in own file and make img size responsive
-        html.Div(children=[html.H1("Automated Machine Learning Web-App - Willkommen!"),html.Img(src='/assets/images/logo.png',style={'position':'absolute','top':'0px','right':'0px','width':'170px','height':'100px','margin-top':'6px','margin-right':'12px'})]),
-        html.Div(nav),
-        html.Hr(),
-        dbc.Card(
-            dbc.CardBody(
-                [
-                    html.H5("Herzlich Willkommen!", className="card-title"),
-                    html.P(
-                        "Willkommen bei der AutoML Webapp!"),
-                    html.P(
-                        "Bitte gehe nach folgenden Schritten vor:"),
-                    html.P(
-                        [
-                            'Schritt 1: Klicke auf den Button "1. Daten hochladen" in der Kopfzeile und folge den Anweisungen',
-                            html.Br(),
-                            'Schritt 2: ', html.Br(),
-                            'Schritt 3: ', html.Br(),
-                            'Schritt 4: ', html.Br(),
-                            'Schritt 5: ', html.Br(),
-                            ''
-
-                        ]
-                    )
-                ]
-            )
-        )
-    ],
-    fluid=True
-
-)
-
-

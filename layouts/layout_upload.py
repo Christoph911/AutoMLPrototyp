@@ -1,7 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from layouts.masterlayout import nav
+from layouts.masterlayout import header
 
 # define control panel for uploadLayout
 controls_upload = dbc.Card(
@@ -38,8 +38,7 @@ card_table_upload = dbc.Card(
 
 layout_upload = dbc.Container(
     [
-        html.H1('AutoML Prototyp - Daten hochladen'),
-        html.Div(nav),
+        html.Div(header),
         html.Hr(),
         dbc.Row(
             [
