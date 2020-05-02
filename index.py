@@ -11,6 +11,7 @@ from layouts.layout_modellauswahl import layout_model
 from layouts.layout_linear_regression import layout_linear_regression
 from layouts.layout_kmeans import layout_kmeans
 from layouts.layout_random_forest import layout_forest
+from layouts.layout_neural_network import layout_nn
 
 
 app.layout = html.Div([
@@ -42,6 +43,8 @@ def display_page(pathname):
         return layout_forest
     elif pathname == '/kmeans':
         return layout_kmeans
+    elif pathname == '/nn':
+        return layout_nn
     else:
         return '404 - Hier gibt es nichts zu sehen!'
 

@@ -29,6 +29,14 @@ layout_model = dbc.Container(
                                     ],
                                 )
                             ),
+                            dbc.Col(
+                                dbc.ListGroup(
+                                    [
+                                        dbc.ListGroupItemHeading('Deep Learning'),
+                                        dbc.ListGroupItem('Künstliches neuronales Netz',action=True,href='/nn')
+                                    ]
+                                )
+                            )
                         ]
                     ),
                 ]
