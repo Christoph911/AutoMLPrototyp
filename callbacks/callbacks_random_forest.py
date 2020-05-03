@@ -13,7 +13,7 @@ from sklearn.ensemble import RandomForestClassifier
     [Output('dropdownX-forest-opt', 'options'),
      Output('train-test-forest', 'options')],
     [
-        Input('stored-data', 'children'),
+        Input('get-data-model', 'children'),
         Input("load-data", "n_clicks")
 
     ]
@@ -37,7 +37,7 @@ def update_date_dropdown(df, n_clicks):
 # TODO: One Hot Encoding implementieren
 @app.callback(
     Output("forest-graph", "figure"),
-    [Input('table-new', 'children'),
+    [Input('get-data-model', 'children'),
      Input("dropdownX-forest-opt", "value"),
      Input('train-test-forest', 'value'),
      Input('card-tabs-forest', 'active_tab'),

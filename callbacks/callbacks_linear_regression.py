@@ -9,10 +9,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 
 
+
 @app.callback(
     [Output('zielwert-opt', 'options'),
      Output('train-test-opt', 'options')],
-    [Input('table-new', 'children'),
+    [Input('get-data-model', 'children'),
      Input('load-data','n_clicks')]
 )
 def update_date_dropdown(df,n_clicks):
@@ -36,7 +37,7 @@ def update_date_dropdown(df,n_clicks):
 # simple regression on input data and return figure
 @app.callback(
     Output("regression-graph", "figure"),
-    [Input('table-new', 'children'),
+    [Input('get-data-model', 'children'),
      Input("zielwert-opt", "value"),
      Input('train-test-opt', 'value'),
      Input('card-tabs-model', 'active_tab'),

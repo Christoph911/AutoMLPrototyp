@@ -17,10 +17,9 @@ tb._SYMBOLIC_SCOPE.value = True
 from tensorflow.keras import Sequential
 
 
-
 @app.callback(
     Output('zielwert-opt-nn', 'options'),
-    [Input('table-new', 'children'),
+    [Input('get-data-model', 'children'),
      Input('load-data-nn','n_clicks')]
 )
 def update_date_dropdown(df,n_clicks):
@@ -41,7 +40,7 @@ def update_date_dropdown(df,n_clicks):
 # simple regression on input data and return figure
 @app.callback(
     Output("nn-graph", "figure"),
-    [Input('table-new', 'children'),
+    [Input('get-data-model', 'children'),
      Input("zielwert-opt-nn", "value"),
      Input('card-tabs-nn', 'active_tab'),
      Input('start-nn-btn', 'n_clicks'),

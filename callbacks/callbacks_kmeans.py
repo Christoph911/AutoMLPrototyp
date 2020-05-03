@@ -6,12 +6,11 @@ import pandas as pd
 import plotly.graph_objs as go
 from sklearn.cluster import KMeans
 
-
 @app.callback(
     [Output('dropdownX-kmeans-opt', 'options'),
      Output('dropdownY-kmeans-opt', 'options')],
     [
-        Input('table-new', 'children'),
+        Input('get-data-model', 'children'),
         Input('load-data-btn', 'n_clicks')
 
     ]
@@ -35,7 +34,7 @@ def update_date_dropdown(df, n_clicks):
 # TODO: JSON file as input
 @app.callback(
     Output('cluster-graph', 'figure'),
-    [Input('table-new', 'children'),
+    [Input('get-data-model', 'children'),
      Input('dropdownX-kmeans-opt', 'value'),
      Input('dropdownY-kmeans-opt', 'value'),
      Input('cluster-count', 'value'),

@@ -30,7 +30,7 @@ def parse_data(contents, filename):
 
 # convert uploaded data to json and store it in hidden div
 @app.callback(
-    Output('stored-data', 'children'),
+    Output('stored-data-upload', 'children'),
     [Input('upload', 'contents'),
      Input('upload', 'filename')]
 )
@@ -46,7 +46,7 @@ def store_data(contents, filename):
 # take stored data, display dash table and some basic statistics
 @app.callback(
     Output('table-head', 'children'),
-    [Input('stored-data', 'children'),
+    [Input('stored-data-upload', 'children'),
      Input('card-tabs', 'active_tab')
      ]
 )

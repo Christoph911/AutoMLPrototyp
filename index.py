@@ -17,9 +17,10 @@ from layouts.layout_neural_network import layout_nn
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     # hidden Div for storing upload data as json
-    html.Div(id='stored-data', style={'display': 'none'}),
+    html.Div(id='stored-data-upload', style={'display': 'none'}),
     # hidden Div for storing table-prep results as json
-    html.Div(id='table-new', style={'display': 'none'}),
+    html.Div(id='stored-data-prep', style={'display': 'none'}),
+    html.Div(id='get-data-model', style={'display': 'none'}),
 
     html.Div(id='page-content')
 ])

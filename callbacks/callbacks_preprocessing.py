@@ -9,7 +9,7 @@ import numpy as np
 
 @app.callback(
     Output('table-prep', 'children'),
-    [Input('stored-data', 'children')]
+    [Input('stored-data-upload', 'children')]
 )
 def display_table_prep(df):
     if df == None:
@@ -62,7 +62,7 @@ def update_table_prep_columns(n_clicks, value, existing_columns):
 
 
 @app.callback(
-    Output('table-new', 'children'),
+    Output('stored-data-prep', 'children'),
     [Input('save-table-changes-btn', 'n_clicks')],
     [State('table-prep', 'data'),
      State('table-prep', 'columns')]
