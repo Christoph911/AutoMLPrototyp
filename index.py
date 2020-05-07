@@ -12,6 +12,7 @@ from layouts.layout_linear_regression import layout_linear_regression
 from layouts.layout_kmeans import layout_kmeans
 from layouts.layout_random_forest import layout_forest
 from layouts.layout_neural_network import layout_nn
+from layouts.layout_logistic_regression import layout_logistic_regression
 
 
 app.layout = html.Div([
@@ -46,6 +47,8 @@ def display_page(pathname):
         return layout_kmeans
     elif pathname == '/nn':
         return layout_nn
+    elif pathname == '/log-regression':
+        return layout_logistic_regression
     else:
         return '404 - Hier gibt es nichts zu sehen!'
 

@@ -6,20 +6,19 @@ import plotly.graph_objs as go
 import pandas as pd
 import sklearn
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import LabelEncoder
-
+from sklearn.linear_model import LogisticRegressionCV
+from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
 
 @app.callback(
-    [Output('dropdownX-forest-opt', 'options'),
-     Output('train-test-forest', 'options')],
-    [
-        Input('get-data-model', 'children'),
-        Input("load-data", "n_clicks")
-
-    ]
+    [Output('zielwert-opt-log', 'options'),
+     Output('train-test-opt-log', 'options')],
+    [Input('get-data-model', 'children'),
+     Input('load-data','n_clicks')]
 )
-def update_date_dropdown(df, n_clicks):
+def update_date_dropdown(df,n_clicks):
+    print("Daten an Dropdown Übergeben")
     if n_clicks is None:
         raise PreventUpdate
     elif n_clicks is not None:
@@ -28,47 +27,48 @@ def update_date_dropdown(df, n_clicks):
         train_test_size = [{'label': '75% Train-size/25% Test-size', 'value': 0.25},
                            {'label': '60% Train-size/40% Test-size', 'value': 0.4}]
 
-        optionsX = [{'label': col, 'value': col} for col in df.columns]
+        options_y = [{'label': col, 'value': col} for col in df.columns]
 
-        return optionsX, train_test_size
+        return options_y, train_test_size
     else:
         raise PreventUpdate
 
-
-# TODO: One Hot Encoding implementieren
 @app.callback(
-    Output("forest-graph", "figure"),
+    Output("logistic-regression-graph", "figure"),
     [Input('get-data-model', 'children'),
-     Input("dropdownX-forest-opt", "value"),
-     Input('train-test-forest', 'value'),
-     Input('card-tabs-forest', 'active_tab'),
-     Input('start-forest-btn', 'n_clicks'),
+     Input("zielwert-opt-log", "value"),
+     Input('train-test-opt-log', 'value'),
+     Input('card-tabs-logistic-reg', 'active_tab'),
+     Input('start-logistic-regression-btn', 'n_clicks'),
      ],
 )
-def make_random_forest(df, y, train_test_size, active_tab, n_clicks):
+def make_log_regression(df, y, train_test_size, active_tab, n_clicks):
     if n_clicks is None:
         raise PreventUpdate
     elif n_clicks is not None:
-        print("started random Forest")
+        print("started logistic regression")
         df = json.loads(df)
         df = pd.DataFrame(df['data'], columns=df['columns'])
 
-    if active_tab == 'tab-1-forest':
+    if active_tab == 'tab-1-log-reg':
+
         Y = df[y]
         X = df.drop(y, axis=1)
 
-        # encode string values in target column
-        le = LabelEncoder()
-        Y = le.fit_transform(Y)
-        print(Y)
+        # scale data with standard scaler
+        sc = StandardScaler()
+        X = sc.fit_transform(X)
 
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=train_test_size)
 
-        model = RandomForestClassifier(n_jobs=1, n_estimators=10)
+        model = LogisticRegressionCV()
         model.fit(X_train, Y_train)
 
         Y_pred = model.predict(X_test)
         print(Y_pred)
+        print(classification_report(Y_test, Y_pred))
+        print(accuracy_score(Y_test, Y_pred))
+
 
         data = [
             go.Scatter(

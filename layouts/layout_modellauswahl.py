@@ -17,6 +17,7 @@ layout_model = dbc.Container(
                                     [
                                         dbc.ListGroupItemHeading('Supervised Learning'),
                                         dbc.ListGroupItem("Lineare Regression",action=True,href='/regression'),
+                                        dbc.ListGroupItem('Logistische Regression',action=True,href='/log-regression'),
                                         dbc.ListGroupItem("Random Forest",action=True,href='/forest'),
                                     ],
                                 )

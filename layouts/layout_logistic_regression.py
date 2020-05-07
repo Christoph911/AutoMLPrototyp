@@ -5,7 +5,7 @@ from layouts.masterlayout import header, choose_model
 # define control panel for modelLayout
 
 #TODO: Dropdown ins masterlayout?
-controls_linear_regression = dbc.Card(
+controls_logistic_regression = dbc.Card(
         [
             dbc.FormGroup(
                 [
@@ -16,7 +16,7 @@ controls_linear_regression = dbc.Card(
                 [
                     dbc.Label("Zielwert"),
                     dcc.Dropdown(
-                        id="zielwert-opt",
+                        id="zielwert-opt-log",
                     ),
                 ]
             ),
@@ -24,13 +24,13 @@ controls_linear_regression = dbc.Card(
                 [
                     dbc.Label("Train/Test-Size"),
                     dcc.Dropdown(
-                        id="train-test-opt",
+                        id="train-test-opt-log",
                     ),
                 ]
             ),
             dbc.FormGroup(
                 [
-                    dbc.Button("Let the magic happen!", id="start-regression-btn"),
+                    dbc.Button("Let the magic happen!", id="start-logistic-regression-btn"),
                 ]
             ),
         ],
@@ -38,31 +38,31 @@ controls_linear_regression = dbc.Card(
     )
 
 # define card for graph in modelLayout
-card_graph_linear_regression = dbc.Card(
+card_graph_logistic_regression = dbc.Card(
     [
         dbc.CardHeader(
             dbc.Tabs(
                 [
-                    dbc.Tab(label="Vorschau", tab_id="tab-1-reg"),
-                    dbc.Tab(label="Metriken", tab_id="tab-2-reg"),
+                    dbc.Tab(label="Vorschau", tab_id="tab-1-log-reg"),
+                    dbc.Tab(label="Metriken", tab_id="tab-2-log-reg"),
                 ],
-                id="card-tabs-model",
+                id="card-tabs-logistic-reg",
                 card=True,
-                active_tab="tab-1-reg",
+                active_tab="tab-1-log-reg",
             )
         ),
-        dbc.CardBody(dcc.Graph(id="regression-graph")),
+        dbc.CardBody(dcc.Graph(id="logistic-regression-graph")),
     ]
 )
 
-layout_linear_regression = dbc.Container(
+layout_logistic_regression = dbc.Container(
     [
         html.Div(header),
         html.Hr(),
         dbc.Row(
             [
-                dbc.Col(controls_linear_regression, md=4, align="start"),
-                dbc.Col(card_graph_linear_regression, md=8, align="start")
+                dbc.Col(controls_logistic_regression, md=4, align="start"),
+                dbc.Col(card_graph_logistic_regression, md=8, align="start")
 
             ]
         )

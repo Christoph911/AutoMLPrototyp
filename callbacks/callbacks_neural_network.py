@@ -1,20 +1,17 @@
+import os
+#CAVE: stellt error Messages und warnings für TF aus!
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import json
 from main import app
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
 import pandas as pd
-import sklearn
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
 from tensorflow import keras
-#from keras import Sequential
-#from keras.layers import Dense
 import keras.backend.tensorflow_backend as tb
-from keras.models import model_from_json
 tb._SYMBOLIC_SCOPE.value = True
-from tensorflow.keras import Sequential
 
 
 @app.callback(

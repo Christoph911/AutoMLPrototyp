@@ -3,7 +3,7 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 from main import app
 #TODO: Callbacks erst im spezifischen Layout Modul aufrufen? Performance?
-from callbacks import callbacks_upload, callbacks_preprocessing,callbacks_linear_regression,callbacks_kmeans,callbacks_random_forest, callbacks_neural_network,callbacks_master
+from callbacks import callbacks_upload, callbacks_preprocessing,callbacks_linear_regression,callbacks_kmeans,callbacks_random_forest, callbacks_neural_network, callbacks_master, callbacks_logistic_regression
 
 
 # define navbar for mainLayout
