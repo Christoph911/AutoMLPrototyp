@@ -22,6 +22,7 @@ app.layout = html.Div([
     # hidden Div for storing table-prep results as json
     html.Div(id='stored-data-prep', style={'display': 'none'}),
     html.Div(id='get-data-model', style={'display': 'none'}),
+    dcc.Store(id="store"),
 
     html.Div(id='page-content')
 ])

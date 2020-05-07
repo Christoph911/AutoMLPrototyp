@@ -1,5 +1,7 @@
 import json
 from main import app
+import dash_html_components as html
+import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
@@ -36,7 +38,7 @@ def update_date_dropdown(df,n_clicks):
 # TODO: mse ausgeben lassen
 # simple regression on input data and return figure
 @app.callback(
-    Output("regression-graph", "figure"),
+    Output("store", "data"),
     [Input('get-data-model', 'children'),
      Input("zielwert-opt", "value"),
      Input('train-test-opt', 'value'),
@@ -45,7 +47,6 @@ def update_date_dropdown(df,n_clicks):
      ],
 )
 def make_regression(df, y, train_test_size, active_tab, n_clicks):
-    mse = None
     if n_clicks is None:
         raise PreventUpdate
     elif n_clicks is not None:
@@ -53,7 +54,7 @@ def make_regression(df, y, train_test_size, active_tab, n_clicks):
         df = json.loads(df)
         df = pd.DataFrame(df['data'], columns=df['columns'])
 
-    if active_tab == 'tab-1-reg':
+    #if active_tab == 'tab-1-reg':
 
         Y = df[y]
         X = df.drop(y, axis=1)
@@ -65,21 +66,53 @@ def make_regression(df, y, train_test_size, active_tab, n_clicks):
 
         Y_pred = model.predict(X_test)
 
+        global mse
         mse = sklearn.metrics.mean_squared_error(Y_test, Y_pred)
 
-        data = [
-            go.Scatter(
-                x=Y_test,
-                y=Y_pred,
-                mode="markers",
-                marker={"size": 8},
+
+        # data = [
+        #     go.Scatter(
+        #         x=Y_test,
+        #         y=Y_pred,
+        #         mode="markers",
+        #         marker={"size": 8},
+        #     )
+        #
+        # ]
+        scatter = go.Figure(data=[go.Scatter(
+            x=Y_test,
+            y=Y_pred,
+            mode="markers",
+            marker={"size": 8}
             )
+        ])
 
-        ]
+        #layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y},'template':'plotly_white'}
 
-        layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y},'template':'plotly_white'}
-
-        return go.Figure(data=data, layout=layout)
+        return {'scatter': scatter}
+    #     return go.Figure(data=data, layout=layout)
+    # elif active_tab == 'tab-2-reg':
+    #     metrics = html.P(["Mean Squared Error:", str(mse)])
+    #     return print(metrics)
 
     else:
         raise PreventUpdate
+
+@app.callback(
+    Output("tab-content", "children"),
+    [Input("card-tabs-model", "active_tab"), Input("store", "data")],
+)
+def render_tab_content(active_tab, data):
+    """
+    This callback takes the 'active_tab' property as input, as well as the
+    stored graphs, and renders the tab content depending on what the value of
+    'active_tab' is.
+    """
+    if active_tab and data is not None:
+        if active_tab == "tab-1-reg":
+            return dcc.Graph(figure=data["scatter"])
+        elif active_tab == "tab-2-reg":
+            metrics = html.P(["Mean Squared Error:", str(mse)])
+            return metrics
+    return data
+
