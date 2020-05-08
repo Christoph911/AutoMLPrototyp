@@ -36,65 +36,60 @@ def update_date_dropdown(df,n_clicks):
 
 # simple regression on input data and return figure
 @app.callback(
-    Output("store-figure", "data"),
-    [Input('get-data-model', 'children'),
-     Input("zielwert-opt", "value"),
-     Input('train-test-opt', 'value'),
-     Input('start-regression-btn', 'n_clicks')],
+    Output("store-figure-reg", "data"),
+    [Input('start-regression-btn', 'n_clicks')],
+    [State('get-data-model', 'children'),
+     State("zielwert-opt", "value"),
+     State('train-test-opt', 'value')]
 )
-def make_regression(df, y, train_test_size, n_clicks):
-    if n_clicks is None:
-        raise PreventUpdate
-    elif n_clicks is not None:
-        print("started regression")
-        # load data
-        df = json.loads(df)
-        df = pd.DataFrame(df['data'], columns=df['columns'])
+def make_regression(n_clicks, df, y, train_test_size):
+    print("started regression")
+    # load data
+    df = json.loads(df)
+    df = pd.DataFrame(df['data'], columns=df['columns'])
 
-        # create model
-        Y = df[y]
-        X = df.drop(y, axis=1)
+    # create model
+    Y = df[y]
+    X = df.drop(y, axis=1)
 
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=train_test_size)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=train_test_size)
 
-        model = LinearRegression()
-        model.fit(X_train, Y_train)
+    model = LinearRegression()
+    model.fit(X_train, Y_train)
 
-        Y_pred = model.predict(X_test)
+    Y_pred = model.predict(X_test)
 
-        global evs, mse, r2
-        evs = explained_variance_score(Y_test, Y_pred)
-        mse = mean_squared_error(Y_test, Y_pred)
-        r2 = r2_score(Y_pred, Y_pred)
+    global evs, mse, r2
+    evs = explained_variance_score(Y_test, Y_pred)
+    mse = mean_squared_error(Y_test, Y_pred)
+    r2 = r2_score(Y_pred, Y_pred)
 
 
-        # build figure
-        fig = go.Figure(
-            data=[
-                go.Scatter(
-                    x=Y_test,
-                    y=Y_pred,
-                    mode="markers",
-                    marker={"size": 8}
-                )
-            ]
-        )
-        fig.update_layout(
-            xaxis_title='Actual ' + y,
-            yaxis_title='Predict ' + y,
-            template='plotly_white'
-        )
+    # build figure
+    fig = go.Figure(
+        data=[
+            go.Scatter(
+                x=Y_test,
+                y=Y_pred,
+                mode="markers",
+                marker={"size": 8}
+            )
+        ]
+    )
+    fig.update_layout(
+        xaxis_title='Actual ' + y,
+        yaxis_title='Predict ' + y,
+        template='plotly_white'
+    )
 
-        return dict(figure=fig)
+    return dict(figure=fig)
 
-    else:
-        raise PreventUpdate
 
 # manage tab content
 @app.callback(
     Output("tab-content", "children"),
     [Input("card-tabs-model", "active_tab"),
-     Input("store-figure", "data")],
+     Input("store-figure-reg", "data")],
 )
 def create_tab_content(active_tab, data):
     if active_tab and data is not None:

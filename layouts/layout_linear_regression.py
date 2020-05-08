@@ -52,7 +52,6 @@ card_graph_linear_regression = dbc.Card(
             )
         ),
         dbc.CardBody(html.Div(id='tab-content'))
-        #dbc.CardBody(dcc.Graph(id="regression-graph"))
     ]
 )
 
