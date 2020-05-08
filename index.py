@@ -1,7 +1,6 @@
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-
 from main import app
 from layouts.layout_start import layout_start
 from callbacks import *
@@ -13,6 +12,7 @@ from layouts.layout_kmeans import layout_kmeans
 from layouts.layout_random_forest import layout_forest
 from layouts.layout_neural_network import layout_nn
 from layouts.layout_logistic_regression import layout_logistic_regression
+
 
 # TODO: hidden DIV durch dcc Store ersetzen?
 app.layout = html.Div([
@@ -28,6 +28,7 @@ app.layout = html.Div([
 
     html.Div(id='page-content')
 ])
+
 app.title = "Machine Learning Web-App"
 
 

@@ -11,28 +11,22 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, explained_variance_score, r2_score
 
 
-
 @app.callback(
     [Output('zielwert-opt', 'options'),
      Output('train-test-opt', 'options')],
-    [Input('get-data-model', 'children'),
-     Input('load-data','n_clicks')]
+    [Input('load-data', 'n_clicks')],
+    [State('get-data-model', 'children')]
 )
-def update_date_dropdown(df,n_clicks):
+def update_date_dropdown(n_clicks, df):
     print("Daten an Dropdown Übergeben")
-    if n_clicks is None:
-        raise PreventUpdate
-    elif n_clicks is not None:
-        df = json.loads(df)
-        df = pd.DataFrame(df['data'], columns=df['columns'])
-        train_test_size = [{'label': '75% Train-size/25% Test-size', 'value': 0.25},
-                           {'label': '60% Train-size/40% Test-size', 'value': 0.4}]
+    df = json.loads(df)
+    df = pd.DataFrame(df['data'], columns=df['columns'])
+    train_test_size = [{'label': '75% Train-size/25% Test-size', 'value': 0.25},
+                       {'label': '60% Train-size/40% Test-size', 'value': 0.4}]
 
-        options_y = [{'label': col, 'value': col} for col in df.columns]
+    options_y = [{'label': col, 'value': col} for col in df.columns]
 
-        return options_y, train_test_size
-    else:
-        raise PreventUpdate
+    return options_y, train_test_size
 
 # simple regression on input data and return figure
 @app.callback(
@@ -64,7 +58,6 @@ def make_regression(n_clicks, df, y, train_test_size):
     mse = mean_squared_error(Y_test, Y_pred)
     r2 = r2_score(Y_pred, Y_pred)
 
-
     # build figure
     fig = go.Figure(
         data=[
@@ -83,7 +76,6 @@ def make_regression(n_clicks, df, y, train_test_size):
     )
 
     return dict(figure=fig)
-
 
 # manage tab content
 @app.callback(
