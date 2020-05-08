@@ -14,7 +14,7 @@ from layouts.layout_random_forest import layout_forest
 from layouts.layout_neural_network import layout_nn
 from layouts.layout_logistic_regression import layout_logistic_regression
 
-
+# TODO: hidden DIV durch dcc Store ersetzen?
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     # hidden Div for storing upload data as json
@@ -22,7 +22,8 @@ app.layout = html.Div([
     # hidden Div for storing table-prep results as json
     html.Div(id='stored-data-prep', style={'display': 'none'}),
     html.Div(id='get-data-model', style={'display': 'none'}),
-    dcc.Store(id="store"),
+    # dcc Store to store figures as dict
+    dcc.Store(id="store-figure"),
 
     html.Div(id='page-content')
 ])

@@ -6,9 +6,9 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
 import pandas as pd
-import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, explained_variance_score, r2_score
 
 
 
@@ -34,28 +34,24 @@ def update_date_dropdown(df,n_clicks):
     else:
         raise PreventUpdate
 
-
-# TODO: mse ausgeben lassen
 # simple regression on input data and return figure
 @app.callback(
-    Output("store", "data"),
+    Output("store-figure", "data"),
     [Input('get-data-model', 'children'),
      Input("zielwert-opt", "value"),
      Input('train-test-opt', 'value'),
-     Input('card-tabs-model', 'active_tab'),
-     Input('start-regression-btn', 'n_clicks'),
-     ],
+     Input('start-regression-btn', 'n_clicks')],
 )
-def make_regression(df, y, train_test_size, active_tab, n_clicks):
+def make_regression(df, y, train_test_size, n_clicks):
     if n_clicks is None:
         raise PreventUpdate
     elif n_clicks is not None:
         print("started regression")
+        # load data
         df = json.loads(df)
         df = pd.DataFrame(df['data'], columns=df['columns'])
 
-    #if active_tab == 'tab-1-reg':
-
+        # create model
         Y = df[y]
         X = df.drop(y, axis=1)
 
@@ -66,53 +62,50 @@ def make_regression(df, y, train_test_size, active_tab, n_clicks):
 
         Y_pred = model.predict(X_test)
 
-        global mse
-        mse = sklearn.metrics.mean_squared_error(Y_test, Y_pred)
+        global evs, mse, r2
+        evs = explained_variance_score(Y_test, Y_pred)
+        mse = mean_squared_error(Y_test, Y_pred)
+        r2 = r2_score(Y_pred, Y_pred)
 
 
-        # data = [
-        #     go.Scatter(
-        #         x=Y_test,
-        #         y=Y_pred,
-        #         mode="markers",
-        #         marker={"size": 8},
-        #     )
-        #
-        # ]
-        scatter = go.Figure(data=[go.Scatter(
-            x=Y_test,
-            y=Y_pred,
-            mode="markers",
-            marker={"size": 8}
-            )
-        ])
+        # build figure
+        fig = go.Figure(
+            data=[
+                go.Scatter(
+                    x=Y_test,
+                    y=Y_pred,
+                    mode="markers",
+                    marker={"size": 8}
+                )
+            ]
+        )
+        fig.update_layout(
+            xaxis_title='Actual ' + y,
+            yaxis_title='Predict ' + y,
+            template='plotly_white'
+        )
 
-        #layout = {"xaxis": {"title": "Actual " + y}, "yaxis": {"title": "Predicted " + y},'template':'plotly_white'}
-
-        return {'scatter': scatter}
-    #     return go.Figure(data=data, layout=layout)
-    # elif active_tab == 'tab-2-reg':
-    #     metrics = html.P(["Mean Squared Error:", str(mse)])
-    #     return print(metrics)
+        return dict(figure=fig)
 
     else:
         raise PreventUpdate
 
+# manage tab content
 @app.callback(
     Output("tab-content", "children"),
-    [Input("card-tabs-model", "active_tab"), Input("store", "data")],
+    [Input("card-tabs-model", "active_tab"),
+     Input("store-figure", "data")],
 )
-def render_tab_content(active_tab, data):
-    """
-    This callback takes the 'active_tab' property as input, as well as the
-    stored graphs, and renders the tab content depending on what the value of
-    'active_tab' is.
-    """
+def create_tab_content(active_tab, data):
     if active_tab and data is not None:
         if active_tab == "tab-1-reg":
-            return dcc.Graph(figure=data["scatter"])
+            figure = dcc.Graph(figure=data["figure"])
+            return figure
         elif active_tab == "tab-2-reg":
-            metrics = html.P(["Mean Squared Error:", str(mse)])
+            metrics = html.P([  'Explained variance score: ' + str(evs.round(3)), html.Br(),
+                                "Mean Squared Error: ", str(mse.round(3)), html.Br(),
+                                'R^2 score: ' + str(r2.round(3)), html.Br()
+                              ])
             return metrics
     return data
 
