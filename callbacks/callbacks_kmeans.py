@@ -1,7 +1,8 @@
 import json
 from main import app
 from dash.dependencies import Input, Output, State
-from dash.exceptions import PreventUpdate
+import dash_html_components as html
+import dash_core_components as dcc
 import pandas as pd
 import plotly.graph_objs as go
 from sklearn.cluster import KMeans
@@ -9,74 +10,84 @@ from sklearn.cluster import KMeans
 @app.callback(
     [Output('dropdownX-kmeans-opt', 'options'),
      Output('dropdownY-kmeans-opt', 'options')],
-    [
-        Input('get-data-model', 'children'),
-        Input('load-data-btn', 'n_clicks')
-
-    ]
+    [Input('load-data-btn', 'n_clicks')],
+    [State('get-data-model', 'children')]
 )
-def update_date_dropdown(df, n_clicks):
-    if n_clicks is None:
-        raise PreventUpdate
-    elif n_clicks is not None:
-        df = json.loads(df)
-        df = pd.DataFrame(df['data'], columns=df['columns'])
+def update_date_dropdown(n_clicks, df):
+    df = json.loads(df)
+    df = pd.DataFrame(df['data'], columns=df['columns'])
 
-        optionsX = [{'label': col, 'value': col} for col in df.columns]
-        optionsY = [{'label': col, 'value': col} for col in df.columns]
+    optionsX = [{'label': col, 'value': col} for col in df.columns]
+    optionsY = [{'label': col, 'value': col} for col in df.columns]
 
-        return optionsX, optionsY
-    else:
-        raise PreventUpdate
+    return optionsX, optionsY
 
 
 # simple clustering based on input data
-# TODO: JSON file as input
 @app.callback(
-    Output('cluster-graph', 'figure'),
-    [Input('get-data-model', 'children'),
-     Input('dropdownX-kmeans-opt', 'value'),
-     Input('dropdownY-kmeans-opt', 'value'),
-     Input('cluster-count', 'value'),
-     Input('start-cluster-btn', 'n_clicks'),
-     ],
+    Output('store-figure-kmeans', 'data'),
+    [Input('start-cluster-btn', 'n_clicks')],
+    [State('get-data-model', 'children'),
+     State('dropdownX-kmeans-opt', 'value'),
+     State('dropdownY-kmeans-opt', 'value'),
+     State('cluster-count', 'value')]
 )
-def make_clustering(df, x, y, n_clusters, n_clicks):
-    if n_clicks is None:
-        raise PreventUpdate
-    elif n_clicks is not None:
-        print("started clustering")
-        df = json.loads(df)
-        df = pd.DataFrame(df['data'], columns=df['columns'])
+def make_clustering(n_clicks, df, x, y, n_clusters):
+    print("started clustering")
+    df = json.loads(df)
+    df = pd.DataFrame(df['data'], columns=df['columns'])
 
-        km = KMeans(n_clusters=max(n_clusters, 1))
-        df = df.loc[:, [x, y]]
-        km.fit(df.values)
-        df["cluster"] = km.labels_
+    km = KMeans(n_clusters=max(n_clusters, 1))
+    df = df.loc[:, [x, y]]
+    km.fit(df.values)
+    df["cluster"] = km.labels_
 
-        centers = km.cluster_centers_
+    centers = km.cluster_centers_
 
-        data = [
+    #build figure
+    fig = go.Figure(
+        data=[
             go.Scatter(
                 x=df.loc[df.cluster == c, x],
                 y=df.loc[df.cluster == c, y],
                 mode="markers",
                 marker={"size": 8},
-                name="Cluster {}".format(c),
+                name="Cluster {}".format(c)
             )
             for c in range(n_clusters)
         ]
+    )
+    # TODO: Cluster center ans Layout übergeben
+    # data.append(
+    #     go.Scatter(
+    #         x=centers[:, 0],
+    #         y=centers[:, 1],
+    #         mode="markers",
+    #         marker={"color": "#000", "size": 12, "symbol": "diamond"},
+    #         name="Cluster centers",
+    #     )
+    # )
 
-        data.append(
-            go.Scatter(
-                x=centers[:, 0],
-                y=centers[:, 1],
-                mode="markers",
-                marker={"color": "#000", "size": 12, "symbol": "diamond"},
-                name="Cluster centers",
-            )
-        )
+    fig.update_layout(
+        xaxis_title = x,
+        yaxis_title = y,
+        template = 'plotly_white'
+    )
 
-        layout = {"xaxis": {"title": x}, "yaxis": {"title": y},'template':'plotly_white'}
+    return dict(figure=fig)
 
-        return go.Figure(data=data, layout=layout)
+# manage tab content
+@app.callback(
+    Output("tab-content-kmeans", "children"),
+    [Input("card-tabs-kmeans", "active_tab"),
+     Input("store-figure-kmeans", "data")],
+)
+def create_tab_content(active_tab, data):
+    if active_tab and data is not None:
+        if active_tab == "tab-1-kmeans":
+            figure = dcc.Graph(figure=data["figure"])
+            return figure
+        elif active_tab == "tab-2-kmeans":
+            metrics = html.P(['metrics'])
+            return metrics
+    return data

@@ -52,7 +52,7 @@ card_graph_forest = dbc.Card(
                 active_tab='tab-1-forest',
             )
         ),
-        dbc.CardBody(dcc.Graph(id='forest-graph')),
+        dbc.CardBody(html.Div(id='tab-content-forest')),
     ]
 )
 

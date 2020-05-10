@@ -43,7 +43,7 @@ card_graph_nn = dbc.Card(
                 active_tab="tab-1-nn",
             )
         ),
-        dbc.CardBody(dcc.Graph(id="nn-graph")),
+        dbc.CardBody(html.Div(id="tab-content-nn")),
     ]
 )
 

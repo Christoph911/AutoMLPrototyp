@@ -51,7 +51,7 @@ card_graph_logistic_regression = dbc.Card(
                 active_tab="tab-1-log-reg",
             )
         ),
-        dbc.CardBody(dcc.Graph(id="logistic-regression-graph")),
+        dbc.CardBody(html.Div(id="tab-content-log")),
     ]
 )
 

@@ -56,7 +56,7 @@ card_graph_kmeans = dbc.Card(
                 active_tab='tab-1-kmeans',
             )
         ),
-        dbc.CardBody(dcc.Graph(id='cluster-graph'))
+        dbc.CardBody(html.Div(id='tab-content-kmeans'))
     ]
 )
 

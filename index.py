@@ -24,7 +24,10 @@ app.layout = html.Div([
     html.Div(id='get-data-model', style={'display': 'none'}),
     # dcc Store to store figures as dict
     dcc.Store(id="store-figure-reg"),
-    #dcc.Store(id='store-figure-log'),
+    dcc.Store(id='store-figure-log'),
+    dcc.Store(id='store-figure-forest'),
+    dcc.Store(id='store-figure-kmeans'),
+    dcc.Store(id='store-figure-nn'),
 
     html.Div(id='page-content')
 ])

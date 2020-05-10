@@ -89,9 +89,9 @@ def create_tab_content(active_tab, data):
             figure = dcc.Graph(figure=data["figure"])
             return figure
         elif active_tab == "tab-2-reg":
-            metrics = html.P([  'Explained variance score: ' + str(evs.round(3)), html.Br(),
-                                "Mean Squared Error: ", str(mse.round(3)), html.Br(),
-                                'R^2 score: ' + str(r2.round(3)), html.Br()
+            metrics = html.P(['Explained variance score: ' + str(evs.round(3)), html.Br(),
+                              "Mean Squared Error: ", str(mse.round(3)), html.Br(),
+                              'R^2 score: ' + str(r2.round(3)), html.Br()
                               ])
             return metrics
     return data
