@@ -53,10 +53,13 @@ def make_regression(n_clicks, df, y, train_test_size):
 
     Y_pred = model.predict(X_test)
 
-    global evs, mse, r2
+    global evs, mse, r2, importance
     evs = explained_variance_score(Y_test, Y_pred)
     mse = mean_squared_error(Y_test, Y_pred)
     r2 = r2_score(Y_pred, Y_pred)
+
+    # get importance
+    importance = model.coef_
 
     # build figure
     fig = go.Figure(
@@ -91,7 +94,8 @@ def create_tab_content(active_tab, data):
         elif active_tab == "tab-2-reg":
             metrics = html.P(['Explained variance score: ' + str(evs.round(3)), html.Br(),
                               "Mean Squared Error: ", str(mse.round(3)), html.Br(),
-                              'R^2 score: ' + str(r2.round(3)), html.Br()
+                              'R^2 score: ' + str(r2.round(3)), html.Br(),
+                              'Feature Importance: ' + str(importance), html.Br()
                               ])
             return metrics
     return data

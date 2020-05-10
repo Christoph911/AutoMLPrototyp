@@ -20,7 +20,7 @@ tb._SYMBOLIC_SCOPE.value = True
     [Input('load-data-nn','n_clicks')],
     [State('get-data-model', 'children')]
 )
-def update_date_dropdown(df, n_clicks):
+def update_date_dropdown(n_clicks, df):
     print("Daten an Dropdown Übergeben")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
@@ -72,26 +72,26 @@ def create_neural_network(n_clicks, df, y):
 
     # predict
     prediction = model.predict(X[:1])
-    y_0 = prediction[0][0]
-    print('Prediction with scaling - {}', format(y_0))
-    y_0 -= added
-    y_0 /= multiplied_by
-    print("Housing Price Prediction  - ${}".format(y_0))
+
+    prediction_scaled_val = prediction - added
+    print('Prediction with scaling - {}'.format(prediction_scaled_val))
+    prediction_norm_val = prediction / multiplied_by
+    print("Housing Price Prediction  - ${}".format(prediction_norm_val))
 
     # build figure
     fig = go.Figure(
         data=[
             go.Scatter(
-                x=Y_test,
-                y=Y_pred,
+                x=prediction_norm_val,
+                y=prediction_norm_val,
                 mode="markers",
                 marker={"size": 8}
             )
         ]
     )
     fig.update_layout(
-        xaxis_title='Actual ' + y,
-        yaxis_title='Predict ' + y,
+        xaxis_title='Actual ',
+        yaxis_title='Predict ',
         template='plotly_white'
     )
 
