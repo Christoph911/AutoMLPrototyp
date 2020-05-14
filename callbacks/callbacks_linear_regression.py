@@ -61,7 +61,7 @@ def make_regression(n_clicks, df, y, train_test_size):
     #TODO: Feature importance graphis darstellen
     # get importance
     importance = model.coef_
-
+    print(Y_test)
     # build figure
     fig = go.Figure(
         data=[

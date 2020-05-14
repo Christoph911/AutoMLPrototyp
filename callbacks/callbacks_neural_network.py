@@ -31,7 +31,8 @@ def update_date_dropdown(n_clicks, df):
     return options_y
 
 @app.callback(
-    Output("store-figure-nn", "data"),
+    [Output("store-figure-nn", "data"),
+     Output('store-figure-nn-reg','data')],
     [Input('start-nn-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
      State("zielwert-opt-nn", "value")]
@@ -75,9 +76,10 @@ def create_neural_network(n_clicks, df, y):
     prediction = model.predict(X_train[:1])
 
     prediction_scaled_val = prediction - added
-    print('Prediction with scaling - {}'.format(prediction_scaled_val))
+    print(prediction_scaled_val)
+    #print('Prediction with scaling - {}'.format(prediction_scaled_val))
     prediction_norm_val = prediction / multiplied_by
-    print("Housing Price Prediction  - ${}".format(prediction_norm_val))
+    #print("Housing Price Prediction  - ${}".format(prediction_norm_val))
 
 
 
@@ -116,38 +118,38 @@ def create_neural_network(n_clicks, df, y):
         yaxis_title='Loss',
         template='plotly_white'
     )
-
     # build figure
-    # fig = go.Figure(
-    #     data=[
-    #         go.Scatter(
-    #             x=Y_test,
-    #             y=prediction_norm_val,
-    #             mode="markers",
-    #             marker={"size": 8}
-    #         )
-    #     ]
-    # )
-    # fig.update_layout(
-    #     xaxis_title='Actual ',
-    #     yaxis_title='Predict ',
-    #     template='plotly_white'
-    # )
+    fig_reg = go.Figure(
+        data=[
+            go.Scatter(
+                x=Y_test,
+                y=prediction_scaled_val,
+                mode="markers",
+                marker={"size": 8}
+            )
+        ]
+    )
+    fig_reg.update_layout(
+        xaxis_title='Actual ',
+        yaxis_title='Predict ',
+        template='plotly_white'
+    )
 
-    return dict(figure=fig)
+    return dict(figure=fig), dict(figure=fig_reg)
 
 # manage tab content
 @app.callback(
     Output("tab-content-nn", "children"),
     [Input("card-tabs-nn", "active_tab"),
-     Input("store-figure-nn", "data")],
+     Input("store-figure-nn", "data"),
+     Input('store-figure-nn-reg','data')],
 )
-def create_tab_content(active_tab, data):
+def create_tab_content(active_tab, data, data_reg):
     if active_tab and data is not None:
         if active_tab == "tab-1-nn":
             figure = dcc.Graph(figure=data["figure"])
             return figure
         elif active_tab == "tab-2-nn":
-            metrics = html.P(['metrics'])
-            return metrics
+            figure = dcc.Graph(figure=data_reg['figure'])
+            return figure
     return data
