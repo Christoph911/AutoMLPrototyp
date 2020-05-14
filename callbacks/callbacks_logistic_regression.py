@@ -7,7 +7,7 @@ import plotly.graph_objs as go
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegressionCV
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import recall_score, precision_score, f1_score
 from sklearn.preprocessing import StandardScaler
 
 @app.callback(
@@ -55,9 +55,10 @@ def make_log_regression(n_clicks, df, y, train_test_size):
     Y_pred = model.predict(X_test)
 
 
-    global report, acc
-    report = classification_report(Y_test, Y_pred)
-    acc = accuracy_score(Y_test, Y_pred)
+    global recall, precision, f1
+    recall = recall_score(Y_test, Y_pred, average='micro')
+    precision = precision_score(Y_test, Y_pred, average='micro')
+    f1 = f1_score(Y_test, Y_pred, average='micro')
 
     fig = go.Figure(
         data=[
@@ -89,9 +90,9 @@ def create_tab_content(active_tab, data):
             figure = dcc.Graph(figure=data["figure"])
             return figure
         elif active_tab == "tab-2-log-reg":
-            metrics = html.P(['Report:', html.Br(), str(report), html.Br(),
-                              "Accuracy Scoore: ", str(acc.round(3)), html.Br(),
-                              'Confusion Matrix:', html.Br(), str("T"), html.Br()
+            metrics = html.P(['Recall score:', str(recall.round(3)), html.Br(),
+                              "Precision Score: ", str(precision.round(3)), html.Br(),
+                              'F1 Score: ', str(f1.round(3)), html.Br()
                               ])
             return metrics
     return data

@@ -8,7 +8,7 @@ import plotly.graph_objs as go
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, explained_variance_score, r2_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 
 @app.callback(
@@ -53,11 +53,12 @@ def make_regression(n_clicks, df, y, train_test_size):
 
     Y_pred = model.predict(X_test)
 
-    global evs, mse, r2, importance
-    evs = explained_variance_score(Y_test, Y_pred)
+    global absolut, mse, rmse, importance
+    absolut = mean_absolute_error(Y_test, Y_pred)
     mse = mean_squared_error(Y_test, Y_pred)
-    r2 = r2_score(Y_pred, Y_pred)
+    rmse = mean_squared_error(Y_test, Y_pred, squared=False)
 
+    #TODO: Feature importance graphis darstellen
     # get importance
     importance = model.coef_
 
@@ -92,9 +93,9 @@ def create_tab_content(active_tab, data):
             figure = dcc.Graph(figure=data["figure"])
             return figure
         elif active_tab == "tab-2-reg":
-            metrics = html.P(['Explained variance score: ' + str(evs.round(3)), html.Br(),
-                              "Mean Squared Error: ", str(mse.round(3)), html.Br(),
-                              'R^2 score: ' + str(r2.round(3)), html.Br(),
+            metrics = html.P(['Mean absolute error: ' + str(absolut.round(3)), html.Br(),
+                              "Mean squared error(MSE): ", str(mse.round(3)), html.Br(),
+                              'Root mean squared error(RMSE): ' + str(rmse.round(3)), html.Br(),
                               'Feature Importance: ' + str(importance), html.Br()
                               ])
             return metrics
