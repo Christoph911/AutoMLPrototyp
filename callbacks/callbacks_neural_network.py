@@ -8,6 +8,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 import pandas as pd
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
 from tensorflow import keras
@@ -40,13 +41,22 @@ def create_neural_network(n_clicks, df, y):
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
 
-    # MinMaxScaler for  preprocessing
+    # MinMaxScaler for preprocessing
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaled_train = scaler.fit_transform(df)
     multiplied_by = scaler.scale_[13]
     added = scaler.min_[13]
-    # scaler result to dataFame
+    # store scaler results into dataFame
     scaled_train_df = pd.DataFrame(scaled_train, columns=df.columns.values)
+
+    # get target column
+    Y = scaled_train_df.loc[:, [y]]
+    X = scaled_train_df.drop([y], axis=1).values
+
+    # crate train/test and val seta
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
+    X_train, X_val, Y_train, Y_val = train_test_split(X_train, Y_train, test_size=0.2)
+
 
     # build model
     model = keras.Sequential(
@@ -56,44 +66,73 @@ def create_neural_network(n_clicks, df, y):
         ]
     )
 
-    model.compile(optimizer='adam',loss=tf.keras.losses.mean_squared_error)
+    model.compile(optimizer='adam',loss='mean_squared_error', metrics=['mean_squared_error'])
 
-    Y = scaled_train_df.loc[:,[y]]
-    X = scaled_train_df.drop([y], axis=1).values
-
-    # Train the model
-    model.fit(
-        X[10:],
-        Y[10:],
-        epochs=10,
-        shuffle=True,
-        verbose=2
-    )
+    # fit model
+    history = model.fit(X_train, Y_train, epochs=10, verbose=2, validation_data=(X_val, Y_val))
 
     # predict
-    prediction = model.predict(X[:1])
+    prediction = model.predict(X_train[:1])
 
     prediction_scaled_val = prediction - added
     print('Prediction with scaling - {}'.format(prediction_scaled_val))
     prediction_norm_val = prediction / multiplied_by
     print("Housing Price Prediction  - ${}".format(prediction_norm_val))
 
-    # build figure
-    fig = go.Figure(
-        data=[
-            go.Scatter(
-                x=prediction_norm_val,
-                y=prediction_norm_val,
-                mode="markers",
-                marker={"size": 8}
-            )
-        ]
-    )
+
+
+    # get scores
+
+    #ACCURACY nur für Classification tasks
+    train_loss = history.history['loss']
+    #train_acc = history.history['accuracy']
+    val_loss = history.history['val_loss']
+    #val_acc = history.history['val_accuracy']
+    val_mean_squared_error = history.history['val_mean_squared_error']
+
+    # create figure for train and val loss
+
+    epochs = list(range(1,11))
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=epochs,
+        y=train_loss,
+        mode='lines',
+        name='Train loss'
+
+    ))
+    fig.add_trace(go.Scatter(
+        x=epochs,
+        y=val_mean_squared_error,
+        mode='lines',
+        name='Val loss'
+
+    ))
+
     fig.update_layout(
-        xaxis_title='Actual ',
-        yaxis_title='Predict ',
+        title='Train loss vs. Val loss',
+        xaxis_title='Epochen',
+        yaxis_title='Loss',
         template='plotly_white'
     )
+
+    # build figure
+    # fig = go.Figure(
+    #     data=[
+    #         go.Scatter(
+    #             x=Y_test,
+    #             y=prediction_norm_val,
+    #             mode="markers",
+    #             marker={"size": 8}
+    #         )
+    #     ]
+    # )
+    # fig.update_layout(
+    #     xaxis_title='Actual ',
+    #     yaxis_title='Predict ',
+    #     template='plotly_white'
+    # )
 
     return dict(figure=fig)
 
