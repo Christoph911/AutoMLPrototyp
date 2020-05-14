@@ -61,22 +61,6 @@ def make_log_regression(n_clicks, df, y, train_test_size):
     precision = precision_score(Y_test, Y_pred, average='micro')
     f1 = f1_score(Y_test, Y_pred, average='micro')
 
-    # fig = go.Figure(
-    #     data=[
-    #         go.Scatter(
-    #             x=Y_test,
-    #             y=Y_pred,
-    #             mode="markers",
-    #             marker={"size": 8}
-    #         )
-    #     ]
-    # )
-    # fig.update_layout(
-    #     xaxis_title='Actual ' + y,
-    #     yaxis_title='Predict ' + y,
-    #     template='plotly_white'
-    # )
-
     # create confusion matrix
     confusion_matrix = metrics.confusion_matrix(Y_test, Y_pred)
     # convert results into int
@@ -101,8 +85,6 @@ def make_log_regression(n_clicks, df, y, train_test_size):
     fig.update_layout(title_text='Confusion matrix',
                       margin=dict(t=50, l=200)
                       )
-
-
     # add colorbar
     fig['data'][0]['showscale'] = True
 
