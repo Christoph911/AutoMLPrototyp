@@ -28,15 +28,24 @@ def update_date_dropdown(n_clicks, df):
 
     return options_y, train_test_size
 
+@app.callback(
+    Output('metrics','value')
+)
+def get_metrics(get_metrics):
+    get_metrics = [{"label":label, "value": val} for val, label in get_metrics]
+    print(get_metrics)
+    return get_metrics
+
 # simple regression on input data and return figure
 @app.callback(
     Output("store-figure-reg", "data"),
     [Input('start-regression-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
      State("zielwert-opt", "value"),
-     State('train-test-opt', 'value')]
+     State('train-test-opt', 'value'),
+     State('metrics', 'value')]
 )
-def make_regression(n_clicks, df, y, train_test_size):
+def make_regression(n_clicks, df, y, train_test_size, choose_metrics):
     print("started regression")
     # load data
     df = json.loads(df)
@@ -53,15 +62,36 @@ def make_regression(n_clicks, df, y, train_test_size):
 
     Y_pred = model.predict(X_test)
 
-    global absolut, mse, rmse, importance
-    absolut = mean_absolute_error(Y_test, Y_pred)
-    mse = mean_squared_error(Y_test, Y_pred)
-    rmse = mean_squared_error(Y_test, Y_pred, squared=False)
+    # Create Metrics
+    print(choose_metrics)
+    if 'mae' in choose_metrics:
+        mae = mean_absolute_error(Y_test, Y_pred)
+        mae = 'Mean absolute error(MAE): ' + str(mae.round(3))
+    elif 'mae' not in choose_metrics:
+        mae = None
+    if 'mse' in choose_metrics:
+        mse = mean_squared_error(Y_test, Y_pred)
+        mse = "Mean squared error(MSE): " + str(mse.round(3))
+    elif 'mse' not in choose_metrics:
+        mse =  None
+    if 'rmse' in choose_metrics:
+        rmse = mean_squared_error(Y_test, Y_pred, squared=False)
+        rmse = 'Root mean squared error(RMSE): ' + str(rmse.round(3))
+    elif 'rmse' not in choose_metrics:
+        rmse = None
+    else:
+        e = "Keine Metriken zur Berechnung ausgewählt"
 
-    #TODO: Feature importance graphis darstellen
+    global metrics
+    metrics = mae, mse, rmse
+
+
+
+
+    #TODO: Feature importance graphisch darstellen
     # get importance
     importance = model.coef_
-    print(Y_test)
+
     # build figure
     fig = go.Figure(
         data=[
@@ -93,11 +123,7 @@ def create_tab_content(active_tab, data):
             figure = dcc.Graph(figure=data["figure"])
             return figure
         elif active_tab == "tab-2-reg":
-            metrics = html.P(['Mean absolute error: ' + str(absolut.round(3)), html.Br(),
-                              "Mean squared error(MSE): ", str(mse.round(3)), html.Br(),
-                              'Root mean squared error(RMSE): ' + str(rmse.round(3)), html.Br(),
-                              'Feature Importance: ' + str(importance), html.Br()
-                              ])
+
             return metrics
     return data
 

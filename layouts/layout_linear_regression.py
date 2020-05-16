@@ -30,6 +30,20 @@ controls_linear_regression = dbc.Card(
             ),
             dbc.FormGroup(
                 [
+                    dbc.Checklist(
+                        options=[
+                            {"label": "Mean absolute error", "value": 'mae'},
+                            {"label": "Mean squared error", "value": 'mse'},
+                            {"label": "Root mean squared error", "value": 'rmse'},
+                        ],
+                        value=[],
+                        id='metrics',
+                        switch=True
+                    )
+                ]
+            ),
+            dbc.FormGroup(
+                [
                     dbc.Button("Let the magic happen!", id="start-regression-btn"),
                 ]
             ),
