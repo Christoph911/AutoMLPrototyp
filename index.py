@@ -29,6 +29,7 @@ app.layout = html.Div([
     dcc.Store(id='store-figure-kmeans'),
     dcc.Store(id='store-figure-nn'),
     dcc.Store(id='store-figure-nn-reg'),
+    dcc.Store(id='store-figure-feat'),
 
     html.Div(id='page-content')
 ])

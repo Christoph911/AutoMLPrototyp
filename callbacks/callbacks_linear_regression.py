@@ -10,24 +10,29 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
-
+# get stored data, update dropdown, return selected target
 @app.callback(
-    [Output('zielwert-opt', 'options'),
-     Output('train-test-opt', 'options')],
+    Output('zielwert-opt', 'options'),
     [Input('load-data', 'n_clicks')],
     [State('get-data-model', 'children')]
 )
-def update_date_dropdown(n_clicks, df):
+def get_target(n_clicks, df):
     print("Daten an Dropdown Übergeben")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
-    train_test_size = [{'label': '75% Train-size/25% Test-size', 'value': 0.25},
-                       {'label': '60% Train-size/40% Test-size', 'value': 0.4}]
 
-    options_y = [{'label': col, 'value': col} for col in df.columns]
+    target = [{'label': col, 'value': col} for col in df.columns]
 
-    return options_y, train_test_size
+    return target
+# get slider value, return train size
+@app.callback(
+    Output('train-test-size','value')
+)
+def get_train_test_size(slider):
+    train_test_size = [{'marks':marks} for marks in slider]
+    return train_test_size
 
+# get metric values, return selected metrics
 @app.callback(
     Output('metrics','value')
 )
@@ -36,13 +41,14 @@ def get_metrics(get_metrics):
     print(get_metrics)
     return get_metrics
 
-# simple regression on input data and return figure
+# linear regression, return two figures, store figures in index.py
 @app.callback(
-    Output("store-figure-reg", "data"),
+    [Output("store-figure-reg", "data"),
+    Output('store-figure-feat','data')],
     [Input('start-regression-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
      State("zielwert-opt", "value"),
-     State('train-test-opt', 'value'),
+     State('train-test-size', 'value'),
      State('metrics', 'value')]
 )
 def make_regression(n_clicks, df, y, train_test_size, choose_metrics):
@@ -55,44 +61,47 @@ def make_regression(n_clicks, df, y, train_test_size, choose_metrics):
     Y = df[y]
     X = df.drop(y, axis=1)
 
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=train_test_size)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=train_test_size)
 
     model = LinearRegression()
     model.fit(X_train, Y_train)
 
     Y_pred = model.predict(X_test)
 
-    # Create Metrics
-    print(choose_metrics)
+    # create Metrics
+    global mae, mse, rmse
+    # create metrics depends on user input
     if 'mae' in choose_metrics:
         mae = mean_absolute_error(Y_test, Y_pred)
         mae = 'Mean absolute error(MAE): ' + str(mae.round(3))
-    elif 'mae' not in choose_metrics:
+    else:
         mae = None
     if 'mse' in choose_metrics:
         mse = mean_squared_error(Y_test, Y_pred)
         mse = "Mean squared error(MSE): " + str(mse.round(3))
-    elif 'mse' not in choose_metrics:
+    else:
         mse =  None
     if 'rmse' in choose_metrics:
         rmse = mean_squared_error(Y_test, Y_pred, squared=False)
         rmse = 'Root mean squared error(RMSE): ' + str(rmse.round(3))
-    elif 'rmse' not in choose_metrics:
-        rmse = None
     else:
-        e = "Keine Metriken zur Berechnung ausgewählt"
-
-    global metrics
-    metrics = mae, mse, rmse
+        rmse = None
 
 
-
-
-    #TODO: Feature importance graphisch darstellen
-    # get importance
+    # get feature importance
     importance = model.coef_
+    # plot feature importance as bar chart
+    fig_feature = go.Figure([
+        go.Bar(x=X.columns, y=importance, text=importance.round(2), textposition='outside')
+        ]
+    )
+    fig_feature.update_layout(
+        xaxis_title='Feature names',
+        yaxis_title='Score',
+        template='plotly_white'
+    )
 
-    # build figure
+    # build figure for results as scatter plot
     fig = go.Figure(
         data=[
             go.Scatter(
@@ -108,22 +117,26 @@ def make_regression(n_clicks, df, y, train_test_size, choose_metrics):
         yaxis_title='Predict ' + y,
         template='plotly_white'
     )
-
-    return dict(figure=fig)
+    # return figures
+    return dict(figure=fig), dict(figure=fig_feature)
 
 # manage tab content
+# get figures and metrics, display output
 @app.callback(
     Output("tab-content", "children"),
     [Input("card-tabs-model", "active_tab"),
-     Input("store-figure-reg", "data")],
+     Input("store-figure-reg", "data"),
+     Input('store-figure-feat', 'data')],
 )
-def create_tab_content(active_tab, data):
+def create_tab_content(active_tab, data, data_feat):
     if active_tab and data is not None:
         if active_tab == "tab-1-reg":
             figure = dcc.Graph(figure=data["figure"])
             return figure
         elif active_tab == "tab-2-reg":
-
-            return metrics
+            return mae, html.Br(), mse, html.Br(), rmse, html.Br()
+        elif active_tab == 'tab-3-reg':
+            figure = dcc.Graph(figure=data_feat['figure'])
+            return figure
     return data
 
