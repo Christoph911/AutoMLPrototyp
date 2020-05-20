@@ -13,30 +13,45 @@ from sklearn.metrics import recall_score, precision_score, f1_score
 from sklearn import metrics
 
 @app.callback(
-    [Output('dropdownX-forest-opt', 'options'),
-     Output('train-test-forest', 'options')],
+    Output('zielwert-forest-opt', 'options'),
     [Input("load-data", "n_clicks")],
     [State('get-data-model', 'children')]
 )
-def update_date_dropdown(n_clicks, df):
+def get_target(n_clicks, df):
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
-    train_test_size = [{'label': '75% Train-size/25% Test-size', 'value': 0.25},
-                       {'label': '60% Train-size/40% Test-size', 'value': 0.4}]
 
-    optionsX = [{'label': col, 'value': col} for col in df.columns]
+    target = [{'label': col, 'value': col} for col in df.columns]
 
-    return optionsX, train_test_size
+    return target
 
+# get slider value, return train size
+@app.callback(
+    Output('train-test-forest','value')
+)
+def get_train_test_size(slider):
+    train_test_size = [{'marks':marks} for marks in slider]
+    return train_test_size
+
+# get metric values, return selected metrics
+@app.callback(
+    Output('metrics-forest','value')
+)
+def get_metrics(get_metrics):
+    get_metrics = [{"label":label, "value": val} for val, label in get_metrics]
+    print(get_metrics)
+    return get_metrics
 
 @app.callback(
     Output("store-figure-forest", "data"),
     [Input('start-forest-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
-     State("dropdownX-forest-opt", "value"),
-     State('train-test-forest', 'value')]
+     State("zielwert-forest-opt", "value"),
+     State('number-trees','value'),
+     State('train-test-forest', 'value'),
+     State('metrics-forest', 'value')]
 )
-def make_random_forest(n_clicks, df, y, train_test_size):
+def make_random_forest(n_clicks, df, y,number_trees, train_test_size,choose_metrics):
     print("started random Forest")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
@@ -48,18 +63,32 @@ def make_random_forest(n_clicks, df, y, train_test_size):
     le = LabelEncoder()
     Y = le.fit_transform(target)
 
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=train_test_size)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y,train_size=train_test_size)
 
-    model = RandomForestClassifier(n_jobs=1, n_estimators=10)
+    model = RandomForestClassifier(n_jobs=1, n_estimators=number_trees)
 
     model.fit(X_train, Y_train)
 
     Y_pred = model.predict(X_test)
 
     global recall, precision, f1
-    recall = recall_score(Y_test, Y_pred, average='micro')
-    precision = precision_score(Y_test, Y_pred, average='micro')
-    f1 = f1_score(Y_test, Y_pred, average='micro')
+
+    # create metrics depends on user input
+    if 'recall' in choose_metrics:
+        recall = recall_score(Y_test, Y_pred, average='micro')
+        recall = 'Recall Score: ' + str(recall.round(3))
+    else:
+        recall = None
+    if 'precision' in choose_metrics:
+        precision = precision_score(Y_test, Y_pred, average='micro')
+        precision = 'Precision Score: ' + str(precision.round(3))
+    else:
+        precision = None
+    if 'f1' in choose_metrics:
+        f1 = f1_score(Y_test, Y_pred, average='micro')
+        f1 = 'F1 Score: ' + str(f1.round(3))
+    else:
+        f1 = None
 
     # create confusion matrix
     confusion_matrix = metrics.confusion_matrix(Y_test, Y_pred)
@@ -102,9 +131,5 @@ def create_tab_content(active_tab, data):
             figure = dcc.Graph(figure=data["figure"])
             return figure
         elif active_tab == "tab-2-forest":
-            metrics = html.P(['Recall score: ', str(recall.round(3)), html.Br(),
-                              'Precision Score: ', str(precision.round(3)), html.Br(),
-                              'F1 Score: ', str(f1.round(3)), html.Br()
-            ])
-            return metrics
+            return recall, html.Br(), precision, html.Br(), f1, html.Br()
     return data

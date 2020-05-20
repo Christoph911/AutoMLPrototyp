@@ -15,8 +15,11 @@ layout_model = dbc.Container(
                             dbc.Col(
                                 dbc.ListGroup(
                                     [
-                                        dbc.ListGroupItemHeading('Supervised Learning'),
+                                        dbc.ListGroupItemHeading('Supervised Learning',style={'text-align':'center'}),
+                                        dbc.ListGroupItemText("Regression:"),
                                         dbc.ListGroupItem("Lineare Regression",action=True,href='/regression'),
+                                        html.Br(),
+                                        dbc.ListGroupItemText("Klassifikation:"),
                                         dbc.ListGroupItem('Logistische Regression',action=True,href='/log-regression'),
                                         dbc.ListGroupItem("Random Forest",action=True,href='/forest'),
                                     ],
@@ -25,7 +28,8 @@ layout_model = dbc.Container(
                             dbc.Col(
                                 dbc.ListGroup(
                                     [
-                                        dbc.ListGroupItemHeading('Unsupervised Learning'),
+                                        dbc.ListGroupItemHeading('Unsupervised Learning', style={'text-align':'center'}),
+                                        dbc.ListGroupItemText("Clustering:"),
                                         dbc.ListGroupItem("K-Means Clustering",action=True,href='/kmeans')
                                     ],
                                 )
@@ -33,7 +37,8 @@ layout_model = dbc.Container(
                             dbc.Col(
                                 dbc.ListGroup(
                                     [
-                                        dbc.ListGroupItemHeading('Deep Learning'),
+                                        dbc.ListGroupItemHeading('Deep Learning', style={'text-align':'center'}),
+                                        dbc.ListGroupItemText("Regression:"),
                                         dbc.ListGroupItem('Künstliches neuronales Netz',action=True,href='/nn')
                                     ]
                                 )

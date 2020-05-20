@@ -8,7 +8,7 @@ controls_clustering = dbc.Card(
     [
         dbc.FormGroup(
             [
-                dbc.Button('Daten laden', id='load-data-btn')
+                dbc.Button('Daten an das Modell übergeben',color='primary', id='load-data-btn')
             ]
         ),
 
@@ -36,7 +36,7 @@ controls_clustering = dbc.Card(
         ),
         dbc.FormGroup(
             [
-                dbc.Button('Let the magic happen!', id='start-cluster-btn'),
+                dbc.Button('Let the magic happen!', color='success', id='start-cluster-btn'),
             ]
         ),
     ],
@@ -49,7 +49,6 @@ card_graph_kmeans = dbc.Card(
             dbc.Tabs(
                 [
                     dbc.Tab(label='Vorschau', tab_id='tab-1-kmeans'),
-                    dbc.Tab(label='Metriken', tab_id='tab-2-kmeans')
                 ],
                 id='card-tabs-kmeans',
                 card=True,

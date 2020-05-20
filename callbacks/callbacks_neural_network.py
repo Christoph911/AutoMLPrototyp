@@ -92,6 +92,7 @@ def create_neural_network(n_clicks, df, y):
     #val_acc = history.history['val_accuracy']
     val_mean_squared_error = history.history['val_mean_squared_error']
 
+
     # create figure for train and val loss
 
     epochs = list(range(1,11))

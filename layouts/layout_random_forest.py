@@ -10,28 +10,59 @@ controls_forest = dbc.Card(
     [
         dbc.FormGroup(
             [
-                dbc.Button("Daten laden", id="load-data")
+                dbc.Button("Daten an das Modell übergeben", color="primary", id="load-data")
             ]
         ),
         dbc.FormGroup(
             [
-                dbc.Label("Zielwert"),
+                dbc.Label("Zielwert:"),
                 dcc.Dropdown(
-                    id="dropdownX-forest-opt",
+                    id="zielwert-forest-opt",
                 ),
             ]
         ),
         dbc.FormGroup(
             [
-                dbc.Label("Train/Test-Size"),
-                dcc.Dropdown(
-                    id="train-test-forest",
-                ),
-            ]
+                html.P("Anzahl Bäume:"),
+                dbc.Input(id="number-trees", type="number", min=50, max=250, step=5, value=100)
+            ],
         ),
         dbc.FormGroup(
             [
-                dbc.Button("Let the magic happen!", id="start-forest-btn"),
+                dbc.Label('Train/Test-Size'),
+                dcc.Slider(
+                    min=0.3,
+                    max=0.8,
+                    step=None,
+                    marks={
+                        0.3: '30%/70%', 0.4: '40%/60%', 0.5: '50%/50%',
+                        0.6: '60%/40', 0.7: '70%/30%', 0.8: '80%/20%',
+                    },
+                    value=0.7,
+                    id='train-test-forest'
+                )
+            ]
+        ),
+        html.Hr(),
+        dbc.FormGroup(
+            [
+                dbc.Label('Metriken auswählen:'),
+                dbc.Checklist(
+                    options=[
+                        {"label": "Recall Score", "value": 'recall'},
+                        {"label": "Precision Score", "value": 'precision'},
+                        {"label": "F1 Score", "value": 'f1'},
+                    ],
+                    value=[],
+                    id='metrics-forest',
+                    switch=True
+                )
+            ]
+        ),
+        html.Hr(),
+        dbc.FormGroup(
+            [
+                dbc.Button("Let the magic happen!",color="success", id="start-forest-btn"),
             ]
         ),
     ],

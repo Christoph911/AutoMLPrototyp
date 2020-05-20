@@ -87,7 +87,4 @@ def create_tab_content(active_tab, data):
         if active_tab == "tab-1-kmeans":
             figure = dcc.Graph(figure=data["figure"])
             return figure
-        elif active_tab == "tab-2-kmeans":
-            metrics = html.P(['metrics'])
-            return metrics
     return data
