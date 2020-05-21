@@ -39,7 +39,7 @@ layout_model = dbc.Container(
                                     [
                                         dbc.ListGroupItemHeading('Deep Learning', style={'text-align':'center'}),
                                         dbc.ListGroupItemText("Regression:"),
-                                        dbc.ListGroupItem('Künstliches neuronales Netz',action=True,href='/nn')
+                                        dbc.ListGroupItem('Künstliches Neuronales Netz',action=True,href='/nn')
                                     ]
                                 )
                             )

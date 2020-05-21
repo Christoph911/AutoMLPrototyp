@@ -21,23 +21,51 @@ tb._SYMBOLIC_SCOPE.value = True
     [Input('load-data-nn','n_clicks')],
     [State('get-data-model', 'children')]
 )
-def update_date_dropdown(n_clicks, df):
+def get_target(n_clicks, df):
     print("Daten an Dropdown Übergeben")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
 
-    options_y = [{'label': col, 'value': col} for col in df.columns]
+    target = [{'label': col, 'value': col} for col in df.columns]
 
-    return options_y
+    return target
+
+#get optimizer
+@app.callback(
+    Output('optimizer-nn','value')
+)
+def get_optimizer(optimizer):
+    optimizer = [{'value': val} for val in optimizer]
+    return optimizer
+
+# get slider value, return train size
+@app.callback(
+    Output('number-epochs','value')
+)
+def get_number_epochs(slider):
+    number_epochs = [{'marks':marks} for marks in slider]
+    return number_epochs
+
+# get slider value, return train size
+@app.callback(
+    Output('train-test-nn','value')
+)
+def get_val_set_size(slider):
+    val_set_size = [{'marks':marks} for marks in slider]
+    return val_set_size
+
 
 @app.callback(
     [Output("store-figure-nn", "data"),
      Output('store-figure-nn-reg','data')],
     [Input('start-nn-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
-     State("zielwert-opt-nn", "value")]
+     State("zielwert-opt-nn", "value"),
+     State('optimizer-nn', 'value'),
+     State('number-epochs','value'),
+     State('train-test-nn', 'value'),]
 )
-def create_neural_network(n_clicks, df, y):
+def create_neural_network(n_clicks, df, y, optimizer, number_epochs, val_set_size):
     print("started neural network")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
@@ -54,11 +82,6 @@ def create_neural_network(n_clicks, df, y):
     Y = scaled_train_df.loc[:, [y]]
     X = scaled_train_df.drop([y], axis=1).values
 
-    # crate train/test and val seta
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
-    X_train, X_val, Y_train, Y_val = train_test_split(X_train, Y_train, test_size=0.2)
-
-
     # build model
     model = keras.Sequential(
         [
@@ -67,13 +90,13 @@ def create_neural_network(n_clicks, df, y):
         ]
     )
 
-    model.compile(optimizer='adam',loss='mean_squared_error', metrics=['mean_squared_error'])
+    model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mean_squared_error'])
 
     # fit model
-    history = model.fit(X_train, Y_train, epochs=10, verbose=2, validation_data=(X_val, Y_val))
+    history = model.fit(X, Y, epochs=number_epochs, verbose=2, validation_split=val_set_size)
 
     # predict
-    prediction = model.predict(X_train[:1])
+    prediction = model.predict(X[:1])
 
     prediction_scaled_val = prediction - added
     print(prediction_scaled_val)
@@ -87,6 +110,7 @@ def create_neural_network(n_clicks, df, y):
 
     #ACCURACY nur für Classification tasks
     train_loss = history.history['loss']
+    train_mean_squared_error = history.history['mean_squared_error']
     #train_acc = history.history['accuracy']
     val_loss = history.history['val_loss']
     #val_acc = history.history['val_accuracy']
@@ -95,7 +119,7 @@ def create_neural_network(n_clicks, df, y):
 
     # create figure for train and val loss
 
-    epochs = list(range(1,11))
+    epochs = list(range(1,number_epochs +1))
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -105,9 +129,10 @@ def create_neural_network(n_clicks, df, y):
         name='Train loss'
 
     ))
+
     fig.add_trace(go.Scatter(
         x=epochs,
-        y=val_mean_squared_error,
+        y=val_loss,
         mode='lines',
         name='Val loss'
 
@@ -123,7 +148,7 @@ def create_neural_network(n_clicks, df, y):
     fig_reg = go.Figure(
         data=[
             go.Scatter(
-                x=Y_test,
+                x=Y,
                 y=prediction_scaled_val,
                 mode="markers",
                 marker={"size": 8}
