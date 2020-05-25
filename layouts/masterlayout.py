@@ -33,18 +33,14 @@ header = (html.Div(children=[html.H1('Automated Machine Learning Web-App'),html.
         html.Div(nav),
         html.Hr())
 
-#METHOD NOT USED AT THE MOMENT
-# nav = dbc.NavbarSimple(
-#     children=[
-#         dbc.NavItem(dbc.NavLink("1. Daten hochladen", href='/upload')),
-#         dbc.NavItem(dbc.NavLink("2. Preprocessing", href='/prep')),
-#         dbc.NavItem(dbc.NavLink("3. Modellauswahl", href='/model')),
-#         dbc.NavItem(dbc.NavLink("4. Evaluation", href='/eval')),
-#     ],
-#     brand="Automated Machine Learning Web-App",
-#     brand_href="/",
-#     color="primary",
-#     dark=True,
-#     expand='xl',
-#     style={'height':'80px'}
-# )
+load_data_btn = dbc.FormGroup(
+    [
+        dbc.Button("Daten an das Modell übergeben", color="primary", id="load-data")
+    ]
+)
+
+start_prediction_btn = dbc.FormGroup(
+    [
+        dbc.Button("Let the magic happen!", color="success"),
+    ]
+),

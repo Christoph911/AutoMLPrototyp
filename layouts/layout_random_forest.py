@@ -1,18 +1,14 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from layouts.masterlayout import header, choose_model
+from layouts.masterlayout import header, load_data_btn
 
 # define control panel for modelLayout
 
 # TODO: Dropdown ins masterlayout?
 controls_forest = dbc.Card(
     [
-        dbc.FormGroup(
-            [
-                dbc.Button("Daten an das Modell übergeben", color="primary", id="load-data")
-            ]
-        ),
+        load_data_btn,
         dbc.FormGroup(
             [
                 dbc.Label("Zielwert:"),

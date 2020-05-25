@@ -40,7 +40,6 @@ def make_random_forest(n_clicks, df, y,number_trees, train_test_size,choose_metr
     model.fit(X_train, Y_train)
 
     Y_pred = model.predict(X_test)
-
     global recall, precision, f1
 
     # create metrics depends on user input
