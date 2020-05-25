@@ -16,20 +16,6 @@ import keras.backend.tensorflow_backend as tb
 tb._SYMBOLIC_SCOPE.value = True
 
 
-@app.callback(
-    Output('zielwert-opt-nn', 'options'),
-    [Input('load-data-nn','n_clicks')],
-    [State('get-data-model', 'children')]
-)
-def get_target(n_clicks, df):
-    print("Daten an Dropdown Übergeben")
-    df = json.loads(df)
-    df = pd.DataFrame(df['data'], columns=df['columns'])
-
-    target = [{'label': col, 'value': col} for col in df.columns]
-
-    return target
-
 #get optimizer
 @app.callback(
     Output('optimizer-nn','value')
@@ -60,7 +46,7 @@ def get_val_set_size(slider):
      Output('store-figure-nn-reg','data')],
     [Input('start-nn-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
-     State("zielwert-opt-nn", "value"),
+     State("zielwert-opt", "value"),
      State('optimizer-nn', 'value'),
      State('number-epochs','value'),
      State('train-test-nn', 'value'),]

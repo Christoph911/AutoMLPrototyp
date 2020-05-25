@@ -10,20 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
-# get stored data, update dropdown, return selected target
-@app.callback(
-    Output('zielwert-opt', 'options'),
-    [Input('load-data', 'n_clicks')],
-    [State('get-data-model', 'children')]
-)
-def get_target(n_clicks, df):
-    print("Daten an Dropdown Übergeben")
-    df = json.loads(df)
-    df = pd.DataFrame(df['data'], columns=df['columns'])
 
-    target = [{'label': col, 'value': col} for col in df.columns]
-
-    return target
 # get slider value, return train size
 @app.callback(
     Output('train-test-size','value')

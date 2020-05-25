@@ -17,7 +17,7 @@ controls_forest = dbc.Card(
             [
                 dbc.Label("Zielwert:"),
                 dcc.Dropdown(
-                    id="zielwert-forest-opt",
+                    id="zielwert-opt",
                 ),
             ]
         ),

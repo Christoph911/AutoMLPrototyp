@@ -11,19 +11,6 @@ from sklearn.metrics import recall_score, precision_score, f1_score, confusion_m
 from sklearn.preprocessing import StandardScaler
 import plotly.figure_factory as ff
 import sklearn.metrics as metrics
-@app.callback(
-    Output('zielwert-opt-log', 'options'),
-    [Input('load-data','n_clicks')],
-    [State('get-data-model', 'children')]
-)
-def get_target(n_clicks, df):
-    print("Daten an Dropdown Übergeben")
-    df = json.loads(df)
-    df = pd.DataFrame(df['data'], columns=df['columns'])
-
-    target = [{'label': col, 'value': col} for col in df.columns]
-
-    return target
 
 # get slider value, return train size
 @app.callback(
@@ -46,7 +33,7 @@ def get_metrics(get_metrics):
     Output("store-figure-log", "data"),
     [Input('start-logistic-regression-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
-     State("zielwert-opt-log", "value"),
+     State("zielwert-opt", "value"),
      State('train-test-opt-log', 'value'),
      State('metrics-log', 'value')]
 )

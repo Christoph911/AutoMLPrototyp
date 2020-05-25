@@ -12,18 +12,6 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import recall_score, precision_score, f1_score
 from sklearn import metrics
 
-@app.callback(
-    Output('zielwert-forest-opt', 'options'),
-    [Input("load-data", "n_clicks")],
-    [State('get-data-model', 'children')]
-)
-def get_target(n_clicks, df):
-    df = json.loads(df)
-    df = pd.DataFrame(df['data'], columns=df['columns'])
-
-    target = [{'label': col, 'value': col} for col in df.columns]
-
-    return target
 
 # get slider value, return train size
 @app.callback(
@@ -46,7 +34,7 @@ def get_metrics(get_metrics):
     Output("store-figure-forest", "data"),
     [Input('start-forest-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
-     State("zielwert-forest-opt", "value"),
+     State("zielwert-opt", "value"),
      State('number-trees','value'),
      State('train-test-forest', 'value'),
      State('metrics-forest', 'value')]
@@ -65,7 +53,7 @@ def make_random_forest(n_clicks, df, y,number_trees, train_test_size,choose_metr
 
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y,train_size=train_test_size)
 
-    model = RandomForestClassifier(n_jobs=1, n_estimators=number_trees)
+    model = RandomForestClassifier(n_estimators=number_trees)
 
     model.fit(X_train, Y_train)
 

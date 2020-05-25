@@ -9,14 +9,14 @@ controls_nn = dbc.Card(
     [
         dbc.FormGroup(
             [
-                dbc.Button("Daten an das Modell übergeben", color='primary', id="load-data-nn")
+                dbc.Button("Daten an das Modell übergeben", color='primary', id="load-data")
             ]
         ),
         dbc.FormGroup(
             [
                 dbc.Label("Zielwert"),
                 dcc.Dropdown(
-                    id="zielwert-opt-nn",
+                    id="zielwert-opt",
                 ),
             ]
         ),

@@ -16,7 +16,7 @@ controls_logistic_regression = dbc.Card(
                 [
                     dbc.Label("Zielwert"),
                     dcc.Dropdown(
-                        id="zielwert-opt-log",
+                        id="zielwert-opt",
                     ),
                 ]
             ),
