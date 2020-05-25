@@ -10,15 +10,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
-
-# get slider value, return train size
-@app.callback(
-    Output('train-test-size','value')
-)
-def get_train_test_size(slider):
-    train_test_size = [{'marks':marks} for marks in slider]
-    return train_test_size
-
 # get metric values, return selected metrics
 @app.callback(
     Output('metrics','value')
@@ -35,7 +26,7 @@ def get_metrics(get_metrics):
     [Input('start-regression-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
      State("zielwert-opt", "value"),
-     State('train-test-size', 'value'),
+     State('train-test', 'value'),
      State('metrics', 'value')]
 )
 def make_regression(n_clicks, df, y, train_test_size, choose_metrics):

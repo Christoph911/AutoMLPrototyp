@@ -12,15 +12,6 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import recall_score, precision_score, f1_score
 from sklearn import metrics
 
-
-# get slider value, return train size
-@app.callback(
-    Output('train-test-forest','value')
-)
-def get_train_test_size(slider):
-    train_test_size = [{'marks':marks} for marks in slider]
-    return train_test_size
-
 # get metric values, return selected metrics
 @app.callback(
     Output('metrics-forest','value')
@@ -36,7 +27,7 @@ def get_metrics(get_metrics):
     [State('get-data-model', 'children'),
      State("zielwert-opt", "value"),
      State('number-trees','value'),
-     State('train-test-forest', 'value'),
+     State('train-test', 'value'),
      State('metrics-forest', 'value')]
 )
 def make_random_forest(n_clicks, df, y,number_trees, train_test_size,choose_metrics):

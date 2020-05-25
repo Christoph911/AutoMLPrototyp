@@ -39,7 +39,7 @@ controls_forest = dbc.Card(
                         0.6: '60%/40', 0.7: '70%/30%', 0.8: '80%/20%',
                     },
                     value=0.7,
-                    id='train-test-forest'
+                    id='train-test'
                 )
             ]
         ),

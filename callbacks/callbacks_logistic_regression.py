@@ -12,14 +12,6 @@ from sklearn.preprocessing import StandardScaler
 import plotly.figure_factory as ff
 import sklearn.metrics as metrics
 
-# get slider value, return train size
-@app.callback(
-    Output('train-test-opt-log','value')
-)
-def get_train_test_size(slider):
-    train_test_size = [{'marks':marks} for marks in slider]
-    return train_test_size
-
 # get metric values, return selected metrics
 @app.callback(
     Output('metrics-log','value')
@@ -34,7 +26,7 @@ def get_metrics(get_metrics):
     [Input('start-logistic-regression-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
      State("zielwert-opt", "value"),
-     State('train-test-opt-log', 'value'),
+     State('train-test', 'value'),
      State('metrics-log', 'value')]
 )
 def make_log_regression(n_clicks, df, y, train_test_size,choose_metrics):
