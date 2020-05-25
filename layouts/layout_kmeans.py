@@ -8,7 +8,7 @@ controls_clustering = dbc.Card(
     [
         dbc.FormGroup(
             [
-                dbc.Button('Daten an das Modell übergeben',color='primary', id='load-data-btn')
+                dbc.Button('Daten an das Modell übergeben',color='primary', id='load-data')
             ]
         ),
 
