@@ -12,15 +12,6 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import recall_score, precision_score, f1_score
 from sklearn import metrics
 
-# get metric values, return selected metrics
-@app.callback(
-    Output('metrics-forest','value')
-)
-def get_metrics(get_metrics):
-    get_metrics = [{"label":label, "value": val} for val, label in get_metrics]
-    print(get_metrics)
-    return get_metrics
-
 @app.callback(
     Output("store-figure-forest", "data"),
     [Input('start-forest-btn', 'n_clicks')],
@@ -28,7 +19,7 @@ def get_metrics(get_metrics):
      State("zielwert-opt", "value"),
      State('number-trees','value'),
      State('train-test', 'value'),
-     State('metrics-forest', 'value')]
+     State('metrics', 'value')]
 )
 def make_random_forest(n_clicks, df, y,number_trees, train_test_size,choose_metrics):
     print("started random Forest")

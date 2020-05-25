@@ -42,3 +42,11 @@ def get_target(n_clicks, df):
 def get_train_test_size(slider):
     train_test_size = [{'marks':marks} for marks in slider]
     return train_test_size
+
+# get metric values, return selected metrics
+@app.callback(
+    Output('metrics','value')
+)
+def get_metrics(get_metrics):
+    get_metrics = [{"label":label, "value": val} for val, label in get_metrics]
+    return get_metrics

@@ -47,7 +47,7 @@ controls_logistic_regression = dbc.Card(
                             {"label": "F1 Score", "value": 'f1'},
                         ],
                         value=[],
-                        id='metrics-log',
+                        id='metrics',
                         switch=True
                     )
                 ]

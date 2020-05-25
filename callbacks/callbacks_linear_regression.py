@@ -10,15 +10,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
-# get metric values, return selected metrics
-@app.callback(
-    Output('metrics','value')
-)
-def get_metrics(get_metrics):
-    get_metrics = [{"label":label, "value": val} for val, label in get_metrics]
-    print(get_metrics)
-    return get_metrics
-
 # linear regression, return two figures, store figures in index.py
 @app.callback(
     [Output("store-figure-reg", "data"),

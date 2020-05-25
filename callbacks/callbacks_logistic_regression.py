@@ -12,14 +12,6 @@ from sklearn.preprocessing import StandardScaler
 import plotly.figure_factory as ff
 import sklearn.metrics as metrics
 
-# get metric values, return selected metrics
-@app.callback(
-    Output('metrics-log','value')
-)
-def get_metrics(get_metrics):
-    get_metrics = [{"label":label, "value": val} for val, label in get_metrics]
-    print(get_metrics)
-    return get_metrics
 
 @app.callback(
     Output("store-figure-log", "data"),
@@ -27,7 +19,7 @@ def get_metrics(get_metrics):
     [State('get-data-model', 'children'),
      State("zielwert-opt", "value"),
      State('train-test', 'value'),
-     State('metrics-log', 'value')]
+     State('metrics', 'value')]
 )
 def make_log_regression(n_clicks, df, y, train_test_size,choose_metrics):
     print("started logistic regression")

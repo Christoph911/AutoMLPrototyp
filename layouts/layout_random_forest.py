@@ -54,7 +54,7 @@ controls_forest = dbc.Card(
                         {"label": "F1 Score", "value": 'f1'},
                     ],
                     value=[],
-                    id='metrics-forest',
+                    id='metrics',
                     switch=True
                 )
             ]
