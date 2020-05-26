@@ -21,7 +21,7 @@ from sklearn import metrics
      State('train-test', 'value'),
      State('metrics', 'value')]
 )
-def make_random_forest(n_clicks, df, y,number_trees, train_test_size,choose_metrics):
+def make_random_forest(n_clicks, df, y,number_trees, train_test_size, choose_metrics):
     print("started random Forest")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])

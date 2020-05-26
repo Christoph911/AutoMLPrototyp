@@ -12,6 +12,7 @@ from layouts.layout_kmeans import layout_kmeans
 from layouts.layout_random_forest import layout_forest
 from layouts.layout_neural_network import layout_nn
 from layouts.layout_logistic_regression import layout_logistic_regression
+from layouts.layout_forest_regressor import layout_forest_regressor
 
 
 # TODO: hidden DIV durch dcc Store ersetzen?
@@ -30,6 +31,8 @@ app.layout = html.Div([
     dcc.Store(id='store-figure-nn'),
     dcc.Store(id='store-figure-nn-reg'),
     dcc.Store(id='store-figure-feat'),
+    dcc.Store(id='store-figure-forest-reg'),
+    dcc.Store(id='store-figure-forest-reg-feat'),
 
     html.Div(id='page-content')
 ])
@@ -52,6 +55,8 @@ def display_page(pathname):
         return layout_linear_regression
     elif pathname == '/forest':
         return layout_forest
+    elif pathname == '/forest_reg':
+        return layout_forest_regressor
     elif pathname == '/kmeans':
         return layout_kmeans
     elif pathname == '/nn':

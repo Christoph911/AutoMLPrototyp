@@ -1,5 +1,6 @@
 import os
-#CAVE: stellt error Messages und warnings für TF aus!
+
+# CAVE: stellt error Messages und warnings für TF aus!
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import json
 from main import app
@@ -13,43 +14,19 @@ from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
 from tensorflow import keras
 import keras.backend.tensorflow_backend as tb
+
 tb._SYMBOLIC_SCOPE.value = True
-
-
-#get optimizer
-@app.callback(
-    Output('optimizer-nn','value')
-)
-def get_optimizer(optimizer):
-    optimizer = [{'value': val} for val in optimizer]
-    return optimizer
-
-# get slider value, return train size
-@app.callback(
-    Output('number-epochs','value')
-)
-def get_number_epochs(slider):
-    number_epochs = [{'marks':marks} for marks in slider]
-    return number_epochs
-
-# get slider value, return train size
-@app.callback(
-    Output('train-test-nn','value')
-)
-def get_val_set_size(slider):
-    val_set_size = [{'marks':marks} for marks in slider]
-    return val_set_size
 
 
 @app.callback(
     [Output("store-figure-nn", "data"),
-     Output('store-figure-nn-reg','data')],
+     Output('store-figure-nn-reg', 'data')],
     [Input('start-nn-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
      State("zielwert-opt", "value"),
      State('optimizer-nn', 'value'),
-     State('number-epochs','value'),
-     State('train-test-nn', 'value'),]
+     State('number-epochs', 'value'),
+     State('train-test-nn', 'value'), ]
 )
 def create_neural_network(n_clicks, df, y, optimizer, number_epochs, val_set_size):
     print("started neural network")
@@ -71,8 +48,8 @@ def create_neural_network(n_clicks, df, y, optimizer, number_epochs, val_set_siz
     # build model
     model = keras.Sequential(
         [
-            keras.layers.Dense(50,activation='relu'),
-            keras.layers.Dense(100,activation='relu')
+            keras.layers.Dense(50, activation='relu'),
+            keras.layers.Dense(100, activation='relu')
         ]
     )
 
@@ -86,26 +63,23 @@ def create_neural_network(n_clicks, df, y, optimizer, number_epochs, val_set_siz
 
     prediction_scaled_val = prediction - added
     print(prediction_scaled_val)
-    #print('Prediction with scaling - {}'.format(prediction_scaled_val))
+    # print('Prediction with scaling - {}'.format(prediction_scaled_val))
     prediction_norm_val = prediction / multiplied_by
-    #print("Housing Price Prediction  - ${}".format(prediction_norm_val))
-
-
+    # print("Housing Price Prediction  - ${}".format(prediction_norm_val))
 
     # get scores
 
-    #ACCURACY nur für Classification tasks
+    # ACCURACY nur für Classification tasks
     train_loss = history.history['loss']
     train_mean_squared_error = history.history['mean_squared_error']
-    #train_acc = history.history['accuracy']
+    # train_acc = history.history['accuracy']
     val_loss = history.history['val_loss']
-    #val_acc = history.history['val_accuracy']
+    # val_acc = history.history['val_accuracy']
     val_mean_squared_error = history.history['val_mean_squared_error']
-
 
     # create figure for train and val loss
 
-    epochs = list(range(1,number_epochs +1))
+    epochs = list(range(1, number_epochs + 1))
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -149,12 +123,13 @@ def create_neural_network(n_clicks, df, y, optimizer, number_epochs, val_set_siz
 
     return dict(figure=fig), dict(figure=fig_reg)
 
+
 # manage tab content
 @app.callback(
     Output("tab-content-nn", "children"),
     [Input("card-tabs-nn", "active_tab"),
      Input("store-figure-nn", "data"),
-     Input('store-figure-nn-reg','data')],
+     Input('store-figure-nn-reg', 'data')],
 )
 def create_tab_content(active_tab, data, data_reg):
     if active_tab and data is not None:

@@ -18,10 +18,11 @@ layout_model = dbc.Container(
                                         dbc.ListGroupItemHeading('Supervised Learning',style={'text-align':'center'}),
                                         dbc.ListGroupItemText("Regression:"),
                                         dbc.ListGroupItem("Lineare Regression",action=True,href='/regression'),
+                                        dbc.ListGroupItem("Random Forest Regressor",action=True,href='/forest_reg'),
                                         html.Br(),
                                         dbc.ListGroupItemText("Klassifikation:"),
                                         dbc.ListGroupItem('Logistische Regression',action=True,href='/log-regression'),
-                                        dbc.ListGroupItem("Random Forest",action=True,href='/forest'),
+                                        dbc.ListGroupItem("Random Forest Klassifikator",action=True,href='/forest'),
                                     ],
                                 )
                             ),
