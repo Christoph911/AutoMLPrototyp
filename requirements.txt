@@ -28,9 +28,6 @@ Flask==1.1.1
 Flask-Compress==1.4.0
 future==0.18.2
 gast==0.3.3
-google-auth==1.14.1
-google-auth-oauthlib==0.4.1
-google-pasta==0.2.0
 grpcio==1.28.1
 h5py==2.10.0
 idna==2.9
