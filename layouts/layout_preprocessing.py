@@ -31,7 +31,7 @@ card_table_prep = dbc.Card(
             html.Div([
                 dcc.Input(
                     id='add-column-name',
-                    placeholder='Spaltennaamme eingeben',
+                    placeholder='Spaltenname eingeben',
                     value='',
                     style={'paadding': 10}
                 ),
