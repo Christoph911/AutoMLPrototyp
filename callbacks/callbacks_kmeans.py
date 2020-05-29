@@ -10,10 +10,10 @@ from sklearn.cluster import KMeans
 @app.callback(
     [Output('dropdownX-kmeans-opt', 'options'),
      Output('dropdownY-kmeans-opt', 'options')],
-    [Input('load-data', 'n_clicks')],
-    [State('get-data-model', 'children')]
+    [Input('get-data-model', 'children'),
+     Input('zielwert-div', 'children')]
 )
-def update_dropdown(n_clicks, df):
+def update_dropdown(df, dummy):
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
 

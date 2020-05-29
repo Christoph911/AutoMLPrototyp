@@ -3,7 +3,6 @@ from main import app
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
-from dash.exceptions import PreventUpdate
 import plotly.graph_objs as go
 import pandas as pd
 from sklearn.model_selection import train_test_split

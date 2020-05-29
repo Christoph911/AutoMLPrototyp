@@ -1,21 +1,13 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from layouts.masterlayout import header, load_data_btn
+from layouts.masterlayout import header, zielwert_dropdown
 # define control panel for modelLayout
 
 #TODO: Dropdown ins masterlayout?
 controls_nn = dbc.Card(
     [
-        load_data_btn,
-        dbc.FormGroup(
-            [
-                dbc.Label("Zielwert"),
-                dcc.Dropdown(
-                    id="zielwert-opt",
-                ),
-            ]
-        ),
+        zielwert_dropdown,
         dbc.FormGroup(
             [
                 dbc.Label("Optimizer"),

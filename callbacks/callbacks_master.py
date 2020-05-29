@@ -21,10 +21,10 @@ def get_data(new_df,stored_df):
 # get stored data, update dropdown, return selected target
 @app.callback(
     Output('zielwert-opt', 'options'),
-    [Input('load-data', 'n_clicks')],
-    [State('get-data-model', 'children')]
+    [Input('get-data-model', 'children'),
+     Input('zielwert-div','children')]
 )
-def get_target(n_clicks, df):
+def get_target(df,dummy):
     print("Daten an Dropdown Übergeben")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])

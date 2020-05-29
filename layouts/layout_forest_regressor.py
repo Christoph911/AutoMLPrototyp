@@ -1,22 +1,14 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from layouts.masterlayout import header, load_data_btn
+from layouts.masterlayout import header, zielwert_dropdown
 
 # define control panel for modelLayout
 
 # TODO: Dropdown ins masterlayout?
-controls_forest = dbc.Card(
+controls_forest_reg = dbc.Card(
     [
-        load_data_btn,
-        dbc.FormGroup(
-            [
-                dbc.Label("Zielwert:"),
-                dcc.Dropdown(
-                    id="zielwert-opt",
-                ),
-            ]
-        ),
+       zielwert_dropdown,
         dbc.FormGroup(
             [
                 html.P("Anzahl Bäume:"),
@@ -66,7 +58,7 @@ controls_forest = dbc.Card(
 )
 
 # define card for graph in modelLayout
-card_graph_forest = dbc.Card(
+card_graph_forest_reg = dbc.Card(
     [
         dbc.CardHeader(
             dbc.Tabs(
@@ -90,8 +82,8 @@ layout_forest_regressor = dbc.Container(
         html.Hr(),
         dbc.Row(
             [
-                dbc.Col(controls_forest, md=4, align='start'),
-                dbc.Col(card_graph_forest, md=8, align='start')
+                dbc.Col(controls_forest_reg, md=4, align='start'),
+                dbc.Col(card_graph_forest_reg, md=8, align='start')
             ]
         )
     ],
