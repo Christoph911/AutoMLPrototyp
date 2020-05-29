@@ -1,7 +1,7 @@
 import json
 from main import app
-import dash_core_components as dcc
 import dash_html_components as html
+import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
 import pandas as pd
@@ -12,12 +12,26 @@ from sklearn.preprocessing import StandardScaler
 import plotly.figure_factory as ff
 import sklearn.metrics as metrics
 
+# get stored data, update dropdown, return selected target
+@app.callback(
+    Output('zielwert-opt-log', 'options'),
+    [Input('get-data-model', 'children'),
+     Input('zielwert-div','children')]
+)
+def get_target(df,dummy):
+    print("Daten an Dropdown Übergeben")
+    df = json.loads(df)
+    df = pd.DataFrame(df['data'], columns=df['columns'])
+
+    target = [{'label': col, 'value': col} for col in df.columns]
+
+    return target
 
 @app.callback(
     Output("store-figure-log", "data"),
     [Input('start-logistic-regression-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
-     State("zielwert-opt", "value"),
+     State("zielwert-opt-log", "value"),
      State('train-test', 'value'),
      State('metrics', 'value')]
 )

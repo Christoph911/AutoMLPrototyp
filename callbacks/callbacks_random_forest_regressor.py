@@ -10,13 +10,27 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
+# get stored data, update dropdown, return selected target
+@app.callback(
+    Output('zielwert-opt-for-reg', 'options'),
+    [Input('get-data-model', 'children'),
+     Input('zielwert-div','children')]
+)
+def get_target(df,dummy):
+    print("Daten an Dropdown Übergeben")
+    df = json.loads(df)
+    df = pd.DataFrame(df['data'], columns=df['columns'])
+
+    target = [{'label': col, 'value': col} for col in df.columns]
+
+    return target
 
 @app.callback(
     [Output("store-figure-forest-reg", "data"),
      Output('store-figure-forest-reg-feat','data')],
     [Input('start-forest-reg-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
-     State("zielwert-opt", "value"),
+     State("zielwert-opt-for-reg", "value"),
      State('number-trees','value'),
      State('train-test', 'value'),
      State('metrics', 'value')]

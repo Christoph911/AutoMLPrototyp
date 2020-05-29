@@ -12,11 +12,26 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import recall_score, precision_score, f1_score
 from sklearn import metrics
 
+# get stored data, update dropdown, return selected target
+@app.callback(
+    Output('zielwert-opt-for', 'options'),
+    [Input('get-data-model', 'children'),
+     Input('zielwert-div','children')]
+)
+def get_target(df,dummy):
+    print("Daten an Dropdown Übergeben")
+    df = json.loads(df)
+    df = pd.DataFrame(df['data'], columns=df['columns'])
+
+    target = [{'label': col, 'value': col} for col in df.columns]
+
+    return target
+
 @app.callback(
     Output("store-figure-forest", "data"),
     [Input('start-forest-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
-     State("zielwert-opt", "value"),
+     State("zielwert-opt-for", "value"),
      State('number-trees','value'),
      State('train-test', 'value'),
      State('metrics', 'value')]

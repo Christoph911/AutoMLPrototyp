@@ -3,7 +3,7 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 from main import app
 #TODO: Callbacks erst im spezifischen Layout Modul aufrufen? Performance?
-from callbacks import callbacks_upload, callbacks_preprocessing,callbacks_linear_regression,callbacks_kmeans, callbacks_random_forest, callbacks_neural_network, callbacks_logistic_regression,callbacks_random_forest_regressor, callbacks_master
+from callbacks import callbacks_upload, callbacks_preprocessing,callbacks_linear_regression,callbacks_kmeans,callbacks_random_forest, callbacks_neural_network, callbacks_logistic_regression,callbacks_random_forest_regressor, callbacks_master
 
 
 # define navbar for mainLayout
@@ -32,21 +32,6 @@ header = (html.Div(children=[html.H1('Automated Machine Learning Web-App'),html.
         html.Div(nav),
         html.Hr())
 
-load_data_btn = dbc.FormGroup(
-    [
-        dbc.Button("Daten an das Modell übergeben", color="primary", id="load-data")
-    ]
-)
-
-zielwert_dropdown = dbc.FormGroup(
-    [
-        dbc.Label("Zielwert"),
-        dcc.Dropdown(
-            id="zielwert-opt",
-        ),
-        html.Div(id='zielwert-div'),
-    ]
-)
 
 start_prediction_btn = dbc.FormGroup(
     [

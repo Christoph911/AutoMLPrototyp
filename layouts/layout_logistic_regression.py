@@ -1,13 +1,23 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
-from layouts.masterlayout import header, zielwert_dropdown
+from layouts.masterlayout import header
 # define control panel for modelLayout
 
 #TODO: Dropdown ins masterlayout?
 controls_logistic_regression = dbc.Card(
         [
-            zielwert_dropdown,
+            html.H5("Auswahlmenü", style={'text-align': 'center'}),
+            html.Hr(),
+            dbc.FormGroup(
+                [
+                    dbc.Label("Zielwert"),
+                    dcc.Dropdown(
+                        id="zielwert-opt-log",
+                    ),
+                    html.Div(id='zielwert-div'),
+                ]
+            ),
             dbc.FormGroup(
                 [
                     dbc.Label('Train/Test-Size'),

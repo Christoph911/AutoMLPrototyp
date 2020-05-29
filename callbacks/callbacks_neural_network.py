@@ -17,13 +17,27 @@ import keras.backend.tensorflow_backend as tb
 
 tb._SYMBOLIC_SCOPE.value = True
 
+# get stored data, update dropdown, return selected target
+@app.callback(
+    Output('zielwert-opt-nn', 'options'),
+    [Input('get-data-model', 'children'),
+     Input('zielwert-div','children')]
+)
+def get_target(df,dummy):
+    print("Daten an Dropdown Übergeben")
+    df = json.loads(df)
+    df = pd.DataFrame(df['data'], columns=df['columns'])
+
+    target = [{'label': col, 'value': col} for col in df.columns]
+
+    return target
 
 @app.callback(
     [Output("store-figure-nn", "data"),
      Output('store-figure-nn-reg', 'data')],
     [Input('start-nn-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
-     State("zielwert-opt", "value"),
+     State("zielwert-opt-nn", "value"),
      State('optimizer-nn', 'value'),
      State('number-epochs', 'value'),
      State('train-test-nn', 'value'), ]

@@ -6,6 +6,8 @@ from layouts.masterlayout import header
 # define control panel for clustering operations
 controls_clustering = dbc.Card(
     [
+        html.H5("Auswahlmenü", style={'text-align':'center'}),
+        html.Hr(),
         dbc.FormGroup(
             [
                 dbc.Label('X-Achse'),

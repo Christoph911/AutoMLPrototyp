@@ -19,6 +19,7 @@ layout_model = dbc.Container(
                                         dbc.ListGroupItemText("Regression:"),
                                         dbc.ListGroupItem("Lineare Regression",action=True,href='/regression'),
                                         dbc.ListGroupItem("Random Forest Regressor",action=True,href='/forest_reg'),
+                                        dbc.ListGroupItem('Künstliches Neuronales Netz',action=True,href='/nn'),
                                         html.Br(),
                                         dbc.ListGroupItemText("Klassifikation:"),
                                         dbc.ListGroupItem('Logistische Regression',action=True,href='/log-regression'),
@@ -35,15 +36,6 @@ layout_model = dbc.Container(
                                     ],
                                 )
                             ),
-                            dbc.Col(
-                                dbc.ListGroup(
-                                    [
-                                        dbc.ListGroupItemHeading('Deep Learning', style={'text-align':'center'}),
-                                        dbc.ListGroupItemText("Regression:"),
-                                        dbc.ListGroupItem('Künstliches Neuronales Netz',action=True,href='/nn')
-                                    ]
-                                )
-                            )
                         ]
                     ),
                 ]
