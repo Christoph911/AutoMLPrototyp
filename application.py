@@ -68,4 +68,4 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    application.run(debug=False, port=8080)
+    application.run_server(debug=False)
