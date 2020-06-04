@@ -9,13 +9,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
+
 # get stored data, update dropdown, return selected target
 @app.callback(
     Output('zielwert-opt-reg', 'options'),
     [Input('get-data-model', 'children'),
-     Input('zielwert-div','children')]
+     Input('zielwert-div', 'children')]
 )
-def get_target(df,dummy):
+def get_target(df, dummy):
     print("Daten an Dropdown Übergeben")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
@@ -25,12 +26,10 @@ def get_target(df,dummy):
     return target
 
 
-
-
-# linear regression, return two figures, store figures in application.py
+# linear regression, return two figures, store figures in index.py
 @app.callback(
     [Output("store-figure-reg", "data"),
-    Output('store-figure-feat','data')],
+     Output('store-figure-feat', 'data')],
     [Input('start-regression-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
      State("zielwert-opt-reg", "value"),
@@ -66,20 +65,19 @@ def make_regression(n_clicks, df, y, train_test_size, choose_metrics):
         mse = mean_squared_error(Y_test, Y_pred)
         mse = "Mean squared error(MSE): " + str(mse.round(3))
     else:
-        mse =  None
+        mse = None
     if 'rmse' in choose_metrics:
         rmse = mean_squared_error(Y_test, Y_pred, squared=False)
         rmse = 'Root mean squared error(RMSE): ' + str(rmse.round(3))
     else:
         rmse = None
 
-
     # get feature importance
     importance = model.coef_
     # plot feature importance as bar chart
     fig_feature = go.Figure([
         go.Bar(x=X.columns, y=importance, text=importance.round(2), textposition='outside')
-        ]
+    ]
     )
     fig_feature.update_layout(
         xaxis_title='Feature names',
@@ -106,6 +104,7 @@ def make_regression(n_clicks, df, y, train_test_size, choose_metrics):
     # return figures
     return dict(figure=fig), dict(figure=fig_feature)
 
+
 # manage tab content
 # get figures and metrics, display output
 @app.callback(
@@ -125,4 +124,3 @@ def create_tab_content(active_tab, data, data_feat):
             figure = dcc.Graph(figure=data_feat['figure'])
             return figure
     return data
-

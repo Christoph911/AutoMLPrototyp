@@ -7,6 +7,7 @@ import pandas as pd
 import plotly.graph_objs as go
 from sklearn.cluster import KMeans
 
+
 @app.callback(
     [Output('dropdownX-kmeans-opt', 'options'),
      Output('dropdownY-kmeans-opt', 'options')],
@@ -44,7 +45,7 @@ def make_clustering(n_clicks, df, x, y, n_clusters):
 
     centers = km.cluster_centers_
 
-    #build figure
+    # build figure
     fig = go.Figure(
         data=[
             go.Scatter(
@@ -69,12 +70,13 @@ def make_clustering(n_clicks, df, x, y, n_clusters):
     # )
 
     fig.update_layout(
-        xaxis_title = x,
-        yaxis_title = y,
-        template = 'plotly_white'
+        xaxis_title=x,
+        yaxis_title=y,
+        template='plotly_white'
     )
 
     return dict(figure=fig)
+
 
 # manage tab content
 @app.callback(

@@ -5,7 +5,7 @@ from layouts.masterlayout import header
 
 # create layout for startpage
 layout_start = dbc.Container(
-    [   #TODO: place css in own file and make img size responsive
+    [  # TODO: place css in own file and make img size responsive
         html.Div(header),
         dbc.Card(
             dbc.CardBody(
@@ -27,7 +27,7 @@ layout_start = dbc.Container(
 
                         ]
                     ),
-                    dbc.Button('Beginnen',color='success',size='lg', href='/upload',style={'float': 'right'})
+                    dbc.Button('Beginnen', color='success', size='lg', href='/upload', style={'float': 'right'})
                 ]
             )
         )
@@ -35,5 +35,3 @@ layout_start = dbc.Container(
     fluid=True
 
 )
-
-

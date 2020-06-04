@@ -12,10 +12,10 @@ import numpy as np
     [Input('stored-data-upload', 'children')]
 )
 def display_table_prep(df):
-    if df == None:
+    if df is None:
         raise PreventUpdate
 
-    elif df != None:
+    elif df is not None:
         df = json.loads(df)
         df = pd.DataFrame(df['data'], columns=df['columns'])
 
@@ -27,10 +27,11 @@ def display_table_prep(df):
                         'height': '60px',
                         'textAlign': 'left'},
 
-                    editable = True,
-                    row_deletable = True,
+            editable=True,
+            row_deletable=True,
         )
         return table
+
 
 @app.callback(
     Output('table-prep', 'data'),
@@ -38,12 +39,13 @@ def display_table_prep(df):
     [State('table-prep', 'data'),
      State('table-prep', 'columns')]
 )
-def update_table_prep_rows(n_clicks,rows,columns):
+def update_table_prep_rows(n_clicks, rows, columns):
     if n_clicks is None:
         raise PreventUpdate
     elif n_clicks is not None:
         rows.append({c['id']: '' for c in columns})
         return rows
+
 
 @app.callback(
     Output('table-prep', 'columns'),

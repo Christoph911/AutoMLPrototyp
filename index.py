@@ -1,7 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-from main import app, application
+from main import app, server
 from layouts.layout_start import layout_start
 from callbacks import *
 from layouts.layout_upload import layout_upload
@@ -68,4 +68,4 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    application.run_server(debug=False)
+    app.run_server(debug=False)

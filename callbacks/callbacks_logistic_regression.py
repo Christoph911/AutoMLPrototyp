@@ -12,13 +12,14 @@ from sklearn.preprocessing import StandardScaler
 import plotly.figure_factory as ff
 import sklearn.metrics as metrics
 
+
 # get stored data, update dropdown, return selected target
 @app.callback(
     Output('zielwert-opt-log', 'options'),
     [Input('get-data-model', 'children'),
-     Input('zielwert-div','children')]
+     Input('zielwert-div', 'children')]
 )
-def get_target(df,dummy):
+def get_target(df, dummy):
     print("Daten an Dropdown Übergeben")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
@@ -26,6 +27,7 @@ def get_target(df,dummy):
     target = [{'label': col, 'value': col} for col in df.columns]
 
     return target
+
 
 @app.callback(
     Output("store-figure-log", "data"),
@@ -35,7 +37,7 @@ def get_target(df,dummy):
      State('train-test', 'value'),
      State('metrics', 'value')]
 )
-def make_log_regression(n_clicks, df, y, train_test_size,choose_metrics):
+def make_log_regression(n_clicks, df, y, train_test_size, choose_metrics):
     print("started logistic regression")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
@@ -53,7 +55,6 @@ def make_log_regression(n_clicks, df, y, train_test_size,choose_metrics):
     model.fit(X_train, Y_train)
 
     Y_pred = model.predict(X_test)
-
 
     # create Metrics
     global recall, precision, f1
@@ -104,7 +105,8 @@ def make_log_regression(n_clicks, df, y, train_test_size,choose_metrics):
 
     return dict(figure=fig)
 
-#manage tab content
+
+# manage tab content
 @app.callback(
     Output("tab-content-log", "children"),
     [Input("card-tabs-logistic-reg", "active_tab"),
@@ -116,5 +118,5 @@ def create_tab_content(active_tab, data):
             figure = dcc.Graph(figure=data["figure"])
             return figure
         elif active_tab == "tab-2-log-reg":
-            return recall,html.Br(),precision,html.Br(), f1, html.Br()
+            return recall, html.Br(), precision, html.Br(), f1, html.Br()
     return data

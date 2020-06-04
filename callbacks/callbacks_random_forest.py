@@ -12,13 +12,14 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import recall_score, precision_score, f1_score
 from sklearn import metrics
 
+
 # get stored data, update dropdown, return selected target
 @app.callback(
     Output('zielwert-opt-for', 'options'),
     [Input('get-data-model', 'children'),
-     Input('zielwert-div','children')]
+     Input('zielwert-div', 'children')]
 )
-def get_target(df,dummy):
+def get_target(df, dummy):
     print("Daten an Dropdown Übergeben")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
@@ -27,16 +28,17 @@ def get_target(df,dummy):
 
     return target
 
+
 @app.callback(
     Output("store-figure-forest", "data"),
     [Input('start-forest-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
      State("zielwert-opt-for", "value"),
-     State('number-trees','value'),
+     State('number-trees', 'value'),
      State('train-test', 'value'),
      State('metrics', 'value')]
 )
-def make_random_forest(n_clicks, df, y,number_trees, train_test_size, choose_metrics):
+def make_random_forest(n_clicks, df, y, number_trees, train_test_size, choose_metrics):
     print("started random Forest")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
@@ -48,7 +50,7 @@ def make_random_forest(n_clicks, df, y,number_trees, train_test_size, choose_met
     le = LabelEncoder()
     Y = le.fit_transform(target)
 
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y,train_size=train_test_size)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=train_test_size)
 
     model = RandomForestClassifier(n_estimators=number_trees)
 
@@ -102,6 +104,7 @@ def make_random_forest(n_clicks, df, y,number_trees, train_test_size, choose_met
     fig['data'][0]['showscale'] = True
 
     return dict(figure=fig)
+
 
 # manage tab content
 @app.callback(

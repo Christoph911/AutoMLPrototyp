@@ -3,13 +3,12 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 from layouts.masterlayout import header
 
-
 # define control panel for modelLayout
 
 # TODO: Dropdown ins masterlayout?
 controls_forest_reg = dbc.Card(
     [
-        html.H5("Auswahlmenü", style={'text-align':'center'}),
+        html.H5("Auswahlmenü", style={'text-align': 'center'}),
         html.Hr(),
         dbc.FormGroup(
             [
@@ -61,7 +60,7 @@ controls_forest_reg = dbc.Card(
         html.Hr(),
         dbc.FormGroup(
             [
-                dbc.Button("Let the magic happen!",color="success", id="start-forest-reg-btn"),
+                dbc.Button("Let the magic happen!", color="success", id="start-forest-reg-btn"),
             ]
         ),
     ],

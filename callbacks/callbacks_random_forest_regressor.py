@@ -10,13 +10,14 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
+
 # get stored data, update dropdown, return selected target
 @app.callback(
     Output('zielwert-opt-for-reg', 'options'),
     [Input('get-data-model', 'children'),
-     Input('zielwert-div','children')]
+     Input('zielwert-div', 'children')]
 )
-def get_target(df,dummy):
+def get_target(df, dummy):
     print("Daten an Dropdown Übergeben")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
@@ -25,13 +26,14 @@ def get_target(df,dummy):
 
     return target
 
+
 @app.callback(
     [Output("store-figure-forest-reg", "data"),
-     Output('store-figure-forest-reg-feat','data')],
+     Output('store-figure-forest-reg-feat', 'data')],
     [Input('start-forest-reg-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
      State("zielwert-opt-for-reg", "value"),
-     State('number-trees','value'),
+     State('number-trees', 'value'),
      State('train-test', 'value'),
      State('metrics', 'value')]
 )
@@ -106,14 +108,15 @@ def make_random_forest(n_clicks, df, y, number_trees, train_test_size, choose_me
     # return figures
     return dict(figure=fig), dict(figure=fig_feature)
 
+
 # manage tab content
 @app.callback(
     Output("tab-content-forest-reg", "children"),
     [Input("card-tabs-forest-reg", "active_tab"),
      Input("store-figure-forest-reg", "data"),
-     Input('store-figure-forest-reg-feat','data')],
+     Input('store-figure-forest-reg-feat', 'data')],
 )
-def create_tab_content(active_tab, data,data_feat):
+def create_tab_content(active_tab, data, data_feat):
     if active_tab and data is not None:
         if active_tab == "tab-1-forest-reg":
             figure = dcc.Graph(figure=data["figure"])

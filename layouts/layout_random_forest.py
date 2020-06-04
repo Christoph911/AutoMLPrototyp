@@ -8,7 +8,7 @@ from layouts.masterlayout import header
 # TODO: Dropdown ins masterlayout?
 controls_forest = dbc.Card(
     [
-        html.H5("Auswahlmenü", style={'text-align':'center'}),
+        html.H5("Auswahlmenü", style={'text-align': 'center'}),
         html.Hr(),
         dbc.FormGroup(
             [
@@ -60,7 +60,7 @@ controls_forest = dbc.Card(
         html.Hr(),
         dbc.FormGroup(
             [
-                dbc.Button("Let the magic happen!",color="success", id="start-forest-btn"),
+                dbc.Button("Let the magic happen!", color="success", id="start-forest-btn"),
             ]
         ),
     ],

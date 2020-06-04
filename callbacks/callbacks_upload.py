@@ -9,6 +9,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import pandas as pd
 
+
 # parse uploaded data and return dataframe
 def parse_data(contents, filename):
     content_type, content_string = contents.split(',')
@@ -43,6 +44,7 @@ def store_data(contents, filename):
         print("Daten in hidden Div gespeichert")
         return df
 
+
 # take stored data, display dash table and some basic statistics
 @app.callback(
     Output('table-head', 'children'),
@@ -51,9 +53,9 @@ def store_data(contents, filename):
      ]
 )
 def display_table(df, active_tab):
-    if df == None:
+    if df is None:
         raise PreventUpdate
-    elif df != None:
+    elif df is not None:
         df = json.loads(df)
         df = pd.DataFrame(df['data'], columns=df['columns'])
         dff = df.head(10)
