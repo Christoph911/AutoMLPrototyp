@@ -9,11 +9,11 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
+#from sklearn.model_selection import train_test_split
+#from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
-from tensorflow import keras
-import keras.backend.tensorflow_backend as tb
+#from tensorflow import keras
+#import keras.backend.tensorflow_backend as tb
 
 tb._SYMBOLIC_SCOPE.value = True
 
