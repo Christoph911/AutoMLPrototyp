@@ -30,19 +30,19 @@ def parse_data(contents, filename):
 
 
 # convert uploaded data to json and store it in hidden div
+
 @app.callback(
     Output('stored-data-upload', 'children'),
     [Input('upload', 'contents'),
      Input('upload', 'filename')]
 )
-def store_data(contents, filename):
+def upload_data(contents, filename):
     if contents:
         contents = contents[0]
         filename = filename[0]
-        df = parse_data(contents, filename)
-        df = df.to_json(orient='split')
-        print("Daten in hidden Div gespeichert")
-        return df
+        data = parse_data(contents, filename)
+        data = data.to_json(orient='split')
+        return data
 
 
 # take stored data, display dash table and some basic statistics

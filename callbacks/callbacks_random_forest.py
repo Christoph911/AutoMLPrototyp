@@ -20,7 +20,6 @@ from sklearn import metrics
      Input('zielwert-div', 'children')]
 )
 def get_target(df, dummy):
-    print("Daten an Dropdown Übergeben")
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
 

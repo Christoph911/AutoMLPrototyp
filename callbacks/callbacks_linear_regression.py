@@ -37,7 +37,6 @@ def get_target(df, dummy):
      State('metrics', 'value')]
 )
 def make_regression(n_clicks, df, y, train_test_size, choose_metrics):
-    print("started regression")
     # load data
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])

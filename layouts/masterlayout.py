@@ -10,9 +10,9 @@ from callbacks import callbacks_upload, callbacks_preprocessing, callbacks_linea
 # define navbar for mainLayout
 nav = dbc.Nav(
     children=[
-        dbc.NavItem(dbc.NavLink("1. Daten hochladen", href='/upload')),
-        dbc.NavItem(dbc.NavLink("2. Preprocessing", href='/prep')),
-        dbc.NavItem(dbc.NavLink("3. Modellauswahl", href='/model'))
+        dbc.NavItem(dbc.NavLink("1. Datensatz hochladen", href='/upload')),
+        dbc.NavItem(dbc.NavLink("2. Datensatz bearbeiten", href='/prep')),
+        dbc.NavItem(dbc.NavLink("3. Auswahl Machine Learning Model", href='/model'))
     ],
     pills=True,
 )

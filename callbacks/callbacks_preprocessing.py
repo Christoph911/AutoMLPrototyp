@@ -69,14 +69,9 @@ def update_table_prep_columns(n_clicks, value, existing_columns):
     [State('table-prep', 'data'),
      State('table-prep', 'columns')]
 )
-def save_table_prep_changes(n_clicks, rows, columns):
-    if n_clicks is None:
-        raise PreventUpdate
-    elif n_clicks is not None:
-        # TODO: Konvertierung direkt in JSON möglich?
-        df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
-        df = df.replace('', np.nan)
-        df = df.dropna()
-        df = df.to_json(orient='split')
-        print("Geänderte Table in Div gespeichert und Null Values entfernt")
-        return df
+def save_data_prep(n_clicks, rows, columns):
+    df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
+    df = df.replace('', np.nan).dropna()
+    df = df.to_json(orient='split')
+    print("Geänderte Table in Div gespeichert und Null Values entfernt")
+    return df

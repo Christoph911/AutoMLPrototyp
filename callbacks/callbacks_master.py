@@ -13,9 +13,8 @@ import pandas as pd
     [Input('stored-data-prep', 'children'),
      Input('stored-data-upload', 'children')]
 )
-def get_data(new_df, stored_df):
-    print("getData")
-    if new_df is not None:
-        return new_df
+def get_data(prepared_df, uploaded_df):
+    if prepared_df is not None:
+        return prepared_df
     else:
-        return stored_df
+        return uploaded_df
