@@ -38,6 +38,6 @@ header = (html.Div(children=[html.H1('Automated Machine Learning Web-App'), html
 
 start_prediction_btn = dbc.FormGroup(
     [
-        dbc.Button("Let the magic happen!", color="success"),
+        dbc.Button("Starten!", color="success"),
     ]
 ),

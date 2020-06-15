@@ -12,18 +12,21 @@ layout_start = dbc.Container(
                 [
                     html.H5("Herzlich Willkommen!", className="card-title"),
                     html.P(
-                        "Willkommen bei der AutoML Webapp!"),
+                        "Willkommen bei der Automated Machine Learning Web-App!"),
                     html.P(
-                        "Bitte gehe nach folgenden Schritten vor:"),
+                        "Zur Analyse eines Datensatzes gehen Sie bitte nach folgenden Schritten vor:"),
                     html.P(
                         [
-                            'Schritt 1: Klicke auf den Button "Beginnen" und folge den Anweisungen des Programmes',
+                            '1: Klicken Sie auf den Button "Beginnen" oder "1. Datensatz hochladen" in der Kopfleiste, um mit dem Programm zu starten.',
                             html.Br(),
-                            'Schritt 2: ', html.Br(),
-                            'Schritt 3: ', html.Br(),
-                            'Schritt 4: ', html.Br(),
-                            'Schritt 5: ', html.Br(),
-                            ''
+                            '2: Klicken Sie in der folgenden Ansicht auf "Datensatz hochladen", um einen Datensatz von der Festplatte in das Programm einzulesen.', html.Br(),
+                            '3: Klicken Sie in der Kopfleiste auf "2. Datensatz bearbeiten, sofern Sie den Datensatz verändern möchten.', html.Br(),
+                            '4: Klicken Sie in der Kopfleiste auf "3. Modellauswahl", um das Modell zur Berechnung auszuwählen und wählen Sie das gewünschte Modell.', html.Br(),
+                            '5: Wählen Sie innerhalb des Modelles den Zielwert des Datensatzes sowie die angezeigten Einstellungsparameter aus.', html.Br(),
+                            '6: Klicken Sie auf den Button "Starten", um das Modelltraining zu starten.', html.Br(),
+                            '7: Folgend werden auf der rechten Karte die Modellergebnisse angezeigt.', html.Br(),
+                            '8: Sie haben die Möglichkeit, über die Tabs der Karte weitere Modellergebnisse anzeigen zu lassen.', html.Br(),
+                            '9: Sie können zu einem beliebigen Schritt im Programm zurückkehren oder das Programm schließen.', html.Br(),
 
                         ]
                     ),
