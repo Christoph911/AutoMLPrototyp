@@ -8,7 +8,31 @@ controls_prep = dbc.Card(
     [
         dbc.FormGroup(
             [
-                dbc.Button('Änderungen speichern', id='save-table-changes-btn')
+                dcc.Input(
+                    id='add-column-name',
+                    placeholder='Spaltenname eingeben',
+                    value='',
+                    style={'paadding': 10}
+                ),
+                dcc.Input(
+                    id='add-column-value',
+                    placeholder='Spaltenwert eingeben',
+                    value='',
+                    style={'paadding': 10}
+                ),html.Br(),
+                html.Button('Spalte hinzufügen', id='add-column-btn', style={'margin': 10}),html.Br(),
+                html.Hr(),
+                dcc.Input(
+                    id='add-row-value',
+                    placeholder='Reihenwert eingeben',
+                    value='',
+                    style={'paadding': 10}
+                ),html.Br(),
+                html.Button('Reihe hinzufügen', id='add-rows-btn'),html.Br(),
+                html.Hr(),
+                html.Button('Entferne Null-Values',id='remove-null-btn'),html.Br(),
+                html.Hr(),
+                dbc.Button('Änderungen speichern', id='save-table-changes-btn'),
             ]
         )
     ]
@@ -29,15 +53,9 @@ card_table_prep = dbc.Card(
         ),
         dbc.CardBody(
             html.Div([
-                dcc.Input(
-                    id='add-column-name',
-                    placeholder='Spaltenname eingeben',
-                    value='',
-                    style={'paadding': 10}
-                ),
-                html.Button('Spalte hinzufügen', id='add-column-btn', style={'margin': 10}),
+
+
                 html.Div(id="table-prep"),
-                html.Button('Reihe hinzufügen', id='add-rows-btn')
 
             ]),
 

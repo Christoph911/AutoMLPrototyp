@@ -29,38 +29,77 @@ def display_table_prep(df):
 
             editable=True,
             row_deletable=True,
+            page_action='none',
+            style_table={'height': '600px', 'overflowY': 'auto'}
         )
         return table
 
+#
+#
+# @app.callback(
+#     Output('table-prep', 'columns'),
+#     [Input('add-column-btn', 'n_clicks')],
+#     [State('add-column-name', 'value'),
+#      State('table-prep', 'columns')])
+# def update_table_prep_columns(n_clicks, value, existing_columns):
+#     if n_clicks is None:
+#         raise PreventUpdate
+#     elif n_clicks is not None:
+#         existing_columns.append({
+#             'id': value, 'name': value,
+#             'renamable': True, 'deletable': True
+#         })
+#     return existing_columns
+
+
+# @app.callback(
+#     Output('table-prep', 'data')
+#     [Input('remove-null-btn', 'n_clicks')],
+#     [State('table-prep', 'data'),
+#      State('table-prep', 'columns')]
+# )
+# def drop_null_values(n_clicks, rows, columns):
+#     if rows == '':
+#         rows = ({c['id']: 'NULL' for c in columns})
+#
+#
+#     return rows
 
 @app.callback(
-    Output('table-prep', 'data'),
+    [Output('table-prep', 'data'),
+     Output('table-prep', 'columns')],
+    [Input('add-column-btn', 'n_clicks')],
+    [State('table-prep', 'data'),
+     State('table-prep', 'columns'),
+     State('add-column-name', 'value'),
+     State('add-column-value', 'value')
+     ]
+)
+def update_columns(n_clicks, rows, columns,column_name, column_value):
+    df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
+    table_data = df.from_dict(rows)
+    try:
+        table_data['output-row'] = table_data['Installed Capacity (MW)'] * table_data['Generation (GWh)']
+    except:
+        table_data[column_name] = column_value
+
+    new_cols = [{"name": i, "id": i} for i in table_data.columns]
+    return table_data.to_dict('records'), new_cols
+
+
+@app.callback(
+    Output('table-prep-row', 'data'),
     [Input('add-rows-btn', 'n_clicks')],
     [State('table-prep', 'data'),
-     State('table-prep', 'columns')]
+     State('table-prep', 'columns'),
+     State('add-row-value', 'value'),]
 )
-def update_table_prep_rows(n_clicks, rows, columns):
+def update_table_prep_rows(n_clicks, rows,columns,value):
     if n_clicks is None:
         raise PreventUpdate
     elif n_clicks is not None:
-        rows.append({c['id']: '' for c in columns})
+        rows.append({c['id']: value for c in columns})
         return rows
-
-
-@app.callback(
-    Output('table-prep', 'columns'),
-    [Input('add-column-btn', 'n_clicks')],
-    [State('add-column-name', 'value'),
-     State('table-prep', 'columns')])
-def update_table_prep_columns(n_clicks, value, existing_columns):
-    if n_clicks is None:
-        raise PreventUpdate
-    elif n_clicks is not None:
-        existing_columns.append({
-            'id': value, 'name': value,
-            'renamable': True, 'deletable': True
-        })
-    return existing_columns
 
 
 @app.callback(
