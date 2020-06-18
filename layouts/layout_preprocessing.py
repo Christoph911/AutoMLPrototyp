@@ -20,7 +20,7 @@ controls_prep = dbc.Card(
                     value='',
                     style={'paadding': 10}
                 ),html.Br(),
-                html.Button('Spalte hinzufügen', id='add-column-btn', style={'margin': 10}),html.Br(),
+                html.Button('Spalte hinzufügen', id='add_column_btn', style={'margin': 10}),html.Br(),
                 html.Hr(),
                 dcc.Input(
                     id='add-row-value',
@@ -28,7 +28,20 @@ controls_prep = dbc.Card(
                     value='',
                     style={'paadding': 10}
                 ),html.Br(),
-                html.Button('Reihe hinzufügen', id='add-rows-btn'),html.Br(),
+                html.Button('Reihe hinzufügen', id='add_rows_btn'),html.Br(),
+                html.Hr(),
+                dbc.Input(id='input-column-1', type='number', value=0),
+                dcc.Dropdown(
+                    id='operator',
+                    options=[
+                        {'label': '+', 'value': '+'},
+                        {'label': '-', 'value': '-'},
+                        {'label': '*', 'value': '*'},
+                        {'label': '/', 'value': '/'}
+                    ]
+                ),
+                dbc.Input(id='input-column-2', type='number', value=0),
+                html.Button('Spalte hinzufügen mit Operation', id='add_column_math_btn'),html.Br(),
                 html.Hr(),
                 html.Button('Entferne Null-Values',id='remove-null-btn'),html.Br(),
                 html.Hr(),

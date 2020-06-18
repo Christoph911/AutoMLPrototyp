@@ -1,5 +1,6 @@
 import json
 from main import app
+import dash
 import dash_table
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
@@ -34,23 +35,6 @@ def display_table_prep(df):
         )
         return table
 
-#
-#
-# @app.callback(
-#     Output('table-prep', 'columns'),
-#     [Input('add-column-btn', 'n_clicks')],
-#     [State('add-column-name', 'value'),
-#      State('table-prep', 'columns')])
-# def update_table_prep_columns(n_clicks, value, existing_columns):
-#     if n_clicks is None:
-#         raise PreventUpdate
-#     elif n_clicks is not None:
-#         existing_columns.append({
-#             'id': value, 'name': value,
-#             'renamable': True, 'deletable': True
-#         })
-#     return existing_columns
-
 
 # @app.callback(
 #     Output('table-prep', 'data')
@@ -68,38 +52,46 @@ def display_table_prep(df):
 @app.callback(
     [Output('table-prep', 'data'),
      Output('table-prep', 'columns')],
-    [Input('add-column-btn', 'n_clicks')],
+    [Input('add_column_btn', 'n_clicks'),
+     Input('add_rows_btn', 'n_clicks'),
+     Input('add_column_math_btn','n_clicks')],
     [State('table-prep', 'data'),
      State('table-prep', 'columns'),
      State('add-column-name', 'value'),
-     State('add-column-value', 'value')
+     State('add-column-value', 'value'),
+     State('add-row-value', 'value'),
+     State('input-column-1', 'value'),
+     State('operator','value'),
+     State('input-column-2', 'value')
      ]
 )
-def update_columns(n_clicks, rows, columns,column_name, column_value):
-    df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
-    table_data = df.from_dict(rows)
-    try:
-        table_data['output-row'] = table_data['Installed Capacity (MW)'] * table_data['Generation (GWh)']
-    except:
-        table_data[column_name] = column_value
+def update_table_prep(add_column_btn, add_rows_btn,add_column_math_btn, rows, columns, column_name, column_value, row_value, col_1, operator, col_2):
+    ctx = dash.callback_context
 
-    new_cols = [{"name": i, "id": i} for i in table_data.columns]
-    return table_data.to_dict('records'), new_cols
+    if not ctx.triggered:
+        button_id = 'No clicks yet'
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
+        if button_id == 'add_column_btn':
+            df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
+            table_data = df.from_dict(rows)
+            table_data[column_name] = column_value
+            new_cols = [{"name": i, "id": i} for i in table_data.columns]
+            return table_data.to_dict('records'), new_cols
+        elif button_id == 'add_rows_btn':
+            rows.append({c['id']: row_value for c in columns})
+            return rows, columns
+        elif button_id == 'add_column_math_btn':
+            df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
+            table_data = df.from_dict(rows)
+            #table_data[column_name] = table_data.iloc[:, col_1] + eval(operator) + table_data.iloc[:, col_2]
+            new_cols = [{"name": i, "id": i} for i in table_data.columns]
+            return table_data.to_dict('records'), new_cols
 
-@app.callback(
-    Output('table-prep-row', 'data'),
-    [Input('add-rows-btn', 'n_clicks')],
-    [State('table-prep', 'data'),
-     State('table-prep', 'columns'),
-     State('add-row-value', 'value'),]
-)
-def update_table_prep_rows(n_clicks, rows,columns,value):
-    if n_clicks is None:
-        raise PreventUpdate
-    elif n_clicks is not None:
-        rows.append({c['id']: value for c in columns})
-        return rows
+        # try:
+        #     table_data['output-row'] = table_data.iloc[:,number_colum_1] operator table_data.iloc[:,number_column_2]
+        # except:
 
 
 @app.callback(
