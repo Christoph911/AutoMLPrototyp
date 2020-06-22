@@ -54,7 +54,9 @@ def display_table_prep(df):
      Output('table-prep', 'columns')],
     [Input('add_column_btn', 'n_clicks'),
      Input('add_rows_btn', 'n_clicks'),
-     Input('add_column_math_btn','n_clicks')],
+     Input('add_column_math_btn','n_clicks'),
+     Input('drop_null_btn', 'n_clicks'),
+     Input('replace_null_btn', 'n_clicks')],
     [State('table-prep', 'data'),
      State('table-prep', 'columns'),
      State('add-column-name', 'value'),
@@ -65,7 +67,7 @@ def display_table_prep(df):
      State('input-column-2', 'value')
      ]
 )
-def update_table_prep(add_column_btn, add_rows_btn,add_column_math_btn, rows, columns, column_name, column_value, row_value, col_1, operator, col_2):
+def update_table_prep(add_column_btn, add_rows_btn,add_column_math_btn, drop_null_btn, replace_null_btn, rows, columns, column_name, column_value, row_value, col_1, operator, col_2):
     ctx = dash.callback_context
 
     if not ctx.triggered:
@@ -86,6 +88,22 @@ def update_table_prep(add_column_btn, add_rows_btn,add_column_math_btn, rows, co
             df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
             table_data = df.from_dict(rows)
             #table_data[column_name] = table_data.iloc[:, col_1] + eval(operator) + table_data.iloc[:, col_2]
+            new_cols = [{"name": i, "id": i} for i in table_data.columns]
+            return table_data.to_dict('records'), new_cols
+        elif button_id == 'drop_null_btn':
+            df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
+            table_data = df.from_dict(rows)
+            replace_values = {'': np.nan, 'Null': np.nan, 'null': np.nan, 'NaN': np.nan}
+            table_data = table_data.replace(replace_values).dropna(axis=0)
+            new_cols = [{"name": i, "id": i} for i in table_data.columns]
+            return table_data.to_dict('records'), new_cols
+        elif button_id == 'replace_null_btn':
+            df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
+            table_data = df.from_dict(rows)
+            mean = table_data.mean()
+            replace_values = {'': np.nan, 'Null': np.nan, 'null': np.nan, 'NaN': np.nan}
+            table_data = table_data.replace(replace_values)
+            table_data = table_data.fillna(round(table_data.mean()))
             new_cols = [{"name": i, "id": i} for i in table_data.columns]
             return table_data.to_dict('records'), new_cols
 
