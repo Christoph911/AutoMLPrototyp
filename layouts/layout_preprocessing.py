@@ -8,31 +8,33 @@ controls_prep = dbc.Card(
     [
         dbc.FormGroup(
             [
-                html.H6('Datensatz bearbeiten',style={'text-align': 'center'}),
+                html.H5('Datensatz bearbeiten', style={'text-align': 'center'}),
+                html.Hr(),
+                html.H6('Spaltenoperationen', style={'text-align': 'center'}),
                 dcc.Input(
                     id='add-column-name',
                     placeholder='Spaltenname eingeben',
                     value='',
-                    style={'paadding': 10}
                 ),
                 dcc.Input(
                     id='add-column-value',
                     placeholder='Spaltenwert eingeben',
                     value='',
-                    style={'paadding': 10}
-                ),html.Br(),
-                html.Button('Spalte hinzufügen', id='add_column_btn', style={'margin': 10}),html.Br(),
-                html.Hr(),
-                html.H6('Reihen hinzufügen',style={'text-align': 'center'}),
+                ), html.Br(),
+                html.Button('Spalte hinzufügen', id='add_column_btn', style={'margin': 10}), html.Br(),
+            ]
+        ),
+        dbc.FormGroup(
+            [
                 dcc.Input(
-                    id='add-row-value',
-                    placeholder='Reihenwert eingeben',
+                    id='add-column-math-name',
+                    placeholder='Spaltenname eingeben',
                     value='',
-                    style={'paadding': 10}
-                ),html.Br(),
-                html.Button('Reihe hinzufügen', id='add_rows_btn'),html.Br(),
-                html.Hr(),
-                dbc.Input(id='input-column-1', type='number', value=0),
+                ),
+                dcc.Dropdown(
+                    id='input-column-1'
+                ),
+                html.Div(id='input-column-1-div'),
                 dcc.Dropdown(
                     id='operator',
                     options=[
@@ -42,15 +44,52 @@ controls_prep = dbc.Card(
                         {'label': '/', 'value': '/'}
                     ]
                 ),
-                dbc.Input(id='input-column-2', type='number', value=0),
-                html.Button('Spalte hinzufügen mit Operation', id='add_column_math_btn'),html.Br(),
+                # dbc.Input(id='input-column-2', type='number', value=0),
+                dcc.Dropdown(
+                    id='input-column-2'
+                ),
+                html.Div(id='input-column-2-div'),
+                html.Button('Spalte hinzufügen mit Operation', id='add_column_math_btn'), html.Br(),
                 html.Hr(),
-                html.H6('Umgang mit Null-Values',style={'text-align': 'center'}),
-                html.Button('Entferne Null-Values',id='drop_null_btn'),html.Button('Ersetze Null-Values mit Durchschnitt Spalte',id='replace_null_btn'),html.Br(),
+            ]
+        ),
+
+        dbc.FormGroup(
+            [
+                html.H6('Reihenoperationen', style={'text-align': 'center'}),
+                dcc.Input(
+                    id='add-row-value',
+                    placeholder='Reihenwert eingeben',
+                    value='',
+                ), html.Br(),
+                html.Button('Reihe hinzufügen', id='add_rows_btn'), html.Br(),
+                html.Hr(),
+            ]
+        ),
+        dbc.FormGroup(
+            [
+
+                html.H6('Umgang mit Null-Values', style={'text-align': 'center'}),
+                html.Button('Entferne Null-Values', id='drop_null_btn'),
+                html.Button('Ersetze Null-Values mit Durchschnitt Spalte', id='replace_null_btn'), html.Br(),
+                html.Hr(),
+
+            ]
+        ),
+        dbc.FormGroup(
+            [
+
+                html.H6('Normalisieren', style={'text-align': 'center'}),
+                html.Button('Z-Score', id='z_score_btn'),
+                html.Button('Min-Max-Scaler', id='min_max_scaler_btn'),
+                html.Button('Natürl. Logarithmus', id='log_btn'), html.Br(),
+                html.Button('Label Encoding', id='label_encoding_btn'),
+                html.Button('One Hot Encoding', id='hot_encoding_btn'),
                 html.Hr(),
                 dbc.Button('Änderungen speichern', id='save-table-changes-btn'),
             ]
-        )
+        ),
+
     ]
 )
 
@@ -71,7 +110,7 @@ card_table_prep = dbc.Card(
             html.Div([
 
 
-                html.Div(id="table-prep"),
+                dbc.CardBody(id="table-prep"),
 
             ]),
 
@@ -90,7 +129,7 @@ layout_prep = dbc.Container(
                 dbc.Col(html.Div(id='data-prepared'), md=4, align='start')
 
             ]
-        )
+        ),
     ],
     fluid=True,
 )
