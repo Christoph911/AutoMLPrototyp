@@ -53,6 +53,16 @@ controls_prep = dbc.Card(
                 html.Hr(),
             ]
         ),
+        dbc.FormGroup(
+            [
+                dcc.Dropdown(
+                    id='drop-column-1'
+                ),
+                html.Div(id='drop-column-1-div'),
+                html.Button('Spalte entfernen', id='drop_column_btn'), html.Br(),
+
+            ]
+        ),
 
         dbc.FormGroup(
             [
@@ -63,7 +73,9 @@ controls_prep = dbc.Card(
                     value='',
                 ), html.Br(),
                 html.Button('Reihe hinzufügen', id='add_rows_btn'), html.Br(),
-                html.Hr(),
+                dbc.Input(id='row-count', type='number'),
+                html.Button('Reihe entfernen', id='drop_rows_btn'),
+                html.Hr()
             ]
         ),
         dbc.FormGroup(

@@ -11,7 +11,8 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder, On
 # get stored data, update dropdown, return selected target
 @app.callback(
     [Output('input-column-1', 'options'),
-    Output('input-column-2', 'options')],
+    Output('input-column-2', 'options'),
+     Output('drop-column-1', 'options')],
     [Input('stored-data-upload', 'children'),
      Input('input-column-2-div', 'children')]
 )
@@ -22,8 +23,9 @@ def get_target(df, dummy):
 
     target_1 = [{'label': col, 'value': col} for col in df.columns]
     target_2 = [{'label': col, 'value': col} for col in df.columns]
+    target_3 = [{'label': col, 'value': col} for col in df.columns]
 
-    return target_1, target_2
+    return target_1, target_2, target_3
 
 @app.callback(
     Output('table-prep', 'children'),
@@ -57,7 +59,9 @@ def display_table_prep(df):
      Output('table-prep', 'columns')],
     [Input('add_column_btn', 'n_clicks'),
      Input('add_rows_btn', 'n_clicks'),
+     Input('drop_rows_btn', 'n_clicks'),
      Input('add_column_math_btn','n_clicks'),
+     Input('drop_column_btn', 'n_clicks'),
      Input('drop_null_btn', 'n_clicks'),
      Input('replace_null_btn', 'n_clicks'),
      Input('z_score_btn', 'n_clicks'),
@@ -70,13 +74,15 @@ def display_table_prep(df):
      State('add-column-name', 'value'),
      State('add-column-math-name','value'),
      State('add-column-value', 'value'),
+     State('drop-column-1', 'value'),
      State('add-row-value', 'value'),
+     State('row-count', 'value'),
      State('input-column-1', 'value'),
      State('operator','value'),
      State('input-column-2', 'value')
      ]
 )
-def update_table_prep(add_column_btn, add_rows_btn,add_column_math_btn, drop_null_btn, replace_null_btn, z_score_btn, min_max_scaler_btn, log_btn, label_encoding_btn, hot_encoding_btn, rows, columns, column_name, column_math_name, column_value, row_value, col_1, operator, col_2):
+def update_table_prep(add_column_btn, add_rows_btn, drop_rows_btn, add_column_math_btn, drop_column_btn, drop_null_btn, replace_null_btn, z_score_btn, min_max_scaler_btn, log_btn, label_encoding_btn, hot_encoding_btn, rows, columns, column_name, column_math_name, column_value, col_1_drop, row_value, row_count, col_1, operator, col_2):
     ctx = dash.callback_context
     df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
     table_data = df.from_dict(rows)
@@ -93,6 +99,10 @@ def update_table_prep(add_column_btn, add_rows_btn,add_column_math_btn, drop_nul
         elif button_id == 'add_rows_btn':
             rows.append({c['id']: row_value for c in columns})
             return rows, columns
+        elif button_id == 'drop_rows_btn':
+            table_data = table_data.drop([table_data.index[row_count]])
+            new_cols = [{"name": i, "id": i} for i in table_data.columns]
+            return table_data.to_dict('records'), new_cols
         elif button_id == 'add_column_math_btn':
             if operator == '+':
                 table_data[column_math_name] = table_data.loc[:, col_1] + table_data.loc[:, col_2]
@@ -102,6 +112,11 @@ def update_table_prep(add_column_btn, add_rows_btn,add_column_math_btn, drop_nul
                 table_data[column_math_name] = table_data.loc[:, col_1] * table_data.loc[:, col_2]
             elif operator == '/':
                 table_data[column_math_name] = table_data.loc[:, col_1] / table_data.loc[:, col_2]
+            new_cols = [{"name": i, "id": i} for i in table_data.columns]
+            return table_data.to_dict('records'), new_cols
+        elif button_id == 'drop_column_btn':
+            table_data = table_data.drop([col_1_drop], axis=1)
+
             new_cols = [{"name": i, "id": i} for i in table_data.columns]
             return table_data.to_dict('records'), new_cols
         elif button_id == 'drop_null_btn':
