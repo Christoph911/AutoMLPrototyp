@@ -5,7 +5,6 @@ from layouts.masterlayout import header
 
 # define control panel for modelLayout
 
-# TODO: Dropdown ins masterlayout?
 controls_forest = dbc.Card(
     [
         html.H5("Auswahlmenü", style={'text-align': 'center'}),

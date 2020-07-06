@@ -37,46 +37,55 @@ def get_target(df, dummy):
      State('train-test', 'value'),
      State('metrics', 'value')]
 )
-def make_random_forest(n_clicks, df, y, number_trees, train_test_size, choose_metrics):
-    print("started random Forest")
+def create_random_forest_classifier(n_clicks, df, y,
+                                    number_trees, train_test_size,
+                                    choose_metrics):
+    """
+    This function creates a random forst classifier model based on the user input.
+    :param n_clicks: button, trigers the function to start
+    :param df: dataFrame
+    :param y: target column in dataFrame
+    :param number_trees: number of trees to compute
+    :param train_test_size: size of training and test set
+    :param choose_metrics: list of metric names to compute
+    :return: plotly figure as dictionary
+    """
+    # load stored JSON Data and convert them into a DataFrame
     df = json.loads(df)
     df = pd.DataFrame(df['data'], columns=df['columns'])
-
-    target = df[y]
+    # define target and X variables
+    Y = df[y]
     X = df.drop(y, axis=1)
-
-    # encode string values in target column
-    le = LabelEncoder()
-    Y = le.fit_transform(target)
-
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=train_test_size)
-
+    # create train and test set
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, train_size=train_test_size)
+    # instantiate RandomForestClassifier
     model = RandomForestClassifier(n_estimators=number_trees)
+    # fit model
+    model.fit(X_train, y_train)
+    # get prediction
+    y_pred = model.predict(X_test)
 
-    model.fit(X_train, Y_train)
-
-    Y_pred = model.predict(X_test)
     global recall, precision, f1
 
     # create metrics depends on user input
     if 'recall' in choose_metrics:
-        recall = recall_score(Y_test, Y_pred, average='micro')
+        recall = recall_score(y_test, Y_pred, average='micro')
         recall = 'Recall Score: ' + str(recall.round(3))
     else:
         recall = None
     if 'precision' in choose_metrics:
-        precision = precision_score(Y_test, Y_pred, average='micro')
+        precision = precision_score(y_test, y_pred, average='micro')
         precision = 'Precision Score: ' + str(precision.round(3))
     else:
         precision = None
     if 'f1' in choose_metrics:
-        f1 = f1_score(Y_test, Y_pred, average='micro')
+        f1 = f1_score(y_test, y_pred, average='micro')
         f1 = 'F1 Score: ' + str(f1.round(3))
     else:
         f1 = None
 
     # create confusion matrix
-    confusion_matrix = metrics.confusion_matrix(Y_test, Y_pred)
+    confusion_matrix = metrics.confusion_matrix(y_test, y_pred)
     # convert results into int
     confusion_matrix = confusion_matrix.astype(int)
     # get target names

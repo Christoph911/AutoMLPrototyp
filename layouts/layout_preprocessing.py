@@ -90,7 +90,10 @@ controls_prep = dbc.Card(
         ),
         dbc.FormGroup(
             [
-
+                dcc.Dropdown(
+                    id='normalize-dropdown'
+                ),
+                html.Div(id='normalize-dropdown-div'),
                 html.H6('Normalisieren', style={'text-align': 'center'}),
                 html.Button('Z-Score', id='z_score_btn'),
                 html.Button('Min-Max-Scaler', id='min_max_scaler_btn'),
