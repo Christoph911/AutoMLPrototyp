@@ -1,4 +1,5 @@
 import json
+import sys
 from main import app
 import dash
 import dash_table
@@ -13,7 +14,8 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder, On
     [Output('input-column-1', 'options'),
     Output('input-column-2', 'options'),
      Output('drop-column-1', 'options'),
-     Output('normalize-dropdown', 'options')],
+     Output('normalize-dropdown', 'options'),
+     Output('dropNull-dropdown', 'options')],
     [Input('stored-data-upload', 'children'),
      Input('input-column-2-div', 'children')]
 )
@@ -26,8 +28,32 @@ def get_target(df, dummy):
     target_2 = [{'label': col, 'value': col} for col in df.columns]
     target_3 = [{'label': col, 'value': col} for col in df.columns]
     target_4 = [{'label': col, 'value': col} for col in df.columns]
+    target_5 = [{'label': col, 'value': col} for col in df.columns]
 
-    return target_1, target_2, target_3, target_4
+    return target_1, target_2, target_3, target_4, target_5
+
+def table_type(df_column):
+
+
+    if sys.version_info < (3, 0):
+        return 'any'
+
+    if isinstance(df_column.dtype, pd.DatetimeTZDtype):
+        return 'datetime',
+    elif (isinstance(df_column.dtype, pd.StringDtype) or
+            isinstance(df_column.dtype, pd.BooleanDtype) or
+            isinstance(df_column.dtype, pd.CategoricalDtype) or
+            isinstance(df_column.dtype, pd.PeriodDtype)):
+        return 'text'
+    elif (isinstance(df_column.dtype, pd.SparseDtype) or
+            isinstance(df_column.dtype, pd.IntervalDtype) or
+            isinstance(df_column.dtype, pd.Int8Dtype) or
+            isinstance(df_column.dtype, pd.Int16Dtype) or
+            isinstance(df_column.dtype, pd.Int32Dtype) or
+            isinstance(df_column.dtype, pd.Int64Dtype)):
+        return 'numeric'
+    else:
+        return 'any'
 
 @app.callback(
     Output('table-prep', 'children'),
@@ -40,10 +66,12 @@ def display_table_prep(df):
     elif df is not None:
         df = json.loads(df)
         df = pd.DataFrame(df['data'], columns=df['columns'])
-
+        df = df.convert_dtypes()
+        print(df.dtypes)
+        print(df.info())
         table = dash_table.DataTable(
             id='table-prep',
-            columns=[{"name": i, "id": i, 'deletable': True, 'renamable': True} for i in df.columns],
+            columns=[{"name": i, "id": i,'type': table_type(df[i]), 'deletable': True, 'renamable': True} for i in df.columns],
             data=df.to_dict("rows"),
             style_cell={'width': '150',
                         'height': '60px',
@@ -51,8 +79,24 @@ def display_table_prep(df):
 
             editable=True,
             row_deletable=True,
-            page_action='none',
-            style_table={'height': '600px', 'overflowY': 'auto'}
+
+            sort_action='native',
+            filter_action="native", #clientside filtering
+            sort_mode="multi",
+            column_selectable="single",
+            row_selectable="multi",
+            selected_columns=[],
+            selected_rows=[],
+            page_action="native",
+            page_current=0,
+            page_size=10,
+            #page_action='none',
+            #style_table={'height': '600px', 'overflowY': 'auto'}
+            style_data={
+                'width': '150px', 'minWidth': '150px', 'maxWidth': '150px',
+                'overflow': 'hidden',
+                'textOverflow': 'ellipsis',
+            }
         )
         return table
 
@@ -82,10 +126,11 @@ def display_table_prep(df):
      State('input-column-1', 'value'),
      State('operator','value'),
      State('input-column-2', 'value'),
-     State('normalize-dropdown', 'value')
+     State('normalize-dropdown', 'value'),
+     State('dropNull-dropdown', 'value')
      ]
 )
-def update_table_prep(add_column_btn, add_rows_btn, drop_rows_btn, add_column_math_btn, drop_column_btn, drop_null_btn, replace_null_btn, z_score_btn, min_max_scaler_btn, log_btn, label_encoding_btn, hot_encoding_btn, rows, columns, column_name, column_math_name, column_value, col_1_drop, row_value, row_count, col_1, operator, col_2, normalize_dropdown):
+def update_table_prep(add_column_btn, add_rows_btn, drop_rows_btn, add_column_math_btn, drop_column_btn, drop_null_btn, replace_null_btn, z_score_btn, min_max_scaler_btn, log_btn, label_encoding_btn, hot_encoding_btn, rows, columns, column_name, column_math_name, column_value, col_1_drop, row_value, row_count, col_1, operator, col_2, normalize_dropdown, dropNull_dropdown):
     ctx = dash.callback_context
     #df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
     table_data = pd.DataFrame.from_dict(rows)
@@ -126,7 +171,11 @@ def update_table_prep(add_column_btn, add_rows_btn, drop_rows_btn, add_column_ma
             return table_data.to_dict('records'), new_cols
         elif button_id == 'drop_null_btn':
             replace_values = {'': np.nan, 'Null': np.nan, 'null': np.nan, 'NaN': np.nan}
-            table_data = table_data.replace(replace_values).dropna(axis=0)
+            if dropNull_dropdown is None:
+                table_data = table_data.replace(replace_values).dropna(axis=0)
+            if dropNull_dropdown is not None:
+                table_data = table_data[dropNull_dropdown].replace(replace_values).dropna(axis=0)
+                print(table_data)
             new_cols = [{"name": i, "id": i} for i in table_data.columns]
             return table_data.to_dict('records'), new_cols
         elif button_id == 'replace_null_btn':
@@ -136,21 +185,42 @@ def update_table_prep(add_column_btn, add_rows_btn, drop_rows_btn, add_column_ma
             new_cols = [{"name": i, "id": i} for i in table_data.columns]
             return table_data.to_dict('records'), new_cols
         elif button_id == 'z_score_btn':
-            scaler = StandardScaler()
-            scaled_values = scaler.fit_transform(table_data).round(5)
-            scaled_values_df = pd.DataFrame(scaled_values, columns=[c['name'] for c in columns])
-            new_cols = [{"name": i, "id": i} for i in table_data.columns]
+            if normalize_dropdown is None:
+                scaler = StandardScaler()
+                scaled_values = scaler.fit_transform(table_data).round(5)
+                scaled_values_df = pd.DataFrame(scaled_values, columns=[c['name'] for c in columns])
+            elif normalize_dropdown is not None:
+                scaler = StandardScaler()
+                scaled_values = scaler.fit_transform(table_data[normalize_dropdown].values.reshape(-1, 1)).round(5)
+                other_columns = table_data.drop([normalize_dropdown], axis=1)
+                scaled_values_df = pd.DataFrame(scaled_values, columns=['Z-Score'])
+                scaled_values_df = pd.concat([other_columns, scaled_values_df], axis=1)
+            new_cols = [{"name": i, "id": i} for i in scaled_values_df.columns]
             return scaled_values_df.to_dict('records'), new_cols
         elif button_id == 'min_max_scaler_btn':
-            scaler = MinMaxScaler(feature_range=(0, 1))
-            scaled_values = scaler.fit_transform(table_data).round(5)
-            scaled_values_df = pd.DataFrame(scaled_values, columns=[c['name'] for c in columns])
-            new_cols = [{"name": i, "id": i} for i in table_data.columns]
+            if normalize_dropdown is None:
+                scaler = MinMaxScaler(feature_range=(0, 1))
+                scaled_values = scaler.fit_transform(table_data).round(5)
+                scaled_values_df = pd.DataFrame(scaled_values, columns=[c['name'] for c in columns])
+            elif normalize_dropdown is not None:
+                scaler = MinMaxScaler(feature_range=(0, 1))
+                scaled_values = scaler.fit_transform(table_data[normalize_dropdown].values.reshape(-1, 1)).round(5)
+                other_columns = table_data.drop([normalize_dropdown], axis=1)
+                scaled_values_df = pd.DataFrame(scaled_values, columns=['Min-Max-Scale'])
+                scaled_values_df = pd.concat([other_columns, scaled_values_df], axis=1)
+            new_cols = [{"name": i, "id": i} for i in scaled_values_df.columns]
             return scaled_values_df.to_dict('records'), new_cols
         elif button_id == 'log_btn':
-            log_values = np.log(table_data).round(5)
-            log_values_df = pd.DataFrame(log_values, columns=[c['name'] for c in columns])
-            new_cols = [{"name": i, "id": i} for i in table_data.columns]
+            if normalize_dropdown is None:
+                log_values = np.log(table_data).round(5)
+                log_values_df = pd.DataFrame(log_values, columns=[c['name'] for c in columns])
+            if normalize_dropdown is not None:
+                log_values = np.log(table_data[normalize_dropdown].values.reshape(-1,1)).round(5)
+                other_columns = table_data.drop([normalize_dropdown], axis=1)
+                log_values_df = pd.DataFrame(log_values, columns=["Log"])
+                log_values_df = pd.concat([other_columns, log_values_df], axis=1)
+
+            new_cols = [{"name": i, "id": i} for i in log_values_df.columns]
             return log_values_df.to_dict('records'), new_cols
         elif button_id == 'label_encoding_btn':
             if normalize_dropdown is None:
@@ -167,15 +237,10 @@ def update_table_prep(add_column_btn, add_rows_btn, drop_rows_btn, add_column_ma
             if normalize_dropdown is not None:
                 choosen_column = table_data[normalize_dropdown]
                 other_columns = table_data.drop([normalize_dropdown], axis=1)
-                print(other_columns)
                 label_encoder = LabelEncoder()
                 encoded_values = label_encoder.fit_transform(choosen_column)
-                print(encoded_values)
-
-                dff = pd.DataFrame(encoded_values,columns=table_data[normalize_dropdown].columns)
-                print(dff)
-                new_df = pd.concat([other_columns,dff],axis=1)
-
+                dff = pd.DataFrame(encoded_values, columns=["Encoded Values"])
+                new_df = pd.concat([other_columns, dff], axis=1)
 
             new_cols = [{"name": i, "id": i} for i in new_df.columns]
             return new_df.to_dict('records'), new_cols

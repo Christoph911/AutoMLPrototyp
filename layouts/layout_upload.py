@@ -40,7 +40,6 @@ card_table_upload = dbc.Card(
 layout_upload = dbc.Container(
     [
         html.Div(header),
-        html.Hr(),
         dbc.Row(
             [
                 dbc.Col(controls_upload, md=4, align='start'),
