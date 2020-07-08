@@ -65,38 +65,29 @@ def display_table_prep(df):
 
     elif df is not None:
         df = json.loads(df)
-        df = pd.DataFrame(df['data'], columns=df['columns'])
-        df = df.convert_dtypes()
-        print(df.dtypes)
-        print(df.info())
+        df = pd.DataFrame(df['data'], columns=df['columns']).convert_dtypes()
+        #df = df.convert_dtypes()
         table = dash_table.DataTable(
             id='table-prep',
             columns=[{"name": i, "id": i,'type': table_type(df[i]), 'deletable': True, 'renamable': True} for i in df.columns],
             data=df.to_dict("rows"),
-            style_cell={'width': '150',
-                        'height': '60px',
-                        'textAlign': 'left'},
-
-            editable=True,
-            row_deletable=True,
-
-            sort_action='native',
-            filter_action="native", #clientside filtering
-            sort_mode="multi",
-            column_selectable="single",
-            row_selectable="multi",
-            selected_columns=[],
-            selected_rows=[],
-            page_action="native",
-            page_current=0,
-            page_size=10,
-            #page_action='none',
-            #style_table={'height': '600px', 'overflowY': 'auto'}
             style_data={
                 'width': '150px', 'minWidth': '150px', 'maxWidth': '150px',
                 'overflow': 'hidden',
                 'textOverflow': 'ellipsis',
-            }
+            },
+            fixed_rows={'headers': True, 'data': 0},
+            editable=True,
+            row_deletable=True,
+            sort_action='native',
+            filter_action="native", #clientside filtering
+            sort_mode="multi",
+            column_selectable="single",
+            selected_columns=[],
+            page_action="native",
+            page_current=0,
+            page_size=50,
+            virtualization=True,
         )
         return table
 

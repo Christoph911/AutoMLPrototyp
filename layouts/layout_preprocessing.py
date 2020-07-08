@@ -53,7 +53,7 @@ controls_columns = dbc.Card(
             ]
         )
     ],
-    color='dark',
+    color='secondary',
     outline=True,
     style={'margin-bottom': '10px'}
 )
@@ -75,7 +75,7 @@ controls_rows = dbc.Card(
             ]
         )
     ],
-    color='dark',
+    color='secondary',
     outline=True,
     style={'margin-bottom': '10px'}
 )
@@ -95,7 +95,7 @@ controls_null = dbc.Card(
             ],
         ),
     ],
-    color='dark',
+    color='secondary',
     outline=True,
     style={'margin-bottom': '10px'}
 )
@@ -116,12 +116,10 @@ controls_normalize = dbc.Card(
                 html.Button('Natürl. Logarithmus', id='log_btn'), html.Br(),
                 html.Button('Label Encoding', id='label_encoding_btn'),
                 html.Button('One Hot Encoding', id='hot_encoding_btn'),
-                html.Hr(),
-                dbc.Button('Änderungen speichern', id='save-table-changes-btn'),
             ],
         ),
     ],
-    color='dark',
+    color='secondary',
     outline=True,
 )
 
@@ -139,15 +137,14 @@ card_table_prep = dbc.Card(
                 active_tab='tab-1-prep',
             )
         ),
+
         dbc.CardBody(
-            html.Div([
-
-
-                dbc.CardBody(id="table-prep"),
-
-            ]),
-
+            [
+                html.Div(id="table-prep"),
+                dbc.Button("Geänderten Datensatz Speichern", id='save-table-changes-btn', style={'float': 'right'})
+            ],
         ),
+
     ],
 )
 
