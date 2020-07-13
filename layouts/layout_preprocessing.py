@@ -9,7 +9,6 @@ controls_columns = dbc.Card(
         dbc.CardHeader("Spaltenoperationen"),
         dbc.FormGroup(
             [
-                #html.H6('Spaltenoperationen', style={'text-align': 'center'}),
                 dcc.Input(
                     id='add-column-name',
                     placeholder='Spaltenname eingeben',
@@ -27,7 +26,7 @@ controls_columns = dbc.Card(
                     value='',
                 ),
                 dcc.Dropdown(
-                    id='input-column-1'
+                    id='input-column-1',
                 ),
                 html.Div(id='input-column-1-div'),
                 dcc.Dropdown(
@@ -39,17 +38,37 @@ controls_columns = dbc.Card(
                         {'label': '/', 'value': '/'}
                     ]
                 ),
-                # dbc.Input(id='input-column-2', type='number', value=0),
+
                 dcc.Dropdown(
                     id='input-column-2'
                 ),
                 html.Div(id='input-column-2-div'),
                 html.Button('Spalte hinzufügen mit Operation', id='add_column_math_btn'), html.Br(),
                 dcc.Dropdown(
-                    id='drop-column-1'
+                    id='drop-column-1',
+                    multi=True
                 ),
                 html.Div(id='drop-column-1-div'),
                 html.Button('Spalte entfernen', id='drop_column_btn'), html.Br(),
+
+                dcc.Dropdown(id='column-operation',
+                             options=[
+                                 {'label': 'drop', 'value': 'drop'}
+                             ]),
+                dcc.Dropdown(id='column-expression',
+                             options=[
+                                 {'label': '>', 'value': '>'},
+                                 {'label': '>=', 'value': '>='},
+                                 {'label': '<', 'value': '<'},
+                                 {'label': '<=', 'value': '<='},
+                                 {'label': '=', 'value': '='}
+                             ]),
+                dcc.Input(id="user-input", type="number"),
+                dcc.Dropdown(
+                    id='drop-column-expression-drp'
+                ),
+
+                html.Button('Werte entfernen', id='drop_column_expr_btn'), html.Br(),
             ]
         )
     ],
@@ -57,6 +76,7 @@ controls_columns = dbc.Card(
     outline=True,
     style={'margin-bottom': '10px'}
 )
+
 
 controls_rows = dbc.Card(
     [
@@ -88,6 +108,7 @@ controls_null = dbc.Card(
                 dcc.Dropdown(
                     id='dropNull-dropdown',
                     placeholder="Gesamter Datensatz",
+                    multi=True
                 ),
                 html.Div(id='dropNull-dropdown-div'),
                 html.Button('Entferne Null-Values', id='drop_null_btn'),
@@ -109,13 +130,13 @@ controls_normalize = dbc.Card(
                 dcc.Dropdown(
                     id='normalize-dropdown',
                     placeholder="Gesamter Datensatz",
+                    multi=True
                 ),
                 html.Div(id='normalize-dropdown-div'),
                 html.Button('Z-Score', id='z_score_btn'),
                 html.Button('Min-Max-Scaler', id='min_max_scaler_btn'),
                 html.Button('Natürl. Logarithmus', id='log_btn'), html.Br(),
                 html.Button('Label Encoding', id='label_encoding_btn'),
-                html.Button('One Hot Encoding', id='hot_encoding_btn'),
             ],
         ),
     ],
