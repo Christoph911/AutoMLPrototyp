@@ -16,7 +16,8 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder
      Output('drop-column-1', 'options'),
      Output('normalize-dropdown', 'options'),
      Output('dropNull-dropdown', 'options'),
-     Output('drop-column-expression-drp', 'options')],
+     Output('drop-column-expression-drp', 'options'),
+     Output('create-column-math', 'options')],
     [Input('stored-data-upload', 'children'),
      Input('input-column-2-div', 'children')]
 )
@@ -33,8 +34,9 @@ def get_target(df, dummy):
     target_4 = [{'label': col, 'value': col} for col in df.columns]
     target_5 = [{'label': col, 'value': col} for col in df.columns]
     target_6 = [{'label': col, 'value': col} for col in df.columns]
+    target_7 = [{'label': col, 'value': col} for col in df.columns]
 
-    return target_1, target_2, target_3, target_4, target_5, target_6
+    return target_1, target_2, target_3, target_4, target_5, target_6, target_7
 
 
 # create Dash DataTable
@@ -88,13 +90,18 @@ def create_table_prep(df):
      Input('min_max_scaler_btn', 'n_clicks'),
      Input('log_btn', 'n_clicks'),
      Input('label_encoding_btn', 'n_clicks'),
-     Input('drop_column_expr_btn', 'n_clicks')],
+     Input('drop_column_expr_btn', 'n_clicks'),
+     Input('create_column_math_btn', 'n_clicks')],
     [State('table-prep', 'data'),
      State('table-prep', 'columns'),
      State('add-column-name', 'value'),
      State('add-column-math-name', 'value'),
      State('add-column-value', 'value'),
      State('drop-column-1', 'value'),
+     State('add-column-math-name-2', 'value'),
+     State('create-column-math','value'),
+     State('operator-create-column', 'value'),
+     State('input-math', 'value'),
      State('add-row-value', 'value'),
      State('row-count', 'value'),
      State('input-column-1', 'value'),
@@ -109,8 +116,8 @@ def create_table_prep(df):
 )
 def update_table_prep(add_column_btn, add_rows_btn, drop_rows_btn, add_column_math_btn, drop_column_btn, drop_null_btn,
                       replace_null_btn, z_score_btn, min_max_scaler_btn, log_btn, label_encoding_btn,
-                      drop_column_expr_btn, rows, columns, column_name, column_math_name, column_value, col_1_drop,
-                      row_value, row_count, col_1, operator, col_2, normalize_dropdown, drop_null_dropdown, user_input,
+                      drop_column_expr_btn,create_column_math_btn, rows, columns, column_name, column_math_name, column_value, col_1_drop,
+                      add_column_math_name_2, create_column_math, operator_create_column, input_math, row_value, row_count, col_1, operator, col_2, normalize_dropdown, drop_null_dropdown, user_input,
                       column_expression, drop_column_expression_drp):
     # create callback context to get different button id´s
     ctx = dash.callback_context
@@ -136,6 +143,18 @@ def update_table_prep(add_column_btn, add_rows_btn, drop_rows_btn, add_column_ma
                 table_data[column_math_name] = table_data.loc[:, col_1] * table_data.loc[:, col_2]
             elif operator == '/':
                 table_data[column_math_name] = table_data.loc[:, col_1] / table_data.loc[:, col_2]
+            new_cols = [{"name": i, "id": i} for i in table_data.columns]
+            return table_data.to_dict('records'), new_cols
+        # create new column with math operation
+        elif button_id == 'create_column_math_btn':
+            if operator_create_column == '+':
+                table_data[add_column_math_name_2] = table_data.loc[:, create_column_math] + input_math
+            elif operator_create_column == '-':
+                table_data[add_column_math_name_2] = table_data.loc[:, create_column_math] - input_math
+            elif operator_create_column == '*':
+                table_data[add_column_math_name_2] = table_data.loc[:, create_column_math] * input_math
+            elif operator_create_column == '/':
+                table_data[add_column_math_name_2] = table_data.loc[:, create_column_math] / input_math
             new_cols = [{"name": i, "id": i} for i in table_data.columns]
             return table_data.to_dict('records'), new_cols
         # drop all selected columns
