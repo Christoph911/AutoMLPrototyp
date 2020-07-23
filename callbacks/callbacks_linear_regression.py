@@ -26,7 +26,7 @@ def get_target(df, dummy):
     return target
 
 
-# linear regression, return two figures, store figures in index.py
+# linear regression, return two figures, store figures in application.py
 @app.callback(
     [Output("store-figure-reg", "data"),
      Output('store-figure-feat', 'data')],

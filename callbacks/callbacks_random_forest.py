@@ -69,7 +69,7 @@ def create_random_forest_classifier(n_clicks, df, y,
 
     # create metrics depends on user input
     if 'recall' in choose_metrics:
-        recall = recall_score(y_test, Y_pred, average='micro')
+        recall = recall_score(y_test, y_pred, average='micro')
         recall = 'Recall Score: ' + str(recall.round(3))
     else:
         recall = None
@@ -89,7 +89,7 @@ def create_random_forest_classifier(n_clicks, df, y,
     # convert results into int
     confusion_matrix = confusion_matrix.astype(int)
     # get target names
-    target_names = target.unique()
+    target_names = Y.unique()
     # split target names by comma and return list
     target_names = ' '.join(target_names).split()
 
