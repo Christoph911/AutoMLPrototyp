@@ -49,7 +49,7 @@ def create_table_prep(df):
         raise PreventUpdate
     elif df is not None:
         df = json.loads(df)
-        df = pd.DataFrame(df['data'], columns=df['columns']).convert_dtypes()
+        df = pd.DataFrame(df['data'], columns=df['columns'])
         table = dash_table.DataTable(
             id='table-prep',
             columns=[{"name": i, "id": i, 'deletable': True, 'renamable': True} for i in df.columns],
@@ -170,15 +170,15 @@ def update_table_prep(add_column_btn, add_rows_btn, drop_rows_btn, add_column_ma
         elif button_id == 'drop_column_expr_btn':
             if drop_column_expression_drp is not None:
                 if column_expression == '>':
-                    table_data = table_data.drop(table_data[table_data[col_1_drop] > user_input].index)
+                    table_data = table_data.drop(table_data[table_data[drop_column_expression_drp] > user_input].index)
                 elif column_expression == '>=':
-                    table_data = table_data.drop(table_data[table_data[col_1_drop] >= user_input].index)
+                    table_data = table_data.drop(table_data[table_data[drop_column_expression_drp] >= user_input].index)
                 elif column_expression == '<':
-                    table_data = table_data.drop(table_data[table_data[col_1_drop] < user_input].index)
+                    table_data = table_data.drop(table_data[table_data[drop_column_expression_drp] < user_input].index)
                 elif column_expression == '<=':
-                    table_data = table_data.drop(table_data[table_data[col_1_drop] <= user_input].index)
+                    table_data = table_data.drop(table_data[table_data[drop_column_expression_drp] <= user_input].index)
                 elif column_expression == '=':
-                    table_data = table_data.drop(table_data[table_data[col_1_drop] == user_input].index)
+                    table_data = table_data.drop(table_data[table_data[drop_column_expression_drp] == user_input].index)
             elif drop_column_expression_drp is None:
                 raise PreventUpdate
             new_cols = [{"name": i, "id": i} for i in table_data.columns]
@@ -242,6 +242,7 @@ def update_table_prep(add_column_btn, add_rows_btn, drop_rows_btn, add_column_ma
             new_cols = [{"name": i, "id": i} for i in table_data.columns]
             return table_data.to_dict('records'), new_cols
         elif button_id == 'label_encoding_btn':
+            # TODO: Spalte auswählen lassen, aktuell Fehler, wenn spalte ausgewählt wird
             # create LabelEncoder Instance
             label_encoder = LabelEncoder()
             if normalize_dropdown is None:
