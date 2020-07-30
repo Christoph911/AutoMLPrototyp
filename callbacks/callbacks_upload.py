@@ -21,11 +21,16 @@ def parse_data(contents, filename):
                 io.StringIO(decoded.decode('utf-8')))
         elif 'xls' in filename:
             df = pd.read_excel(io.BytesIO(decoded))
+            print(df)
+        elif 'txt' or 'tsv' in filename:
+            df = pd.read_csv(
+                io.StringIO(decoded.decode('utf-8')))
     except Exception as e:
         print(e)
-        return html.Div([
-            'Fehler beim Dateiupload!'
-        ])
+        # TODO: Popup für Fehlermeldungen einfügen
+        # return html.Div([
+        #     'Fehler beim Dateiupload!'
+        # ])
     return df
 
 
