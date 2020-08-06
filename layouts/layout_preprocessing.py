@@ -148,8 +148,8 @@ controls_rows = dbc.Card(
                     value='',
                 ),
                 dbc.Button('Reihe hinzufügen', id='add_rows_btn', outline=True, color='secondary', size='sm', style={'margin': '8px'}), html.Br(),
-                html.H6('Spalte entfernen:', style={'text-align': 'center'}),
-                dcc.Input(id='row-count', type='number', placeholder='Nr. der Spalte wählen'),
+                html.H6('Reihe entfernen:', style={'text-align': 'center'}),
+                dcc.Input(id='row-count', type='number', placeholder='Nr. der Reihe wählen'),
                 dbc.Button('Reihe entfernen', id='drop_rows_btn', outline=True, color='secondary', size='sm', style={'margin': '8px'}),
             ]
         )
