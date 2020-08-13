@@ -42,7 +42,8 @@ def get_target(df, dummy):
 # linear regression, return two figures, store figures in application.py
 @app.callback(
     [Output("store-figure-reg", "data"),
-     Output('store-figure-feat', 'data')],
+     Output('store-figure-feat', 'data'),
+     Output('error-message-model', 'children')],
     [Input('start-regression-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
      State("zielwert-opt-reg", "value"),
@@ -50,71 +51,86 @@ def get_target(df, dummy):
      State('metrics', 'value')]
 )
 def make_regression(n_clicks, df, y, train_test_size, choose_metrics):
-    # load data
-    df = json.loads(df)
-    df = pd.DataFrame(df['data'], columns=df['columns'])
+    try:
+        # load data
+        df = json.loads(df)
+        df = pd.DataFrame(df['data'], columns=df['columns'])
 
-    # create model
-    Y = df[y]
-    X = df.drop(y, axis=1)
+        # create model
+        Y = df[y]
+        X = df.drop(y, axis=1)
 
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=train_test_size)
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=train_test_size)
 
-    model = LinearRegression()
-    model.fit(X_train, Y_train)
+        model = LinearRegression()
+        model.fit(X_train, Y_train)
 
-    Y_pred = model.predict(X_test)
+        Y_pred = model.predict(X_test)
 
-    # create Metrics
-    global mae, mse, rmse
-    # create metrics depends on user input
-    if 'mae' in choose_metrics:
-        mae = mean_absolute_error(Y_test, Y_pred)
-        mae = 'Mean absolute error(MAE): ' + str(mae.round(3))
-    else:
-        mae = None
-    if 'mse' in choose_metrics:
-        mse = mean_squared_error(Y_test, Y_pred)
-        mse = "Mean squared error(MSE): " + str(mse.round(3))
-    else:
-        mse = None
-    if 'rmse' in choose_metrics:
-        rmse = mean_squared_error(Y_test, Y_pred, squared=False)
-        rmse = 'Root mean squared error(RMSE): ' + str(rmse.round(3))
-    else:
-        rmse = None
+        # create Metrics
+        global mae, mse, rmse
+        # create metrics depends on user input
+        if 'mae' in choose_metrics:
+            mae = mean_absolute_error(Y_test, Y_pred)
+            mae = 'Mean absolute error(MAE): ' + str(mae.round(3))
+        else:
+            mae = None
+        if 'mse' in choose_metrics:
+            mse = mean_squared_error(Y_test, Y_pred)
+            mse = "Mean squared error(MSE): " + str(mse.round(3))
+        else:
+            mse = None
+        if 'rmse' in choose_metrics:
+            rmse = mean_squared_error(Y_test, Y_pred, squared=False)
+            rmse = 'Root mean squared error(RMSE): ' + str(rmse.round(3))
+        else:
+            rmse = None
 
-    # get feature importance
-    importance = model.coef_
-    # plot feature importance as bar chart
-    fig_feature = go.Figure([
-        go.Bar(x=X.columns, y=importance, text=importance.round(2), textposition='outside')
-    ]
-    )
-    fig_feature.update_layout(
-        xaxis_title='Feature names',
-        yaxis_title='Score',
-        template='plotly_white'
-    )
-
-    # build figure for results as scatter plot
-    fig = go.Figure(
-        data=[
-            go.Scatter(
-                x=Y_test,
-                y=Y_pred,
-                mode="markers",
-                marker={"size": 8}
-            )
+        # get feature importance
+        importance = model.coef_
+        # plot feature importance as bar chart
+        fig_feature = go.Figure([
+            go.Bar(x=X.columns, y=importance, text=importance.round(2), textposition='outside')
         ]
-    )
-    fig.update_layout(
-        xaxis_title='Actual ' + y,
-        yaxis_title='Predict ' + y,
-        template='plotly_white'
-    )
-    # return figures
-    return dict(figure=fig), dict(figure=fig_feature)
+        )
+        fig_feature.update_layout(
+            xaxis_title='Feature names',
+            yaxis_title='Score',
+            template='plotly_white'
+        )
+
+        # build figure for results as scatter plot
+        fig = go.Figure(
+            data=[
+                go.Scatter(
+                    x=Y_test,
+                    y=Y_pred,
+                    mode="markers",
+                    marker={"size": 8}
+                )
+            ]
+        )
+        fig.update_layout(
+            xaxis_title='Actual ' + y,
+            yaxis_title='Predict ' + y,
+            template='plotly_white'
+        )
+        # return figures
+        return dict(figure=fig), dict(figure=fig_feature), None
+    except Exception as e:
+        error_message_model = dbc.Modal(
+            [
+                dbc.ModalHeader("Fehler!"),
+                dbc.ModalBody(["Es ist ein Fehler während des Trainingsprozesses aufgetreten:", html.Br(),
+                               html.H6(str(e)), html.Br(),
+                               " Bitte stell darüber hinaus sicher, dass der verwendete Datensatz keine Null-Values enthält "
+                               "und das korrekte Modell für die Problemstellung ausgewählt wurde",html.Br(),
+                               ]),
+                dbc.ModalFooter("")
+            ],
+            is_open=True,
+        ),
+        return None, None, error_message_model
 
 
 # manage tab content
