@@ -59,7 +59,7 @@ controls_forest = dbc.Card(
         html.Hr(),
         dbc.FormGroup(
             [
-                dbc.Button("Let the magic happen!", color="success", id="start-forest-btn"),
+                dbc.Button("Start!", color="success", id="start-forest-btn"),
             ]
         ),
     ],

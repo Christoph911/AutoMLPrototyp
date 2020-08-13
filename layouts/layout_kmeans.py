@@ -34,7 +34,7 @@ controls_clustering = dbc.Card(
         ),
         dbc.FormGroup(
             [
-                dbc.Button('Let the magic happen!', color='success', id='start-cluster-btn'),
+                dbc.Button('Start!', color='success', id='start-cluster-btn'),
             ]
         ),
     ],

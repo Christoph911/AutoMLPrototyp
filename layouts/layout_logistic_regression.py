@@ -54,7 +54,7 @@ controls_logistic_regression = dbc.Card(
         html.Hr(),
         dbc.FormGroup(
             [
-                dbc.Button("Let the magic happen!", color="success", id="start-logistic-regression-btn"),
+                dbc.Button("Start!", color="success", id="start-logistic-regression-btn"),
             ]
         ),
     ],

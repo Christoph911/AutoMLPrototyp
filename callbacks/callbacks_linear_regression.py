@@ -8,22 +8,35 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-
+import dash_bootstrap_components as dbc
 
 # get stored data, update dropdown, return selected target
 @app.callback(
-    Output('zielwert-opt-reg', 'options'),
+    [Output('zielwert-opt-reg', 'options'),
+     Output('error-message-target', 'children')],
     [Input('get-data-model', 'children'),
      Input('zielwert-div', 'children')]
 )
 def get_target(df, dummy):
-    print("Daten an Dropdown Übergeben")
-    df = json.loads(df)
-    df = pd.DataFrame(df['data'], columns=df['columns'])
+    try:
+        print("Daten an Dropdown Übergeben")
+        df = json.loads(df)
+        df = pd.DataFrame(df['data'], columns=df['columns'])
 
-    target = [{'label': col, 'value': col} for col in df.columns]
+        target = [{'label': col, 'value': col} for col in df.columns]
 
-    return target
+        return target, None
+    except:
+        error_message_get_target = dbc.Modal(
+            [
+                dbc.ModalHeader("Fehler!"),
+                dbc.ModalBody(["Es konnte kein Datensatz für den Trainingsprozess gefunden werden:", html.Br(),
+                               "Bitte stell sicher, dass ein Datensatz hochgeladen wurde!"]),
+                dbc.ModalFooter("")
+            ],
+            is_open=True,
+        ),
+        return None, error_message_get_target
 
 
 # linear regression, return two figures, store figures in application.py

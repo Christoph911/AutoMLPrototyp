@@ -69,7 +69,7 @@ controls_nn = dbc.Card(
         html.Hr(),
         dbc.FormGroup(
             [
-                dbc.Button("Let the magic happen!", color='success', id="start-nn-btn"),
+                dbc.Button("Start!", color='success', id="start-nn-btn"),
             ]
         ),
     ],

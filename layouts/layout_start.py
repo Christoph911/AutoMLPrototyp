@@ -2,7 +2,20 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from layouts.masterlayout import header
+from main import app
+from dash.dependencies import Input, Output, State
 
+# create modal element for information
+info_modal = dbc.Modal(
+    [
+        dbc.ModalHeader("Changelog: 13.08.2020"),
+        dbc.ModalBody(["- Einlesen von Excel-Dateien ermöglicht", html.Br(),
+                      "- Div. Fehler in Datenbearbeitung behoben", html.Br(),
+                       "- Begonnen Fehler abzufangen"]),
+        dbc.ModalFooter("")
+     ],
+     is_open=True,
+)
 # create layout for startpage
 layout_start = dbc.Container(
     [  # TODO: place css in own file and make img size responsive
@@ -26,14 +39,16 @@ layout_start = dbc.Container(
                             '6: Klicken Sie auf den Button "Starten", um das Modelltraining zu starten.', html.Br(),
                             '7: Folgend werden auf der rechten Karte die Modellergebnisse angezeigt.', html.Br(),
                             '8: Sie haben die Möglichkeit, über die Tabs der Karte weitere Modellergebnisse anzeigen zu lassen.', html.Br(),
-                            '9: Sie können zu einem beliebigen Schritt im Programm zurückkehren oder das Programm schließen.', html.Br(),
+
 
                         ]
                     ),
                     dbc.Button('Beginnen', color='success', size='lg', href='/upload', style={'float': 'right'})
                 ]
-            )
-        )
+            ),
+        ),
+        # place modal element on start_layout
+        info_modal
     ],
     fluid=True
 

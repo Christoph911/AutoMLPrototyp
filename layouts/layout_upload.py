@@ -3,6 +3,16 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 from layouts.masterlayout import header
 
+test_modal = dbc.Modal(
+    [
+        dbc.ModalHeader("TEST"),
+        dbc.ModalBody(["Fehlermeldung XY"]),
+        dbc.ModalFooter("")
+    ],
+    is_open=True,
+),
+
+
 # define control panel for uploadLayout
 controls_upload = dbc.Card(
     [
@@ -45,7 +55,8 @@ layout_upload = dbc.Container(
                 dbc.Col(controls_upload, md=4, align='start'),
                 dbc.Col(card_table_upload, md=8, align='start')
             ],
-        )
+        ),
+        html.Div(id='error-message-upload'),
     ],
     fluid=True,
 )

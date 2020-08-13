@@ -8,6 +8,9 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import pandas as pd
+import dash_bootstrap_components as dbc
+
+
 
 
 # parse uploaded data and return dataframe
@@ -35,19 +38,32 @@ def parse_data(contents, filename):
 
 
 # convert uploaded data to json and store it in hidden div
-
 @app.callback(
-    Output('stored-data-upload', 'children'),
+    [Output('stored-data-upload', 'children'),
+     Output('error-message-upload', 'children')],
     [Input('upload', 'contents'),
      Input('upload', 'filename')]
 )
 def upload_data(contents, filename):
     if contents:
-        contents = contents[0]
-        filename = filename[0]
-        data = parse_data(contents, filename)
-        data = data.to_json(orient='split')
-        return data
+        try:
+            contents = contents[0]
+            filename = filename[0]
+            data = parse_data(contents, filename)
+            data = data.to_json(orient='split')
+            return data, None
+        except:
+            error_message_upload = dbc.Modal(
+                [
+                    dbc.ModalHeader("Fehler!"),
+                    dbc.ModalBody(["Es ist ein Fehler beim Dateiupload aufgetreten:", html.Br(),
+                                   "Bitte stell sicher, dass die hochzuladene Datei im CVS oder"
+                                   " einem Excel-Dateiformat vorliegt!"]),
+                    dbc.ModalFooter("")
+                ],
+                is_open=True,
+            ),
+            return None, error_message_upload
 
 
 # take stored data, display dash table and some basic statistics
