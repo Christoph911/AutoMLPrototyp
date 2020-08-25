@@ -17,18 +17,6 @@ nav = dbc.Nav(
     pills=True,
 )
 
-choose_model = dbc.DropdownMenu(
-    [
-        dbc.DropdownMenuItem('Supervised Learning', header=True),
-        dbc.DropdownMenuItem('Lineare Regression', href='/regression'),
-        dbc.DropdownMenuItem('Random Forest', href='/forest'),
-        dbc.DropdownMenuItem('Unsupervised Learning', header=True),
-        dbc.DropdownMenuItem('K-Means Clustering', href='/kmeans')
-    ],
-    label='Modellauswahl',
-    bs_size='md',
-),
-
 header = (html.Div(children=[html.H1('Automated Machine Learning Web-App'), html.A([html.Img(
     src='/assets/images/logo.png',
     style={'position': 'absolute', 'top': '0px', 'right': '0px', 'width': '170px', 'height': '100px',

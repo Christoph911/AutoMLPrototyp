@@ -33,7 +33,7 @@ layout_start = dbc.Container(
                             '1: Klicken Sie auf den Button "Beginnen" oder "1. Datensatz hochladen" in der Kopfleiste, um mit dem Programm zu starten.',
                             html.Br(),
                             '2: Klicken Sie in der folgenden Ansicht auf "Datensatz hochladen", um einen Datensatz von der Festplatte in das Programm einzulesen.', html.Br(),
-                            '3: Klicken Sie in der Kopfleiste auf "2. Datensatz bearbeiten, sofern Sie den Datensatz verändern möchten.', html.Br(),
+                            '3: Klicken Sie in der Kopfleiste auf "2. Datensatz bearbeiten", sofern Sie den Datensatz verändern möchten.', html.Br(),
                             '4: Klicken Sie in der Kopfleiste auf "3. Modellauswahl", um das Modell zur Berechnung auszuwählen und wählen Sie das gewünschte Modell.', html.Br(),
                             '5: Wählen Sie innerhalb des Modelles den Zielwert des Datensatzes sowie die angezeigten Einstellungsparameter aus.', html.Br(),
                             '6: Klicken Sie auf den Button "Starten", um das Modelltraining zu starten.', html.Br(),

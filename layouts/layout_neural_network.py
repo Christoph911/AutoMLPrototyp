@@ -104,7 +104,9 @@ layout_nn = dbc.Container(
                 dbc.Col(card_graph_nn, md=8, align="start")
 
             ]
-        )
+        ),
+        html.Div(id='error-message-target-nn'),
+        html.Div(id='error-message-model-nn')
     ],
     fluid=True,
 )

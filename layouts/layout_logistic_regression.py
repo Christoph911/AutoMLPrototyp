@@ -89,7 +89,9 @@ layout_logistic_regression = dbc.Container(
                 dbc.Col(card_graph_logistic_regression, md=8, align="start")
 
             ]
-        )
+        ),
+        html.Div(id='error-message-target-log'),
+        html.Div(id='error-message-model-log')
     ],
     fluid=True,
 )

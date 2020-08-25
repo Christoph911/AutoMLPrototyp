@@ -11,29 +11,21 @@ import pandas as pd
 import dash_bootstrap_components as dbc
 
 
-
-
 # parse uploaded data and return dataframe
 def parse_data(contents, filename):
     content_type, content_string = contents.split(',')
 
     decoded = base64.b64decode(content_string)
-    try:
-        if 'csv' in filename:
-            df = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')))
-        elif 'xls' in filename:
-            df = pd.read_excel(io.BytesIO(decoded))
-            print(df)
-        elif 'txt' or 'tsv' in filename:
-            df = pd.read_csv(
-                io.StringIO(decoded.decode('utf-8')))
-    except Exception as e:
-        print(e)
-        # TODO: Popup für Fehlermeldungen einfügen
-        # return html.Div([
-        #     'Fehler beim Dateiupload!'
-        # ])
+    if 'csv' in filename:
+        df = pd.read_csv(
+            io.StringIO(decoded.decode('utf-8')))
+    elif 'xls' in filename:
+        df = pd.read_excel(io.BytesIO(decoded))
+        print(df)
+    elif 'txt' or 'tsv' in filename:
+        df = pd.read_csv(
+            io.StringIO(decoded.decode('utf-8')))
+
     return df
 
 
@@ -93,10 +85,11 @@ def display_table(df, active_tab):
         return table
 
     elif active_tab == 'tab-2':
-        shape = html.P(['Dataset Shape:', html.Br(), str(df.shape), html.Br(),
-                        'Anzahal NaN Werte in Spalten:', html.Br(), str(df.isna().sum()), html.Br(),
-                        ])
-        return shape
+        infos = html.Div([html.H6('Dataset Shape:'), str(df.shape), html.Br(),
+                          html.H6('Anzahal NaN Werte in Spalten:'), str(df.isna().sum()), html.Br(),
+                          html.H6('Datentypen der Spalten:'), str(df.dtypes), html.Br()
+                          ])
+        return infos
 
     else:
         raise PreventUpdate

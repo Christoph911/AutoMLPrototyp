@@ -14,27 +14,33 @@ from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
 from tensorflow import keras
 #import keras.backend.tensorflow_backend as tb
-
+from callbacks.callbacks_master import error_message_get_target
 #tb._SYMBOLIC_SCOPE.value = True
+import dash_bootstrap_components as dbc
 
 # get stored data, update dropdown, return selected target
 @app.callback(
-    Output('zielwert-opt-nn', 'options'),
+    [Output('zielwert-opt-nn', 'options'),
+     Output('error-message-target-nn', 'children')],
     [Input('get-data-model', 'children'),
      Input('zielwert-div','children')]
 )
 def get_target(df,dummy):
-    print("Daten an Dropdown Übergeben")
-    df = json.loads(df)
-    df = pd.DataFrame(df['data'], columns=df['columns'])
+    try:
+        print("Daten an Dropdown Übergeben")
+        df = json.loads(df)
+        df = pd.DataFrame(df['data'], columns=df['columns'])
 
-    target = [{'label': col, 'value': col} for col in df.columns]
+        target = [{'label': col, 'value': col} for col in df.columns]
 
-    return target
+        return target, None
+    except:
+        return None, error_message_get_target
 
 @app.callback(
     [Output("store-figure-nn", "data"),
-     Output('store-figure-nn-reg', 'data')],
+     Output('store-figure-nn-reg', 'data'),
+     Output('error-message-model-nn', 'children')],
     [Input('start-nn-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
      State("zielwert-opt-nn", "value"),
@@ -43,99 +49,115 @@ def get_target(df,dummy):
      State('train-test-nn', 'value'), ]
 )
 def create_neural_network(n_clicks, df, y, optimizer, number_epochs, val_set_size):
-    print("started neural network")
-    df = json.loads(df)
-    df = pd.DataFrame(df['data'], columns=df['columns'])
+    try:
+        print("started neural network")
+        df = json.loads(df)
+        df = pd.DataFrame(df['data'], columns=df['columns'])
 
-    # MinMaxScaler for preprocessing
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    scaled_train = scaler.fit_transform(df)
-    multiplied_by = scaler.scale_[13]
-    added = scaler.min_[13]
-    # store scaler results into dataFame
-    scaled_train_df = pd.DataFrame(scaled_train, columns=df.columns.values)
+        # MinMaxScaler for preprocessing
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        scaled_train = scaler.fit_transform(df)
+        multiplied_by = scaler.scale_[13]
+        added = scaler.min_[13]
+        # store scaler results into dataFame
+        scaled_train_df = pd.DataFrame(scaled_train, columns=df.columns.values)
 
-    # get target column
-    Y = scaled_train_df.loc[:, [y]]
-    X = scaled_train_df.drop([y], axis=1).values
+        # get target column
+        Y = scaled_train_df.loc[:, [y]]
+        X = scaled_train_df.drop([y], axis=1).values
 
-    # build model
-    model = keras.Sequential(
-        [
-            keras.layers.Dense(50, activation='relu'),
-            keras.layers.Dense(100, activation='relu')
-        ]
-    )
+        # build model
+        model = keras.Sequential(
+            [
+                keras.layers.Dense(50, activation='relu'),
+                keras.layers.Dense(100, activation='relu')
+            ]
+        )
 
-    model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mean_squared_error'])
+        model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mean_squared_error'])
 
-    # fit model
-    history = model.fit(X, Y, epochs=number_epochs, verbose=2, validation_split=val_set_size)
+        # fit model
+        history = model.fit(X, Y, epochs=number_epochs, verbose=2, validation_split=val_set_size)
 
-    # predict
-    prediction = model.predict(X[:1])
+        # predict
+        prediction = model.predict(X[:1])
 
-    prediction_scaled_val = prediction - added
-    print(prediction_scaled_val)
-    # print('Prediction with scaling - {}'.format(prediction_scaled_val))
-    prediction_norm_val = prediction / multiplied_by
-    # print("Housing Price Prediction  - ${}".format(prediction_norm_val))
+        prediction_scaled_val = prediction - added
+        print(prediction_scaled_val)
+        # print('Prediction with scaling - {}'.format(prediction_scaled_val))
+        prediction_norm_val = prediction / multiplied_by
+        # print("Housing Price Prediction  - ${}".format(prediction_norm_val))
 
-    # get scores
+        # get scores
 
-    # ACCURACY nur für Classification tasks
-    train_loss = history.history['loss']
-    train_mean_squared_error = history.history['mean_squared_error']
-    # train_acc = history.history['accuracy']
-    val_loss = history.history['val_loss']
-    # val_acc = history.history['val_accuracy']
-    val_mean_squared_error = history.history['val_mean_squared_error']
+        # ACCURACY nur für Classification tasks
+        train_loss = history.history['loss']
+        train_mean_squared_error = history.history['mean_squared_error']
+        # train_acc = history.history['accuracy']
+        val_loss = history.history['val_loss']
+        # val_acc = history.history['val_accuracy']
+        val_mean_squared_error = history.history['val_mean_squared_error']
 
-    # create figure for train and val loss
+        # create figure for train and val loss
 
-    epochs = list(range(1, number_epochs + 1))
+        epochs = list(range(1, number_epochs + 1))
 
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=epochs,
-        y=train_loss,
-        mode='lines',
-        name='Train loss'
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=epochs,
+            y=train_loss,
+            mode='lines',
+            name='Train loss'
 
-    ))
+        ))
 
-    fig.add_trace(go.Scatter(
-        x=epochs,
-        y=val_loss,
-        mode='lines',
-        name='Val loss'
+        fig.add_trace(go.Scatter(
+            x=epochs,
+            y=val_loss,
+            mode='lines',
+            name='Val loss'
 
-    ))
+        ))
 
-    fig.update_layout(
-        title='Train loss vs. Val loss',
-        xaxis_title='Epochen',
-        yaxis_title='Loss',
-        template='plotly_white'
-    )
-    # build figure
-    fig_reg = go.Figure(
-        data=[
-            go.Scatter(
-                x=Y,
-                y=prediction_scaled_val,
-                mode="markers",
-                marker={"size": 8}
-            )
-        ]
-    )
-    fig_reg.update_layout(
-        xaxis_title='Actual ',
-        yaxis_title='Predict ',
-        template='plotly_white'
-    )
+        fig.update_layout(
+            title='Train loss vs. Val loss',
+            xaxis_title='Epochen',
+            yaxis_title='Loss',
+            template='plotly_white'
+        )
+        # build figure
+        fig_reg = go.Figure(
+            data=[
+                go.Scatter(
+                    x=Y,
+                    y=prediction_scaled_val,
+                    mode="markers",
+                    marker={"size": 8}
+                )
+            ]
+        )
+        fig_reg.update_layout(
+            xaxis_title='Actual ',
+            yaxis_title='Predict ',
+            template='plotly_white'
+        )
 
-    return dict(figure=fig), dict(figure=fig_reg)
+        return dict(figure=fig), dict(figure=fig_reg), None
+
+    except Exception as e:
+        error_message_model = dbc.Modal(
+            [
+                dbc.ModalHeader("Fehler!"),
+                dbc.ModalBody(["Es ist ein Fehler während des Trainingsprozesses aufgetreten:", html.Br(),
+                               html.H6(str(e)), html.Br(),
+                               " Bitte stell darüber hinaus sicher, dass der verwendete Datensatz keine Null-Values enthält "
+                               "und das korrekte Modell für die Problemstellung ausgewählt wurde", html.Br(),
+                               ]),
+                dbc.ModalFooter("")
+            ],
+            is_open=True,
+        )
+        return None, None, error_message_model
 
 
 # manage tab content

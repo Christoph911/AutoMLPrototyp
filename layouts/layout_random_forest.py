@@ -93,7 +93,9 @@ layout_forest = dbc.Container(
                 dbc.Col(controls_forest, md=4, align='start'),
                 dbc.Col(card_graph_forest, md=8, align='start')
             ]
-        )
+        ),
+        html.Div(id='error-message-target-rf'),
+        html.Div(id='error-message-model-rf')
     ],
     fluid=True,
 )

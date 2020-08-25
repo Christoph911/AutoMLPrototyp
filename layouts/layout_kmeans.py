@@ -66,7 +66,9 @@ layout_kmeans = dbc.Container(
                 dbc.Col(controls_clustering, md=4, align='start'),
                 dbc.Col(card_graph_kmeans, md=8, align='start'),
             ]
-        )
+        ),
+        html.Div(id='error-message-target-cluster'),
+        html.Div(id='error-message-model-cluster')
     ],
     fluid=True,
 )

@@ -26,7 +26,9 @@ controls_upload = dbc.Card(
                 )
             ]
         )
-    ]
+    ],
+    color="light",
+    outline=True
 )
 
 # define card for table and metrics in uploadLayout
@@ -36,7 +38,7 @@ card_table_upload = dbc.Card(
             dbc.Tabs(
                 [
                     dbc.Tab(label='Vorschau', tab_id='tab-1'),
-                    dbc.Tab(label="Infos", tab_id='tab-2'),
+                    dbc.Tab(label="Informationen", tab_id='tab-2'),
                 ],
                 id='card-tabs',
                 card=True,

@@ -95,7 +95,9 @@ layout_forest_regressor = dbc.Container(
                 dbc.Col(controls_forest_reg, md=4, align='start'),
                 dbc.Col(card_graph_forest_reg, md=8, align='start')
             ]
-        )
+        ),
+        html.Div(id='error-message-target-for-reg'),
+        html.Div(id='error-message-model-for-reg')
     ],
     fluid=True,
 )

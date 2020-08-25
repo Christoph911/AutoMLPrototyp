@@ -91,8 +91,8 @@ layout_linear_regression = dbc.Container(
 
             ]
         ),
-        html.Div(id='error-message-target'),
-        html.Div(id='error-message-model')
+        html.Div(id='error-message-target-reg'),
+        html.Div(id='error-message-model-reg')
     ],
     fluid=True,
 )

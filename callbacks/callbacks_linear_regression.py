@@ -9,11 +9,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 import dash_bootstrap_components as dbc
-
+from callbacks.callbacks_master import error_message_get_target
 # get stored data, update dropdown, return selected target
 @app.callback(
     [Output('zielwert-opt-reg', 'options'),
-     Output('error-message-target', 'children')],
+     Output('error-message-target-reg', 'children')],
     [Input('get-data-model', 'children'),
      Input('zielwert-div', 'children')]
 )
@@ -27,15 +27,7 @@ def get_target(df, dummy):
 
         return target, None
     except:
-        error_message_get_target = dbc.Modal(
-            [
-                dbc.ModalHeader("Fehler!"),
-                dbc.ModalBody(["Es konnte kein Datensatz für den Trainingsprozess gefunden werden:", html.Br(),
-                               "Bitte stell sicher, dass ein Datensatz hochgeladen wurde!"]),
-                dbc.ModalFooter("")
-            ],
-            is_open=True,
-        ),
+        error_message_get_target
         return None, error_message_get_target
 
 
@@ -43,7 +35,7 @@ def get_target(df, dummy):
 @app.callback(
     [Output("store-figure-reg", "data"),
      Output('store-figure-feat', 'data'),
-     Output('error-message-model', 'children')],
+     Output('error-message-model-reg', 'children')],
     [Input('start-regression-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
      State("zielwert-opt-reg", "value"),
