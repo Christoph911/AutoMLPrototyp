@@ -5,7 +5,7 @@ from main import app
 # TODO: Callbacks erst im spezifischen Layout Modul aufrufen? Performance?
 from callbacks import callbacks_upload, callbacks_preprocessing, callbacks_linear_regression, callbacks_kmeans, \
     callbacks_random_forest, callbacks_neural_network, callbacks_logistic_regression, callbacks_random_forest_regressor, \
-    callbacks_master
+    callbacks_neural_network_classification, callbacks_master
 
 # define navbar for mainLayout
 nav = dbc.Nav(

@@ -25,6 +25,7 @@ layout_model = dbc.Container(
                                         dbc.ListGroupItem('Logistische Regression', action=True,
                                                           href='/log-regression'),
                                         dbc.ListGroupItem("Random Forest Klassifikator", action=True, href='/forest'),
+                                        dbc.ListGroupItem('Künstliches Neuronales Netz', action=True, href='/nn-class'),
                                     ],
                                 )
                             ),
