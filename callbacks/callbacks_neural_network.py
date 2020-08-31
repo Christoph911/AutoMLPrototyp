@@ -10,7 +10,7 @@ import dash_html_components as html
 import plotly.graph_objs as go
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
 from tensorflow import keras
 #import keras.backend.tensorflow_backend as tb
@@ -18,14 +18,15 @@ from callbacks.callbacks_master import error_message_get_target
 #tb._SYMBOLIC_SCOPE.value = True
 import dash_bootstrap_components as dbc
 
+
 # get stored data, update dropdown, return selected target
 @app.callback(
     [Output('zielwert-opt-nn', 'options'),
      Output('error-message-target-nn', 'children')],
     [Input('get-data-model', 'children'),
-     Input('zielwert-div','children')]
+     Input('zielwert-div', 'children')]
 )
-def get_target(df,dummy):
+def get_target(df, dummy):
     try:
         print("Daten an Dropdown Übergeben")
         df = json.loads(df)
@@ -37,6 +38,7 @@ def get_target(df,dummy):
     except:
         return None, error_message_get_target
 
+
 @app.callback(
     [Output("store-figure-nn", "data"),
      Output('store-figure-nn-reg', 'data'),
@@ -46,25 +48,30 @@ def get_target(df,dummy):
      State("zielwert-opt-nn", "value"),
      State('optimizer-nn', 'value'),
      State('number-epochs', 'value'),
-     State('train-test-nn', 'value'), ]
+     State('train-test-nn', 'value'),
+     State('val-nn', 'value')]
 )
-def create_neural_network(n_clicks, df, y, optimizer, number_epochs, val_set_size):
+def create_neural_network(n_clicks, df, y, optimizer, number_epochs, train_test_size, val_set_size):
     try:
         print("started neural network")
+        # load data out of local storage and convert into dataFrame
         df = json.loads(df)
         df = pd.DataFrame(df['data'], columns=df['columns'])
 
-        # MinMaxScaler for preprocessing
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        scaled_train = scaler.fit_transform(df)
-        multiplied_by = scaler.scale_[13]
-        added = scaler.min_[13]
-        # store scaler results into dataFame
-        scaled_train_df = pd.DataFrame(scaled_train, columns=df.columns.values)
+        # create X and Y variables, store Y as 2D-Array
+        Y = df[[y]]
+        X = df.drop(y, axis=1)
 
-        # get target column
-        Y = scaled_train_df.loc[:, [y]]
-        X = scaled_train_df.drop([y], axis=1).values
+        # split train and test set
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=train_test_size)
+
+        # scale values
+        scalerX = StandardScaler().fit(X_train)
+        scalerY = StandardScaler().fit(Y_train)
+        X_train = scalerX.transform(X_train)
+        Y_train = scalerY.transform(Y_train)
+        X_test = scalerX.transform(X_test)
+        Y_test = scalerY.transform(Y_test)
 
         # build model
         model = keras.Sequential(
@@ -77,25 +84,19 @@ def create_neural_network(n_clicks, df, y, optimizer, number_epochs, val_set_siz
         model.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mean_squared_error'])
 
         # fit model
-        history = model.fit(X, Y, epochs=number_epochs, verbose=2, validation_split=val_set_size)
+        history = model.fit(X_train, Y_train, epochs=number_epochs, verbose=2, validation_split=val_set_size)
 
         # predict
-        prediction = model.predict(X[:1])
+        prediction = model.predict(X_test)
 
-        prediction_scaled_val = prediction - added
-        print(prediction_scaled_val)
-        # print('Prediction with scaling - {}'.format(prediction_scaled_val))
-        prediction_norm_val = prediction / multiplied_by
-        # print("Housing Price Prediction  - ${}".format(prediction_norm_val))
+        # scale back predicted and test values and store in 1D-Array
+        prediction_norm_val = scalerY.inverse_transform(prediction).flatten()
+        test_norm_val = scalerY.inverse_transform(Y_test).flatten()
 
-        # get scores
-
-        # ACCURACY nur für Classification tasks
+        # get train and validation loss
         train_loss = history.history['loss']
         train_mean_squared_error = history.history['mean_squared_error']
-        # train_acc = history.history['accuracy']
         val_loss = history.history['val_loss']
-        # val_acc = history.history['val_accuracy']
         val_mean_squared_error = history.history['val_mean_squared_error']
 
         # create figure for train and val loss
@@ -120,25 +121,26 @@ def create_neural_network(n_clicks, df, y, optimizer, number_epochs, val_set_siz
         ))
 
         fig.update_layout(
-            title='Train loss vs. Val loss',
+            title='Train loss vs. Validation loss',
             xaxis_title='Epochen',
             yaxis_title='Loss',
             template='plotly_white'
         )
-        # build figure
+
+        # build figure for representation of predicted values
         fig_reg = go.Figure(
             data=[
                 go.Scatter(
-                    x=Y,
-                    y=prediction_scaled_val,
+                    x=test_norm_val,
+                    y=prediction_norm_val,
                     mode="markers",
                     marker={"size": 8}
                 )
             ]
         )
         fig_reg.update_layout(
-            xaxis_title='Actual ',
-            yaxis_title='Predict ',
+            xaxis_title='Actual ' + y,
+            yaxis_title='Predict ' + y,
             template='plotly_white'
         )
 
@@ -170,9 +172,9 @@ def create_neural_network(n_clicks, df, y, optimizer, number_epochs, val_set_siz
 def create_tab_content(active_tab, data, data_reg):
     if active_tab and data is not None:
         if active_tab == "tab-1-nn":
-            figure = dcc.Graph(figure=data["figure"])
+            figure = dcc.Graph(figure=data_reg["figure"])
             return figure
         elif active_tab == "tab-2-nn":
-            figure = dcc.Graph(figure=data_reg['figure'])
+            figure = dcc.Graph(figure=data['figure'])
             return figure
     return data

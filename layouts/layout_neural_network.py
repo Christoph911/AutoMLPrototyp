@@ -51,6 +51,22 @@ controls_nn = dbc.Card(
         ),
         dbc.FormGroup(
             [
+                dbc.Label('Train/Test-Size'),
+                dcc.Slider(
+                    min=0.3,
+                    max=0.8,
+                    step=None,
+                    marks={
+                        0.3: '30%/70%', 0.4: '40%/60%', 0.5: '50%/50%',
+                        0.6: '60%/40', 0.7: '70%/30%', 0.8: '80%/20%',
+                    },
+                    value=0.7,
+                    id='train-test-nn'
+                )
+            ]
+        ),
+        dbc.FormGroup(
+            [
                 dbc.Label('Größe Validation Set:'),
                 dcc.Slider(
                     min=0.1,
@@ -62,7 +78,7 @@ controls_nn = dbc.Card(
                         0.7: '70%', 0.8: '80%', 0.9: '90%'
                     },
                     value=0.1,
-                    id='train-test-nn'
+                    id='val-nn'
                 )
             ]
         ),
