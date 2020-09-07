@@ -11,11 +11,8 @@ import plotly.graph_objs as go
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-import tensorflow as tf
 from tensorflow import keras
-#import keras.backend.tensorflow_backend as tb
 from callbacks.callbacks_master import error_message_get_target
-#tb._SYMBOLIC_SCOPE.value = True
 import dash_bootstrap_components as dbc
 
 
@@ -76,8 +73,9 @@ def create_neural_network(n_clicks, df, y, optimizer, number_epochs, train_test_
         # build model
         model = keras.Sequential(
             [
-                keras.layers.Dense(50, activation='relu'),
-                keras.layers.Dense(100, activation='relu')
+                keras.layers.Dense(12, activation='relu'),
+                keras.layers.Dense(8, activation='relu'),
+                keras.layers.Dense(1, activation='linear')
             ]
         )
 
@@ -95,9 +93,7 @@ def create_neural_network(n_clicks, df, y, optimizer, number_epochs, train_test_
 
         # get train and validation loss
         train_loss = history.history['loss']
-        train_mean_squared_error = history.history['mean_squared_error']
         val_loss = history.history['val_loss']
-        val_mean_squared_error = history.history['val_mean_squared_error']
 
         # create figure for train and val loss
 
