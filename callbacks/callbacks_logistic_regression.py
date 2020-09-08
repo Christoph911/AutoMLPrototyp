@@ -3,16 +3,16 @@ from main import app
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
-import plotly.graph_objs as go
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegressionCV
-from sklearn.metrics import recall_score, precision_score, f1_score, confusion_matrix
+from sklearn.metrics import recall_score, precision_score, f1_score
 from sklearn.preprocessing import StandardScaler
 import plotly.figure_factory as ff
 import sklearn.metrics as metrics
 from callbacks.callbacks_master import error_message_get_target
 import dash_bootstrap_components as dbc
+import numpy as np
 
 # get stored data, update dropdown, return selected target
 @app.callback(
@@ -32,7 +32,6 @@ def get_target(df, dummy):
         return target, None
     except:
         return None, error_message_get_target
-
 
 
 @app.callback(
@@ -119,7 +118,8 @@ def make_log_regression(n_clicks, df, y, train_test_size, choose_metrics):
                 dbc.ModalHeader("Fehler!"),
                 dbc.ModalBody(["Es ist ein Fehler während des Trainingsprozesses aufgetreten:", html.Br(),
                                html.H6(str(e)), html.Br(),
-                               " Bitte stell darüber hinaus sicher, dass der verwendete Datensatz keine Null-Values enthält "
+                               " Bitte stell darüber hinaus sicher, dass der verwendete Datensatz"
+                               " keine Null-Values enthält "
                                "und das korrekte Modell für die Problemstellung ausgewählt wurde", html.Br(),
                                ]),
                 dbc.ModalFooter("")

@@ -74,6 +74,7 @@ card_graph_forest = dbc.Card(
                 [
                     dbc.Tab(label='Vorschau', tab_id='tab-1-forest'),
                     dbc.Tab(label='Metriken', tab_id='tab-2-forest'),
+                    dbc.Tab(label='Feature Imp.', tab_id='tab-3-forest')
                 ],
                 id='card-tabs-forest',
                 card=True,

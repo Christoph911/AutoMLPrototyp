@@ -8,11 +8,14 @@ from dash.dependencies import Input, Output, State
 # create modal element for information
 info_modal = dbc.Modal(
     [
-        dbc.ModalHeader("Changelog: 26.08.2020"),
+        dbc.ModalHeader("Changelog: 07.09.2020"),
         dbc.ModalBody(["- Einlesen von Excel-Dateien ermöglicht", html.Br(),
                       "- Pop-ups für Fehlermeldungen eingefügt", html.Br(),
                        "- Erstellen von Docker Images/Einrichten CI-Workflow", html.Br(),
-                       "- Keras/Tensorflow auf AWS realisiert"]),
+                       "- Keras/Tensorflow auf AWS realisiert", html.Br(),
+                       "- Neuronales Netz für Klassifikationsaufgaben eingefügt", html.Br(),
+                       "- NN-Regression verbessert", html.Br(),
+                       "- Feature Importance für Klassifikationsaufgaben eingefügt"]),
         dbc.ModalFooter("")
      ],
      is_open=True,

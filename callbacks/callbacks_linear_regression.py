@@ -91,8 +91,6 @@ def make_regression(n_clicks, df, y, train_test_size, choose_metrics):
             template='plotly_white'
         )
         # build figure for results as scatter plot
-        print(Y_test)
-        print(Y_pred)
         fig = go.Figure(
             data=[
                 go.Scatter(

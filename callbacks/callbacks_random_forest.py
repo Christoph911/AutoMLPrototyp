@@ -36,6 +36,7 @@ def get_target(df, dummy):
 
 @app.callback(
     [Output("store-figure-forest", "data"),
+     Output('store-figure-forest-feat', 'data'),
      Output('error-message-model-rf', 'children')],
     [Input('start-forest-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
@@ -92,6 +93,20 @@ def create_random_forest_classifier(n_clicks, df, y,
         else:
             f1 = None
 
+        # get feature importance
+        importance = model.feature_importances_
+
+        # plot feature importance as bar chart
+        fig_feature = go.Figure([
+            go.Bar(x=X.columns, y=importance, text=importance.round(2), textposition='outside')
+        ]
+        )
+        fig_feature.update_layout(
+            xaxis_title='Feature names',
+            yaxis_title='Score',
+            template='plotly_white'
+        )
+
         # create confusion matrix
         confusion_matrix = metrics.confusion_matrix(y_test, y_pred)
         # convert results into int
@@ -119,7 +134,7 @@ def create_random_forest_classifier(n_clicks, df, y,
         # add colorbar
         fig['data'][0]['showscale'] = True
 
-        return dict(figure=fig), None
+        return dict(figure=fig), dict(figure=fig_feature), None
 
     except Exception as e:
         error_message_model = dbc.Modal(
@@ -134,20 +149,24 @@ def create_random_forest_classifier(n_clicks, df, y,
             ],
             is_open=True,
         )
-        return None, error_message_model
+        return None, None, error_message_model
 
 
 # manage tab content
 @app.callback(
     Output("tab-content-forest", "children"),
     [Input("card-tabs-forest", "active_tab"),
-     Input("store-figure-forest", "data")],
+     Input("store-figure-forest", "data"),
+     Input('store-figure-forest-feat', 'data')],
 )
-def create_tab_content(active_tab, data):
+def create_tab_content(active_tab, data, data_feat):
     if active_tab and data is not None:
         if active_tab == "tab-1-forest":
             figure = dcc.Graph(figure=data["figure"])
             return figure
         elif active_tab == "tab-2-forest":
             return recall, html.Br(), precision, html.Br(), f1, html.Br()
+        elif active_tab == 'tab-3-forest':
+            figure = dcc.Graph(figure=data_feat['figure'])
+            return figure
     return data
