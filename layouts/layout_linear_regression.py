@@ -55,6 +55,7 @@ controls_linear_regression = dbc.Card(
         dbc.FormGroup(
             [
                 dbc.Button("Start", color="success", id="start-regression-btn"),
+                dbc.Button("Download Ergebnis", color="primary", id="download-results-btn"),
             ]
         ),
     ],
@@ -92,7 +93,8 @@ layout_linear_regression = dbc.Container(
             ]
         ),
         html.Div(id='error-message-target-reg'),
-        html.Div(id='error-message-model-reg')
+        html.Div(id='error-message-model-reg'),
+        #html.P(id='results', style={'display': 'none'})
     ],
     fluid=True,
 )

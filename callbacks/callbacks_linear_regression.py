@@ -27,7 +27,6 @@ def get_target(df, dummy):
 
         return target, None
     except:
-        error_message_get_target
         return None, error_message_get_target
 
 
@@ -57,7 +56,9 @@ def make_regression(n_clicks, df, y, train_test_size, choose_metrics):
         model = LinearRegression()
         model.fit(X_train, Y_train)
 
+        global Y_pred
         Y_pred = model.predict(X_test)
+        #download_model_results()
 
         # create Metrics
         global mae, mse, rmse
@@ -91,6 +92,7 @@ def make_regression(n_clicks, df, y, train_test_size, choose_metrics):
             template='plotly_white'
         )
         # build figure for results as scatter plot
+
         fig = go.Figure(
             data=[
                 go.Scatter(
@@ -143,3 +145,6 @@ def create_tab_content(active_tab, data, data_feat):
             figure = dcc.Graph(figure=data_feat['figure'])
             return figure
     return data
+
+
+
