@@ -39,6 +39,8 @@ card_table_upload = dbc.Card(
                 [
                     dbc.Tab(label='Vorschau', tab_id='tab-1'),
                     dbc.Tab(label="Informationen", tab_id='tab-2'),
+                    dbc.Tab(label="Korrelation", tab_id='tab-3'),
+                    dbc.Tab(label="Histogram", tab_id='tab-4')
                 ],
                 id='card-tabs',
                 card=True,

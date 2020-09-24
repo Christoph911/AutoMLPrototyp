@@ -85,6 +85,22 @@ controls_nn = dbc.Card(
         html.Hr(),
         dbc.FormGroup(
             [
+                dbc.Label('Metriken auswählen:'),
+                dbc.Checklist(
+                    options=[
+                        {"label": "Recall Score", "value": 'recall'},
+                        {"label": "Precision Score", "value": 'precision'},
+                        {"label": "F1 Score", "value": 'f1'},
+                    ],
+                    value=[],
+                    id='metrics-nn-class',
+                    switch=True
+                )
+            ]
+        ),
+        html.Hr(),
+        dbc.FormGroup(
+            [
                 dbc.Button("Start!", color='success', id="start-nn-class-btn"),
             ]
         ),
@@ -99,7 +115,8 @@ card_graph_nn = dbc.Card(
             dbc.Tabs(
                 [
                     dbc.Tab(label="Vorschau", tab_id="tab-1-nn-class"),
-                    dbc.Tab(label="Metriken", tab_id="tab-2-nn-class"),
+                    dbc.Tab(label="Acc/Loss", tab_id="tab-2-nn-class"),
+                    dbc.Tab(label='Metriken', tab_id="tab-3-nn-class")
                 ],
                 id="card-tabs-nn-class",
                 card=True,

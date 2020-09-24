@@ -9,7 +9,10 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import pandas as pd
 import dash_bootstrap_components as dbc
-
+import plotly.figure_factory as ff
+import dash_core_components as dcc
+import plotly.graph_objects as go
+pd.options.plotting.backend = "plotly"
 
 # parse uploaded data and return dataframe
 def parse_data(contents, filename):
@@ -91,5 +94,28 @@ def display_table(df, active_tab):
                           ])
         return infos
 
+    elif active_tab == 'tab-3':
+        # get values for corr-matrix
+        z = df.corr().round(2).values
+        # delete non numeric values
+        df_numeric = df._get_numeric_data()
+        # get column names for axis
+        x = list(df_numeric.columns)
+        y = list(df_numeric.columns)
+        # create heatmap
+        fig = ff.create_annotated_heatmap(z, x=x, y=y, colorscale='Blues')
+        fig.update_layout(title_text='Korrelations-Matrix',
+                          width=1200,
+                          height=800,
+
+                          )
+
+        return dcc.Graph(figure=fig)
+
+    elif active_tab == 'tab-4':
+        df_numeric = df._get_numeric_data()
+        fig_hist = df_numeric.plot.hist()
+
+        return dcc.Graph(figure=fig_hist)
     else:
         raise PreventUpdate

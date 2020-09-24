@@ -17,6 +17,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from tensorflow import keras
 import sklearn.metrics as metrics
+from sklearn.metrics import f1_score, precision_score, recall_score, confusion_matrix
 
 
 # get stored data, update dropdown, return selected target
@@ -49,9 +50,10 @@ def get_target(df, dummy):
      State('optimizer-nn-class', 'value'),
      State('number-epochs-nn-class', 'value'),
      State('train-test-nn-class', 'value'),
-     State('val-nn-class', 'value')]
+     State('val-nn-class', 'value'),
+     State('metrics-nn-class', 'value')]
 )
-def create_neural_network_classification(n_clicks, df, y, optimizer, number_epochs, train_test_size, validation_size):
+def create_neural_network_classification(n_clicks, df, y, optimizer, number_epochs, train_test_size, validation_size, choose_metrics):
     try:
         # load data out of local storage and convert into dataFrame
         df = json.loads(df)
@@ -92,6 +94,7 @@ def create_neural_network_classification(n_clicks, df, y, optimizer, number_epoc
 
         # predict
         prediction = np.argmax(model.predict(X_test), axis=1)
+
         # convert predictions back into categorical values
         prediction_cat = encoder.inverse_transform(prediction)
 
@@ -104,6 +107,27 @@ def create_neural_network_classification(n_clicks, df, y, optimizer, number_epoc
         train_accuracy = history.history['accuracy']
         val_loss = history.history['val_loss']
         val_accuracy = history.history['val_accuracy']
+
+        # create metrics
+        global recall, precision, f1
+
+        # create metrics depends on user input
+        if 'recall' in choose_metrics:
+            recall = recall_score(Y_test_cat, prediction_cat, average='micro')
+            recall = 'Recall Score: ' + str(recall.round(3))
+        else:
+            recall = None
+        if 'precision' in choose_metrics:
+            precision = precision_score(Y_test_cat, prediction_cat, average='micro')
+            precision = 'Precision Score: ' + str(precision.round(3))
+        else:
+            precision = None
+        if 'f1' in choose_metrics:
+            f1 = f1_score(Y_test_cat, prediction_cat, average='micro')
+            f1 = 'F1 Score: ' + str(f1.round(3))
+        else:
+            f1 = None
+
 
         # create figure for train loss and accuracy
         epochs = list(range(1, number_epochs + 1))
@@ -208,4 +232,6 @@ def create_tab_content(active_tab, data, data_class):
         elif active_tab == "tab-2-nn-class":
             figure = dcc.Graph(figure=data['figure'])
             return figure
+        elif active_tab == "tab-3-nn-class":
+            return recall, html.Br(), precision, html.Br(), f1, html.Br()
     return data
