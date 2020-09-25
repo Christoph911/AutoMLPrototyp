@@ -5,13 +5,12 @@ from main import app
 
 import dash_table
 import dash_html_components as html
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 import pandas as pd
 import dash_bootstrap_components as dbc
 import plotly.figure_factory as ff
 import dash_core_components as dcc
-import plotly.graph_objects as go
 
 pd.options.plotting.backend = "plotly"
 
