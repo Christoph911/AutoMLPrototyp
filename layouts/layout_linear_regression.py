@@ -55,7 +55,6 @@ controls_linear_regression = dbc.Card(
         dbc.FormGroup(
             [
                 dbc.Button("Start", color="success", id="start-regression-btn"),
-                dbc.Button("Download Ergebnis", color="primary", id="download-results-btn"),
             ]
         ),
     ],

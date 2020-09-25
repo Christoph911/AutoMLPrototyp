@@ -12,7 +12,9 @@ import dash_bootstrap_components as dbc
 import plotly.figure_factory as ff
 import dash_core_components as dcc
 import plotly.graph_objects as go
+
 pd.options.plotting.backend = "plotly"
+
 
 # parse uploaded data and return dataframe
 def parse_data(contents, filename):
