@@ -69,6 +69,7 @@ card_graph_logistic_regression = dbc.Card(
                 [
                     dbc.Tab(label="Vorschau", tab_id="tab-1-log-reg"),
                     dbc.Tab(label="Metriken", tab_id="tab-2-log-reg"),
+                    dbc.Tab(label="ROC-Curve", tab_id='tab-3-log-reg')
                 ],
                 id="card-tabs-logistic-reg",
                 card=True,

@@ -13,7 +13,8 @@ from sklearn.metrics import recall_score, precision_score, f1_score
 from sklearn import metrics
 from callbacks.callbacks_master import error_message_get_target
 import dash_bootstrap_components as dbc
-
+import numpy as np
+import plotly.express as px
 
 # get stored data, update dropdown, return selected target
 @app.callback(
@@ -36,6 +37,7 @@ def get_target(df, dummy):
 
 @app.callback(
     [Output("store-figure-forest", "data"),
+     Output('store-figure-forest-roc', 'data'),
      Output('store-figure-forest-feat', 'data'),
      Output('error-message-model-rf', 'children')],
     [Input('start-forest-btn', 'n_clicks')],
@@ -65,6 +67,11 @@ def create_random_forest_classifier(n_clicks, df, y,
         # define target and X variables
         Y = df[y]
         X = df.drop(y, axis=1)
+
+        # label encoder for y-column
+        label_encoder = LabelEncoder()
+        Y = label_encoder.fit_transform(Y)
+
         # create train and test set
         X_train, X_test, y_train, y_test = train_test_split(X, Y, train_size=train_test_size)
         # instantiate RandomForestClassifier
@@ -73,6 +80,32 @@ def create_random_forest_classifier(n_clicks, df, y,
         model.fit(X_train, y_train)
         # get prediction
         y_pred = model.predict(X_test)
+
+        # check for binary classification task and build roc curve if true
+        if len(np.unique(Y)) <= 2:
+            # predict proba and other metrics for for roc-curve
+            Y_pred_proba = model.predict_proba(X_test)
+            preds = Y_pred_proba[:, 1]
+            fpr, tpr, threshold = metrics.roc_curve(y_test, preds)
+            auc = metrics.roc_auc_score(y_test, preds)
+
+            # create roc-curve figure
+            fig_roc = px.area(
+                x=fpr, y=tpr,
+                title=f'ROC Curve (AUC={auc:.4f})',
+                labels=dict(x='False Positive Rate', y='True Positive Rate'),
+                width=800, height=600
+            )
+
+            fig_roc.add_shape(
+                type='line', line=dict(dash='dash'),
+                x0=0, x1=1, y0=0, y1=1
+            )
+
+            fig_roc.update_yaxes(scaleanchor="x", scaleratio=1)
+            fig_roc.update_xaxes(constrain='domain')
+        else:
+            fig_roc = html.Div("")
 
         global recall, precision, f1
 
@@ -111,8 +144,12 @@ def create_random_forest_classifier(n_clicks, df, y,
         confusion_matrix = metrics.confusion_matrix(y_test, y_pred)
         # convert results into int
         confusion_matrix = confusion_matrix.astype(int)
+        # reverse label encoder for matrix
+        Y = label_encoder.inverse_transform(Y)
+        # convert y values to string
+        Y = Y.astype(str)
         # get target names
-        target_names = Y.unique()
+        target_names = np.unique(Y)
         # split target names by comma and return list
         target_names = ' '.join(target_names).split()
 
@@ -134,7 +171,7 @@ def create_random_forest_classifier(n_clicks, df, y,
         # add colorbar
         fig['data'][0]['showscale'] = True
 
-        return dict(figure=fig), dict(figure=fig_feature), None
+        return dict(figure=fig), dict(figure=fig_roc), dict(figure=fig_feature), None
 
     except Exception as e:
         error_message_model = dbc.Modal(
@@ -149,7 +186,7 @@ def create_random_forest_classifier(n_clicks, df, y,
             ],
             is_open=True,
         )
-        return None, None, error_message_model
+        return None, None, None, error_message_model
 
 
 # manage tab content
@@ -157,9 +194,10 @@ def create_random_forest_classifier(n_clicks, df, y,
     Output("tab-content-forest", "children"),
     [Input("card-tabs-forest", "active_tab"),
      Input("store-figure-forest", "data"),
+     Input("store-figure-forest-roc", "data"),
      Input('store-figure-forest-feat', 'data')],
 )
-def create_tab_content(active_tab, data, data_feat):
+def create_tab_content(active_tab, data, data_roc, data_feat):
     if active_tab and data is not None:
         if active_tab == "tab-1-forest":
             figure = dcc.Graph(figure=data["figure"])
@@ -167,6 +205,9 @@ def create_tab_content(active_tab, data, data_feat):
         elif active_tab == "tab-2-forest":
             return recall, html.Br(), precision, html.Br(), f1, html.Br()
         elif active_tab == 'tab-3-forest':
+            figure = dcc.Graph(figure=data_roc['figure'])
+            return figure
+        elif active_tab == 'tab-4-forest':
             figure = dcc.Graph(figure=data_feat['figure'])
             return figure
     return data

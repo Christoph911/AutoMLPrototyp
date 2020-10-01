@@ -15,15 +15,13 @@ from layouts.layout_logistic_regression import layout_logistic_regression
 from layouts.layout_forest_regressor import layout_forest_regressor
 from layouts.layout_neural_network_classification import layout_nn_class
 
-
-# TODO: hidden DIV durch dcc Store ersetzen?
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     # hidden Div for storing upload data as json
-    html.Div(id='stored-data-upload', style={'display': 'none'}),
+    dcc.Store(id='stored-data-upload'),
     # hidden Div for storing table-prep results as json
-    html.Div(id='stored-data-prep', style={'display': 'none'}),
-    html.Div(id='get-data-model', style={'display': 'none'}),
+    dcc.Store(id='stored-data-prep'),
+    dcc.Store(id='get-data-model'),
     # dcc Store to store figures as dict
     dcc.Store(id="store-figure-reg"),
     dcc.Store(id='store-figure-log'),
@@ -37,6 +35,8 @@ app.layout = html.Div([
     dcc.Store(id='store-figure-forest-reg-feat'),
     dcc.Store(id='store-figure-nn-class'),
     dcc.Store(id='store-figure-nn-class-metrics'),
+    dcc.Store(id='store-fig-roc-log'),
+    dcc.Store(id='store-figure-forest-roc'),
 
     html.Div(id='page-content')
 ])

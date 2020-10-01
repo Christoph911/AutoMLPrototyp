@@ -9,6 +9,7 @@ from sklearn.cluster import KMeans
 import dash_bootstrap_components as dbc
 from callbacks.callbacks_master import error_message_get_target
 
+
 @app.callback(
     [Output('dropdownX-kmeans-opt', 'options'),
      Output('dropdownY-kmeans-opt', 'options'),
@@ -26,7 +27,6 @@ def update_dropdown(df, dummy):
 
         return optionsX, optionsY, None
     except:
-        error_message_get_target
         return None, None, error_message_get_target
 
 
@@ -50,8 +50,6 @@ def make_clustering(n_clicks, df, x, y, n_clusters):
         df = df.loc[:, [x, y]]
         km.fit(df.values)
         df["cluster"] = km.labels_
-
-        centers = km.cluster_centers_
 
         # build figure
         fig = go.Figure(
@@ -80,8 +78,9 @@ def make_clustering(n_clicks, df, x, y, n_clusters):
                 dbc.ModalHeader("Fehler!"),
                 dbc.ModalBody(["Es ist ein Fehler während des Trainingsprozesses aufgetreten:", html.Br(),
                                html.H6(str(e)), html.Br(),
-                               " Bitte stell darüber hinaus sicher, dass der verwendete Datensatz keine Null-Values enthält "
-                               "und das korrekte Modell für die Problemstellung ausgewählt wurde",html.Br(),
+                               "Bitte stell darüber hinaus sicher, dass der verwendete Datensatz keine Null-Values"
+                               " enthält "
+                               "und das korrekte Modell für die Problemstellung ausgewählt wurde", html.Br(),
                                ]),
                 dbc.ModalFooter("")
             ],

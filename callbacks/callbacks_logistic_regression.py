@@ -6,13 +6,15 @@ from dash.dependencies import Input, Output, State
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegressionCV
-from sklearn.metrics import recall_score, precision_score, f1_score
-from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import recall_score, precision_score, f1_score, roc_auc_score
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 import plotly.figure_factory as ff
 import sklearn.metrics as metrics
 from callbacks.callbacks_master import error_message_get_target
 import dash_bootstrap_components as dbc
 import numpy as np
+import plotly.express as px
+
 
 # get stored data, update dropdown, return selected target
 @app.callback(
@@ -36,6 +38,7 @@ def get_target(df, dummy):
 
 @app.callback(
     [Output("store-figure-log", "data"),
+     Output('store-fig-roc-log', 'data'),
      Output('error-message-model-log', 'children')],
     [Input('start-logistic-regression-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
@@ -52,16 +55,48 @@ def make_log_regression(n_clicks, df, y, train_test_size, choose_metrics):
         Y = df[y]
         X = df.drop(y, axis=1)
 
+        # label encoder for y-column
+        label_encoder = LabelEncoder()
+        Y = label_encoder.fit_transform(Y)
+
         # scale data with standard scaler
         sc = StandardScaler()
         X = sc.fit_transform(X)
 
+        # train/test/split
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=train_test_size)
 
+        # create and fit model
         model = LogisticRegressionCV()
         model.fit(X_train, Y_train)
-
+        # predict
         Y_pred = model.predict(X_test)
+
+        # check for binary classification task and build roc curve if true
+        if len(np.unique(Y)) <= 2:
+            # predict proba and other metrics for for roc-curve
+            Y_pred_proba = model.predict_proba(X_test)
+            preds = Y_pred_proba[:, 1]
+            fpr, tpr, threshold = metrics.roc_curve(Y_test, preds)
+            auc = metrics.roc_auc_score(Y_test, preds)
+
+            # create roc-curve figure
+            fig_roc = px.area(
+                x=fpr, y=tpr,
+                title=f'ROC Curve (AUC={auc:.4f})',
+                labels=dict(x='False Positive Rate', y='True Positive Rate'),
+                width=800, height=600
+            )
+
+            fig_roc.add_shape(
+                type='line', line=dict(dash='dash'),
+                x0=0, x1=1, y0=0, y1=1
+            )
+
+            fig_roc.update_yaxes(scaleanchor="x", scaleratio=1)
+            fig_roc.update_xaxes(constrain='domain')
+        else:
+            fig_roc = html.Div("")
 
         # create Metrics
         global recall, precision, f1
@@ -87,8 +122,13 @@ def make_log_regression(n_clicks, df, y, train_test_size, choose_metrics):
         confusion_matrix = metrics.confusion_matrix(Y_test, Y_pred)
         # convert results into int
         confusion_matrix = confusion_matrix.astype(int)
+        # reverse label encoder for matrix
+        Y = label_encoder.inverse_transform(Y)
+        # convert y values to string
+        Y = Y.astype(str)
         # get target names
-        target_names = Y.unique()
+        target_names = np.unique(Y)
+
         # split target names by comma and return list
         target_names = ' '.join(target_names).split()
 
@@ -110,7 +150,9 @@ def make_log_regression(n_clicks, df, y, train_test_size, choose_metrics):
         # add colorbar
         fig['data'][0]['showscale'] = True
 
-        return dict(figure=fig), None
+        return dict(figure=fig), dict(figure=fig_roc), None
+
+
     except Exception as e:
 
         error_message_model = dbc.Modal(
@@ -126,20 +168,24 @@ def make_log_regression(n_clicks, df, y, train_test_size, choose_metrics):
             ],
             is_open=True,
         )
-        return None, error_message_model
+        return None, None, error_message_model
 
 
 # manage tab content
 @app.callback(
     Output("tab-content-log", "children"),
     [Input("card-tabs-logistic-reg", "active_tab"),
-     Input("store-figure-log", "data")],
+     Input("store-figure-log", "data"),
+     Input("store-fig-roc-log", "data")],
 )
-def create_tab_content(active_tab, data):
+def create_tab_content(active_tab, data, roc):
     if active_tab and data is not None:
         if active_tab == "tab-1-log-reg":
             figure = dcc.Graph(figure=data["figure"])
             return figure
         elif active_tab == "tab-2-log-reg":
             return recall, html.Br(), precision, html.Br(), f1, html.Br()
+        elif active_tab == 'tab-3-log-reg':
+            figure = dcc.Graph(figure=roc["figure"])
+            return figure
     return data
