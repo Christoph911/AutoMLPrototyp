@@ -116,7 +116,8 @@ card_graph_nn = dbc.Card(
                 [
                     dbc.Tab(label="Vorschau", tab_id="tab-1-nn-class"),
                     dbc.Tab(label="Acc/Loss", tab_id="tab-2-nn-class"),
-                    dbc.Tab(label='Metriken', tab_id="tab-3-nn-class")
+                    dbc.Tab(label='Metriken', tab_id="tab-3-nn-class"),
+                    dbc.Tab(label='ROC-Curve', tab_id="tab-4-nn-class")
                 ],
                 id="card-tabs-nn-class",
                 card=True,

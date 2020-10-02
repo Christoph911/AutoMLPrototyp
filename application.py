@@ -37,6 +37,8 @@ app.layout = html.Div([
     dcc.Store(id='store-figure-nn-class-metrics'),
     dcc.Store(id='store-fig-roc-log'),
     dcc.Store(id='store-figure-forest-roc'),
+    dcc.Store(id='store-figure-nn-class-roc'),
+
 
     html.Div(id='page-content')
 ])

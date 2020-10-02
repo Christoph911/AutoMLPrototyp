@@ -18,6 +18,7 @@ from sklearn.preprocessing import LabelEncoder
 from tensorflow import keras
 import sklearn.metrics as metrics
 from sklearn.metrics import f1_score, precision_score, recall_score
+import plotly.express as px
 
 
 # get stored data, update dropdown, return selected target
@@ -43,6 +44,7 @@ def get_target(df, dummy):
 @app.callback(
     [Output('store-figure-nn-class', 'data'),
      Output('store-figure-nn-class-metrics', 'data'),
+     Output('store-figure-nn-class-roc', 'data'),
      Output('error-message-model-nn-class', 'children')],
     [Input('start-nn-class-btn', 'n_clicks')],
     [State('get-data-model', 'children'),
@@ -53,7 +55,8 @@ def get_target(df, dummy):
      State('val-nn-class', 'value'),
      State('metrics-nn-class', 'value')]
 )
-def create_neural_network_classification(n_clicks, df, y, optimizer, number_epochs, train_test_size, validation_size, choose_metrics):
+def create_neural_network_classification(n_clicks, df, y, optimizer, number_epochs, train_test_size, validation_size,
+                                         choose_metrics):
     try:
         # load data out of local storage and convert into dataFrame
         df = json.loads(df)
@@ -71,18 +74,18 @@ def create_neural_network_classification(n_clicks, df, y, optimizer, number_epoc
         one_hot_y = keras.utils.to_categorical(
             encoded_Y, num_classes=None, dtype='float32'
         )
-
+        print(one_hot_y)
         # train-test-split function
         X_train, X_test, Y_train, Y_test = train_test_split(X, one_hot_y, train_size=train_test_size)
 
         # build model
         model = keras.Sequential(
             [
-                keras.layers.Dense(8, input_dim=4, activation='relu'),
+                keras.layers.Dense(8, activation='relu'),
                 keras.layers.Dense(10, activation='relu'),
                 keras.layers.Dense(10, activation='relu'),
                 keras.layers.Dense(10, activation='relu'),
-                keras.layers.Dense(3, activation='softmax'),
+                keras.layers.Dense(len(np.unique(Y)), activation='softmax'),
             ]
         )
 
@@ -101,6 +104,32 @@ def create_neural_network_classification(n_clicks, df, y, optimizer, number_epoc
         # convert Y_test back into categorical values
         Y_test_cat = np.argmax(Y_test, axis=1)
         Y_test_cat = encoder.inverse_transform(Y_test_cat)
+        print(Y_test_cat)
+        # check for binary classification task and build roc curve if true
+        if len(np.unique(Y)) <= 2:
+            # predict proba and other metrics for for roc-curve
+            Y_pred_proba = model.predict_proba(X_test)
+            preds = Y_pred_proba[:, 1]
+            fpr, tpr, threshold = metrics.roc_curve(Y_test_cat, preds)
+            auc = metrics.roc_auc_score(Y_test_cat, preds)
+
+            # create roc-curve figure
+            fig_roc = px.area(
+                x=fpr, y=tpr,
+                title=f'ROC Curve (AUC={auc:.4f})',
+                labels=dict(x='False Positive Rate', y='True Positive Rate'),
+                width=800, height=600
+            )
+
+            fig_roc.add_shape(
+                type='line', line=dict(dash='dash'),
+                x0=0, x1=1, y0=0, y1=1
+            )
+
+            fig_roc.update_yaxes(scaleanchor="x", scaleratio=1)
+            fig_roc.update_xaxes(constrain='domain')
+        else:
+            fig_roc = html.Div("")
 
         # get loss and accuracy
         train_loss = history.history['loss']
@@ -127,7 +156,6 @@ def create_neural_network_classification(n_clicks, df, y, optimizer, number_epoc
             f1 = 'F1 Score: ' + str(f1.round(3))
         else:
             f1 = None
-
 
         # create figure for train loss and accuracy
         epochs = list(range(1, number_epochs + 1))
@@ -176,8 +204,12 @@ def create_neural_network_classification(n_clicks, df, y, optimizer, number_epoc
         confusion_matrix = metrics.confusion_matrix(Y_test_cat, prediction_cat)
         # convert results into int
         confusion_matrix = confusion_matrix.astype(int)
+        # reverse label encoder for matrix
+        Y = encoder.inverse_transform(encoded_Y)
+        # convert y values to string
+        Y = Y.astype(str)
         # get target names
-        target_names = Y.unique()
+        target_names = np.unique(Y)
         # split target names by comma and return list
         target_names = ' '.join(target_names).split()
 
@@ -199,7 +231,7 @@ def create_neural_network_classification(n_clicks, df, y, optimizer, number_epoc
         # add colorbar
         fig_class['data'][0]['showscale'] = True
 
-        return dict(figure=fig), dict(figure=fig_class), None
+        return dict(figure=fig), dict(figure=fig_class), dict(figure=fig_roc), None
 
     except Exception as e:
         error_message_model = dbc.Modal(
@@ -214,7 +246,7 @@ def create_neural_network_classification(n_clicks, df, y, optimizer, number_epoc
             ],
             is_open=True,
         )
-        return None, None, error_message_model
+        return None, None, None, error_message_model
 
 
 # manage tab content
@@ -222,9 +254,10 @@ def create_neural_network_classification(n_clicks, df, y, optimizer, number_epoc
     Output("tab-content-nn-class", "children"),
     [Input("card-tabs-nn-class", "active_tab"),
      Input("store-figure-nn-class", "data"),
-     Input('store-figure-nn-class-metrics', 'data')],
+     Input('store-figure-nn-class-metrics', 'data'),
+     Input('store-figure-nn-class-roc', 'data')]
 )
-def create_tab_content(active_tab, data, data_class):
+def create_tab_content(active_tab, data, data_class, data_roc):
     if active_tab and data is not None:
         if active_tab == "tab-1-nn-class":
             figure = dcc.Graph(figure=data_class["figure"])
@@ -234,4 +267,7 @@ def create_tab_content(active_tab, data, data_class):
             return figure
         elif active_tab == "tab-3-nn-class":
             return recall, html.Br(), precision, html.Br(), f1, html.Br()
+        elif active_tab == 'tab-4-nn-class':
+            figure = dcc.Graph(figure=data_roc['figure'])
+            return figure
     return data
